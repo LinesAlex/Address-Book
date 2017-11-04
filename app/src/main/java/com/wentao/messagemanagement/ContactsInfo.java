@@ -8,16 +8,16 @@ import java.util.ArrayList;
  */
 
 public class ContactsInfo {
-    private Long id = null;
+    public static int FIRST_ID;
+    private int id = 0;
     private String name = null;
-    private String email = null;
+    private ArrayList<String> email = new ArrayList<String>();
     private ArrayList<String> phoneNumber = new ArrayList<String>();
 
-
-    public Long getId() {
+    public int getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -28,13 +28,18 @@ public class ContactsInfo {
         this.name = name;
     }
 
-    public String getEmail() {return email;}
-    public void setEmail(String email) {this.email = email;}
+    public ArrayList<String> getEmail() {return email;}
+    public String getEmail(int Index) {
+        return email.get(Index);
+    }
+
+    public void setEmail(String email) {
+        this.email.add(email);
+    }
+    public void setEmail(int index, String email) {this.email.add(index, email);}
 
     public ArrayList<String> getPhoneNumber() {return phoneNumber;}
-    public String getPhoneNumber(int Index) {
-        return phoneNumber.get(Index);
-    }
+    public String getPhoneNumber(int Index) {return phoneNumber.get(Index);}
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber.add(phoneNumber);

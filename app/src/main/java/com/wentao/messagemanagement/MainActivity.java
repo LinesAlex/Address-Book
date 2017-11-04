@@ -7,13 +7,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +17,6 @@ public class MainActivity extends AppCompatActivity {
     private GetContactsInfo getContactsInfo = new GetContactsInfo();
 
     private static MainActivity instance;
-
     public static MainActivity getInstance() {
         return instance;
     }
@@ -39,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
             //动态请求权限
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.READ_CONTACTS},1);
-
         } else {
             setContactsListView();
         }
@@ -57,22 +50,17 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:break;
         }
-
     }
-
-
 
     private void setContactsListView(){
-        //getContacts()方法获取联系人的姓名及电话号码
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
 //                android.R.layout.simple_list_item_1,
-//                getContactsInfo.getLinkedOfContactsInfo());
+//                getContactsInfo.getLinkedOfContactsInfo());//简单显示
 
-        ContactsAdapter adapter = new ContactsAdapter(MainActivity.this,
+        ContactsAdapter adapter = new ContactsAdapter(
+                MainActivity.this,
                 R.layout.contacts_item,
                 getContactsInfo.getContactsInfos());
-        //将姓名及电话号码显示到ListView上
-        contactsListView.setAdapter(adapter);
+        contactsListView.setAdapter(adapter);//将姓名及电话号码显示到ListView上
     }
-
 }

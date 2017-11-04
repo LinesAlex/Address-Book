@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,10 +34,17 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
         TextView name = (TextView) view.findViewById(R.id.tv_name);
         TextView phone = (TextView) view.findViewById(R.id.tv_phone);
         TextView email = (TextView) view.findViewById(R.id.tv_email);
-        id.setText(item.getId().toString());
-        name.setText("Name : " + item.getName());
-        phone.setText("Phone : " + item.getPhoneNumber(0));
-        email.setText("Email : " + item.getEmail());
+        id.setText((item.getId() - ContactsInfo.FIRST_ID) + "");
+        name.setText(item.getName());
+        String phoneNumber = checkOutItem(item.getPhoneNumber());
+        String emailAdress = checkOutItem(item.getEmail());
+        phone.setText("Phone : " + phoneNumber);
+        email.setText("Email : " + emailAdress);
         return view;
+    }
+    private String checkOutItem(ArrayList<String> str)
+    {
+        if (str.isEmpty()) {return "无";}
+        else {return str.get(0);}
     }
 }
