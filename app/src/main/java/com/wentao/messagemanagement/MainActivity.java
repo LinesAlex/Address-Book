@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView setListSideBar(final String letter, int letterHeight) {
         TextView letterText = new TextView(MainActivity.this);
         letterText.setText(letter);
-        letterText.setTextSize(letterHeight / 5 - 3);
+        letterText.setTextSize(letterHeight / 5 - 6);
         letterText.setHeight(letterHeight - 10);
         letterText.setGravity(Gravity.CENTER);
         letterText.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (ContactsAdapter.LetterToPosition.containsKey(letter)) {
-                            contactsListView.smoothScrollToPosition(ContactsAdapter.LetterToPosition.get(letter));
+                            contactsListView.setSelection(ContactsAdapter.LetterToPosition.get(letter));
                             Toast.makeText(MainActivity.this, letter, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(MainActivity.this, "NULL " + letter, Toast.LENGTH_SHORT).show();
