@@ -34,8 +34,10 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
         TextView name = (TextView) view.findViewById(R.id.tv_name);
         TextView phone = (TextView) view.findViewById(R.id.tv_phone);
         TextView email = (TextView) view.findViewById(R.id.tv_email);
+        TextView fristname = (TextView) view.findViewById(R.id.tv_fristname);
         id.setText((item.getId() - ContactsInfo.FIRST_ID) + "");
         name.setText(item.getName());
+        fristname.setText(item.getName().substring(0,1));
         String phoneNumber = checkOutItem(item.getPhoneNumber());
         String emailAdress = checkOutItem(item.getEmail());
         phone.setText("Phone : " + phoneNumber);

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("name",((TextView) view.findViewById(R.id.tv_name)).getText());
                 intent.putExtra("phone",((TextView) view.findViewById(R.id.tv_phone)).getText());
                 intent.putExtra("email",((TextView) view.findViewById(R.id.tv_email)).getText());
+                intent.putExtra("id",((TextView) view.findViewById(R.id.tv_id)).getText());
                 startActivity(intent);
             }
         });
