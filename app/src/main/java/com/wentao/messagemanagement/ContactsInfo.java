@@ -8,11 +8,15 @@ import java.util.ArrayList;
  */
 
 public class ContactsInfo {
-    public static int FIRST_ID;
     private int id = 0;
+    private int count = 0;
     private String name = null;
+    private String pinyin = null;
     private ArrayList<String> email = new ArrayList<String>();
     private ArrayList<String> phoneNumber = new ArrayList<String>();
+
+    public String getPinyin() {return pinyin;}
+    public void setPinyin(String pinyin) {this.pinyin = pinyin;}
 
     public int getId() {
         return id;
@@ -20,6 +24,9 @@ public class ContactsInfo {
     public void setId(int id) {
         this.id = id;
     }
+
+    public int getCount() {return count;}
+    public void setCount(int count) {this.count = count;}
 
     public String getName() {
         return name;
@@ -45,4 +52,20 @@ public class ContactsInfo {
         this.phoneNumber.add(phoneNumber);
     }
     public void setPhoneNumber(int index, String phoneNumber) {this.phoneNumber.add(index, phoneNumber);}
+
+    @Override
+    public String toString() {
+        StringBuilder sbContactInfo = new StringBuilder();
+                sbContactInfo.append(
+                        "Count : " + getCount() + "\nName : " + getName());
+        for (int i = 0; i < getPhoneNumber().size(); i++)
+        {
+            sbContactInfo.append("\nPhoneNumber : " + getPhoneNumber(i));
+        }
+        for (int i = 0; i < getEmail().size(); i++)
+        {
+            sbContactInfo.append("\nEmail : " + getEmail(i));
+        }
+        return sbContactInfo.toString();
+    }
 }

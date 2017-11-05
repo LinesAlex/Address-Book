@@ -1,15 +1,24 @@
 package com.wentao.messagemanagement;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("name",((TextView) view.findViewById(R.id.tv_name)).getText());
                 intent.putExtra("phone",((TextView) view.findViewById(R.id.tv_phone)).getText());
                 intent.putExtra("email",((TextView) view.findViewById(R.id.tv_email)).getText());
-                intent.putExtra("id",((TextView) view.findViewById(R.id.tv_id)).getText());
+                intent.putExtra("count",((TextView) view.findViewById(R.id.tv_count)).getText());
                 startActivity(intent);
             }
         });
@@ -77,5 +86,43 @@ public class MainActivity extends AppCompatActivity {
                 R.layout.contacts_item,
                 getContactsInfo.getContactsInfos());
         contactsListView.setAdapter(adapter);//将姓名及电话号码显示到ListView上
+        setCatalog();
+    }
+
+    private void setCatalog() {
+        WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        int height = wm.getDefaultDisplay().getHeight();
+        int letterHeight = height / 27;
+        LinearLayout  catalog = (LinearLayout) findViewById(R.id.catalog);
+        String[] letter = new String[]{ "A", "B", "C", "D", "E", "F", "G", "H", "I",
+                "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+                "W", "X", "Y", "Z", "#" };
+        for (String str : letter) {
+            catalog.addView(setListSideBar(str,letterHeight));
+        }
+    }
+    private TextView setListSideBar(final String letter, int letterHeight) {
+        TextView letterText = new TextView(MainActivity.this);
+        letterText.setText(letter);
+        letterText.setTextSize(letterHeight / 5 - 3);
+        letterText.setHeight(letterHeight - 10);
+        letterText.setGravity(Gravity.CENTER);
+        letterText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                contactsListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ContactsAdapter.LetterToPosition.containsKey(letter)) {
+                            contactsListView.smoothScrollToPosition(ContactsAdapter.LetterToPosition.get(letter));
+                            Toast.makeText(MainActivity.this, letter, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "NULL " + letter, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        return letterText;
     }
 }

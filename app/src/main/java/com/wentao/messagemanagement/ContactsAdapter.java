@@ -10,7 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -19,23 +21,25 @@ import java.util.List;
 
 public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     private int resourceId;
-
+    static public Map<String, Integer> LetterToPosition = new HashMap<String, Integer>();
     public ContactsAdapter(@NonNull Context context, int textViewResourceId, @NonNull List<ContactsInfo> objects) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
+
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         ContactsInfo item = getItem(position);
+        LetterToPosition.put(item.getPinyin(), position);
         View view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
-        TextView id = (TextView) view.findViewById(R.id.tv_id);
+        TextView count = (TextView) view.findViewById(R.id.tv_count);
         TextView name = (TextView) view.findViewById(R.id.tv_name);
         TextView phone = (TextView) view.findViewById(R.id.tv_phone);
         TextView email = (TextView) view.findViewById(R.id.tv_email);
         TextView fristname = (TextView) view.findViewById(R.id.tv_fristname);
-        id.setText((item.getId() - ContactsInfo.FIRST_ID) + "");
+        count.setText(item.getCount() + "");
         name.setText(item.getName());
         fristname.setText(item.getName().substring(0,1));
         String phoneNumber = checkOutItem(item.getPhoneNumber());

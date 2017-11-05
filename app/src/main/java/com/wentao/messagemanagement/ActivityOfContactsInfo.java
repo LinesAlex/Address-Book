@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by Administrator on 2017/11/4.
  */
@@ -18,7 +16,7 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
     private TextView tv_name;
     private TextView tv_phone;
     private TextView tv_email;
-    private TextView tv_id;
+    private TextView tv_count;
     private Button btn_back;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,10 +25,10 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         tv_name = (TextView) findViewById(R.id.tv_name_info);
         tv_phone = (TextView) findViewById(R.id.tv_phone_info);
         tv_email = (TextView) findViewById(R.id.tv_email_info);
-        tv_id = (TextView) findViewById(R.id.tv_id_info);
+        tv_count = (TextView) findViewById(R.id.tv_count_info);
         Intent intent = getIntent();
         tv_name.setText(intent.getStringExtra("name"));
-        tv_id.setText(intent.getStringExtra("id"));
+        tv_count.setText(intent.getStringExtra("count"));
         tv_phone.setText("Phone\n    " + intent.getStringExtra("phone").substring(7));
         tv_email.setText("Email\n    " + intent.getStringExtra("email").substring(7));
         btn_back = (Button) findViewById(R.id.btn_back);
