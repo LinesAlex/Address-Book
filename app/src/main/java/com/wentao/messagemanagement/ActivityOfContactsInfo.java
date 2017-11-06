@@ -13,19 +13,22 @@ import android.widget.TextView;
  */
 
 public class ActivityOfContactsInfo extends AppCompatActivity {
-    private TextView tv_name;
-    private TextView tv_phone;
-    private TextView tv_email;
-    private TextView tv_count;
+    private TextView tv_name, tv_phone, tv_email, tv_count;
     private Button btn_back;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts_info);
+        initView();
+        setView();
+    }
+    private void initView(){
         tv_name = (TextView) findViewById(R.id.tv_name_info);
         tv_phone = (TextView) findViewById(R.id.tv_phone_info);
         tv_email = (TextView) findViewById(R.id.tv_email_info);
         tv_count = (TextView) findViewById(R.id.tv_count_info);
+    }
+    private void setView() {
         Intent intent = getIntent();
         tv_name.setText(intent.getStringExtra("name"));
         tv_count.setText(intent.getStringExtra("count"));

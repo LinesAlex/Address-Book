@@ -128,19 +128,11 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_callone"
+            android:id="@+id/btn_call"
             android:background="@drawable/phone_icon_1"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="35dp"
-            android:layout_marginRight="20dp" />
-
-        <Button
-            android:id="@+id/btn_calltwo"
-            android:background="@drawable/phone_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="50dp"
             android:layout_marginRight="20dp" />
 
         <Button
@@ -148,7 +140,7 @@
             android:background="@drawable/message_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginRight="20dp"/>
 
         <Button
@@ -156,7 +148,7 @@
             android:background="@drawable/info_icon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginLeft="30dp"/>
     </LinearLayout>
 
 

@@ -1,7 +1,5 @@
 package com.wentao.messagemanagement;
 
-import android.util.Log;
-
 import java.util.Comparator;
 
 /**

@@ -1,10 +1,13 @@
 package com.wentao.messagemanagement;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -29,12 +29,12 @@ import java.util.Map;
 public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     private int resourceId;
     private String letter;
-    private Button btn_info, btn_message, btn_callone, btn_calltwo, btn_showmenu;
     private View view;
     private LinearLayout liner_line;
+    private TextView tv_fristletter, count, name, phone, email, fristname;
+    private Button btn_info, btn_message, btn_call, btn_showmenu;
     private static LinearLayout PriorLinear,Linear;
     private static Button PriorMenu, Menu;
-    private TextView tv_fristletter, count, name, phone, email, fristname;
 
 
     static public HashMap<String, Integer> LetterToPosition = new HashMap<String, Integer>();
@@ -42,6 +42,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
     }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -49,7 +50,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
         view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
         initView();
         setShowLine(item, position);
-        setValue(item);
+        setView(item);
         return view;
     }
 
@@ -67,8 +68,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     public void initView() {
         btn_info = (Button) view.findViewById(R.id.btn_info);
         btn_message = (Button) view.findViewById(R.id.btn_message);
-        btn_callone = (Button) view.findViewById(R.id.btn_callone);
-        btn_calltwo = (Button) view.findViewById(R.id.btn_calltwo);
+        btn_call = (Button) view.findViewById(R.id.btn_call);
         btn_showmenu = (Button) view.findViewById(R.id.btn_showmenu);
         count = (TextView) view.findViewById(R.id.tv_count);
         name = (TextView) view.findViewById(R.id.tv_name);
@@ -79,11 +79,10 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
         liner_line = (LinearLayout) view.findViewById(R.id.liner_line);
     }
 
-    public void setValue(ContactsInfo item) {
+    public void setView(ContactsInfo item) {
         btn_info.setOnClickListener(new ItemsClickListener(view));
         btn_message.setOnClickListener(new ItemsClickListener(view));
-        btn_callone.setOnClickListener(new ItemsClickListener(view));
-        btn_calltwo.setOnClickListener(new ItemsClickListener(view));
+        btn_call.setOnClickListener(new ItemsClickListener(view));
         btn_showmenu.setOnClickListener(new ItemsClickListener(view));
         count.setText(item.getCount() + "");
         name.setText(item.getName());
@@ -102,9 +101,25 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
         @Override
         public void onClick(View v) {
             switch(v.getId()) {
-                case R.id.btn_callone : break;
-                case R.id.btn_calltwo : break;
-                case R.id.btn_message : break;
+                case R.id.btn_call:{
+                    String phoneNumber = ((TextView) view.findViewById(R.id.tv_phone)).getText().toString().trim();
+                    if(ActivityCompat.checkSelfPermission(MainActivity.getInstance(),
+                            Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                        Intent intent = new Intent(Intent.ACTION_CALL);
+                        intent.setData(Uri.parse("tel:" + phoneNumber));
+                        MainActivity.getInstance().startActivity(intent);
+                    }
+                }break;
+                case R.id.btn_message : {
+                    String phoneNumber = ((TextView) view.findViewById(R.id.tv_phone)).getText().toString().trim();
+                    if(ActivityCompat.checkSelfPermission(MainActivity.getInstance(),
+                            Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+                        Uri uri = Uri.parse("smsto:" + phoneNumber);
+                        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                        intent.putExtra("sms_body", "");
+                        MainActivity.getInstance().startActivity(intent);
+                    }
+                }break;
                 case R.id.btn_info : {
                     Intent intent = new Intent(MainActivity.getInstance(), ActivityOfContactsInfo.class);
                     intent.putExtra("name", ((TextView) view.findViewById(R.id.tv_name)).getText());

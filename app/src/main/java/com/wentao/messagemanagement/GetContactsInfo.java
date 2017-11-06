@@ -4,12 +4,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 
 /**
  * Created by Administrator on 2017/11/4.
