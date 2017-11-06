@@ -21,9 +21,10 @@
         android:layout_width="15dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginRight="3dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="5dp">
+        android:background="#eee"
+        android:paddingRight="3dp"
+        android:paddingLeft="3dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp">
     </LinearLayout>
 </LinearLayout>
