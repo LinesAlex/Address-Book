@@ -129,7 +129,7 @@
 
         <Button
             android:id="@+id/btn_call"
-            android:background="@drawable/phone_icon_1"
+            android:background="@drawable/icon_phone_gray"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="50dp"
@@ -137,7 +137,7 @@
 
         <Button
             android:id="@+id/btn_message"
-            android:background="@drawable/message_icon"
+            android:background="@drawable/icon_message_gray"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="30dp"
@@ -145,7 +145,7 @@
 
         <Button
             android:id="@+id/btn_info"
-            android:background="@drawable/info_icon"
+            android:background="@drawable/icon_info_gray"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="30dp"/>

@@ -80,29 +80,31 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     }
 
     public void setView(ContactsInfo item) {
-        btn_info.setOnClickListener(new ItemsClickListener(view));
-        btn_message.setOnClickListener(new ItemsClickListener(view));
-        btn_call.setOnClickListener(new ItemsClickListener(view));
-        btn_showmenu.setOnClickListener(new ItemsClickListener(view));
+        btn_info.setOnClickListener(new ItemsClickListener(view, item));
+        btn_message.setOnClickListener(new ItemsClickListener(view, item));
+        btn_call.setOnClickListener(new ItemsClickListener(view, item));
+        btn_showmenu.setOnClickListener(new ItemsClickListener(view, item));
         count.setText(item.getCount() + "");
         name.setText(item.getName());
         fristname.setText(item.getName().substring(0,1));
         String phoneNumber = checkOutItem(item.getPhoneNumber());
         String emailAdress = checkOutItem(item.getEmail());
-        phone.setText("Phone : " + phoneNumber);
-        email.setText("Email : " + emailAdress);
+        phone.setText(phoneNumber);
+        email.setText(emailAdress);
     }
 
     class ItemsClickListener implements View.OnClickListener {
         private View view;
-        public ItemsClickListener(View view) {
+        private ContactsInfo item;
+        public ItemsClickListener(View view, ContactsInfo item) {
             this.view = view;
+            this.item = item;
         }
         @Override
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.btn_call:{
-                    String phoneNumber = ((TextView) view.findViewById(R.id.tv_phone)).getText().toString().trim();
+                    String phoneNumber = checkOutItem(item.getPhoneNumber()).trim();
                     if(ActivityCompat.checkSelfPermission(MainActivity.getInstance(),
                             Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                         Intent intent = new Intent(Intent.ACTION_CALL);
@@ -111,7 +113,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
                     }
                 }break;
                 case R.id.btn_message : {
-                    String phoneNumber = ((TextView) view.findViewById(R.id.tv_phone)).getText().toString().trim();
+                    String phoneNumber = checkOutItem(item.getPhoneNumber()).trim();
                     if(ActivityCompat.checkSelfPermission(MainActivity.getInstance(),
                             Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
                         Uri uri = Uri.parse("smsto:" + phoneNumber);
@@ -154,7 +156,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     //检测ArrayList元素是否为空
     private String checkOutItem(ArrayList<String> str)
     {
-        if (str.isEmpty()) {return "无";}
+        if (str.isEmpty()) {return "NULL";}
         else {return str.get(0);}
     }
 }

@@ -21,6 +21,8 @@ public class GetContactsInfo{
         Uri uriContent = ContactsContract.Contacts.CONTENT_URI;
         Uri uriPhone = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         Uri uriEmail = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
+        String emailId = ContactsContract.CommonDataKinds.Email.CONTACT_ID;
+        String phoneId = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
         String[] projection = new String[] {
                 ContactsContract.Contacts._ID,
                 ContactsContract.Contacts.DISPLAY_NAME,
@@ -37,8 +39,8 @@ public class GetContactsInfo{
                 contactsInfo.setId(cursorOfContactsInfo.getInt(0));
                 contactsInfo.setName(cursorOfContactsInfo.getString(1));//获取姓名
                 contactsInfo.setPinyin(cursorOfContactsInfo.getString(2).substring(0,1));
-                getInfo(uriPhone, phoneProjection, contactsInfo);
-                getInfo(uriEmail, emailProjection, contactsInfo);
+                getInfo(uriPhone, phoneProjection, contactsInfo, phoneId, contactsInfo.getPhoneNumber());
+                getInfo(uriEmail, emailProjection, contactsInfo, emailId, contactsInfo.getEmail());
                 ContactsInfos.add(contactsInfo);
             } while (cursorOfContactsInfo.moveToNext());
         }
@@ -50,14 +52,14 @@ public class GetContactsInfo{
             ContactsInfos.get(i).setCount(i + 1);
         }
     }
-    private void getInfo(Uri uri, String[] projection, ContactsInfo info){
-        Cursor cursor = MainActivity.getInstance().getContentResolver().query(
-                uri, projection, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=" + info.getId(), null, null);
+    private ArrayList<String> getInfo(Uri uri, String[] projection, ContactsInfo info, String id, ArrayList<String> setStr){
+        Cursor cursor = MainActivity.getInstance().getContentResolver().query(uri, projection,id  + "=" + info.getId(), null, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                info.setEmail(cursor.getString(0));
+                setStr.add(cursor.getString(0));
             } while (cursor.moveToNext());
         }
+        return setStr;
     }
     //初始化ContactsInfos
     public void initContactsInfos(){//输出以ContactsInfo为元素的ArrayList.
