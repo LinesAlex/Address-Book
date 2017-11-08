@@ -1,23 +1,118 @@
 package com.wentao.messagemanagement;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
+import com.wentao.messagemanagement.db.CallInfo;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * Created by Administrator on 2017/11/4.
  */
 
-public class GetContactsInfo{
+public class GetContactsInfo {
     public static ArrayList<ContactsInfo> ContactsInfos = new ArrayList<ContactsInfo>();//联系人基本信息
+    public static ArrayList<CallInfo> getCallInfo(String phoneNumber,String id) {
+        ArrayList<CallInfo> infos = new ArrayList<>();
+        CallInfo callInfo = new CallInfo();
+        callInfo.setId(id);
+        Cursor cursor = ActivityOfContactsInfo.getInstance().getContentResolver().query(
+                CallLog.Calls.CONTENT_URI, null, CallLog.Calls.NUMBER + "=" + phoneNumber.replace("-","").replace(" ",""),
+                null, CallLog.Calls.DEFAULT_SORT_ORDER);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                //号码
+                //cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
+                //呼叫类型
+                switch (Integer.parseInt(cursor.getString(cursor.getColumnIndex(CallLog.Calls.TYPE)))) {
+                    case CallLog.Calls.INCOMING_TYPE:
+                        callInfo.setType("呼入");
+                        break;
+                    case CallLog.Calls.OUTGOING_TYPE:
+                        callInfo.setType("呼出");
+                        break;
+                    case CallLog.Calls.MISSED_TYPE:
+                        callInfo.setType("未接");
+                        break;
+                    default:
+                        callInfo.setType("挂断");//应该是挂断.根据我手机类型判断出的
+                        break;
+                }
+                SimpleDateFormat sfd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE))));
+                //呼叫时间
+                callInfo.setTime(sfd.format(date));
+                //通话时长
+                callInfo.setDuration(formatDuration(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION))));
+                infos.add(callInfo);
+            }while(cursor.moveToNext());
+        }
+        return infos;
+    }
+    private static String formatDuration(long duration) {
+        StringBuilder sb = new StringBuilder();
+
+        if (duration == 0) {
+            sb.append("00:00");
+        } else if (duration > 0 && duration < 60) {
+            sb.append("00:");
+            if (duration < 10) {
+                sb.append("0");
+            }
+            sb.append(duration);
+
+        } else if (duration > 60 && duration < 3600) {
+
+            long min = duration / 60;
+            long sec = duration % 60;
+            if (min < 10) {
+                sb.append("0");
+            }
+            sb.append(min);
+            sb.append(":");
+
+            if (sec < 10) {
+                sb.append("0");
+            }
+            sb.append(sec);
+        } else if (duration > 3600) {
+            long hour = duration / 3600;
+            long min = duration % 3600 / 60;
+            long sec = duration % 3600 % 60;
+            if (hour < 10) {
+                sb.append("0");
+            }
+            sb.append(hour);
+            sb.append(":");
+
+            if (min < 10) {
+                sb.append("0");
+            }
+            sb.append(min);
+            sb.append(":");
+
+            if (sec < 10) {
+                sb.append("0");
+            }
+            sb.append(sec);
+        }
+
+        return sb.toString();
+    }
 
     private void getContacts() {//_________________________________finish___________________________________
         //联系人的Uri，也就是content://com.android.contacts/contacts
-        Uri uriCallInfo = CallLog.Calls.CONTENT_URI;//// TODO: 2017/11/6
+
         Uri uriContent = ContactsContract.Contacts.CONTENT_URI;
         Uri uriPhone = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         Uri uriEmail = ContactsContract.CommonDataKinds.Email.CONTENT_URI;

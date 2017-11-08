@@ -14,14 +14,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private GetContactsInfo getContactsInfo = new GetContactsInfo();
     private ListView contactsListView;
+    private SearchView searchView;
     private boolean Flag = false;
     //获取MainActivity上下文
     private static MainActivity instance;
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         getPermission(Manifest.permission.READ_CONTACTS, 1);
         getPermission(Manifest.permission.CALL_PHONE, 2);
         getPermission(Manifest.permission.SEND_SMS, 3);
+        getPermission(Manifest.permission.READ_CALL_LOG,4);
         if (Flag) {
             getContactsInfo.initContactsInfos();
             initListView();
@@ -45,14 +50,36 @@ public class MainActivity extends AppCompatActivity {
 
     //初始化ListView
     private void initListView(){
+        searchView = (SearchView) findViewById(R.id.sv_search);
+        searchView.setIconifiedByDefault(true);//显示图标及输入框
+        searchView.setSubmitButtonEnabled(true);//添加提交搜索按钮
+        ArrayList<ContactsInfo> items = GetContactsInfo.ContactsInfos;
         contactsListView = (ListView) findViewById(R.id.lv_contacts);
         ContactsAdapter adapter = new ContactsAdapter(
                 MainActivity.this,
                 R.layout.contacts_item,
-                GetContactsInfo.ContactsInfos);
+                items);
         contactsListView.setAdapter(adapter);//将姓名及电话号码显示到ListView上
+        contactsListView.setTextFilterEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText != null && newText.length() != 0){
+                    contactsListView.setFilterText(newText);
+                } else {
+                    contactsListView.clearTextFilter();
+                }
+                return true;
+            }
+        });
         setCatalog();
     }
+
     //为ListView添加侧边栏
     private void setCatalog() {
         WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -96,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
     private void getPermission(String permission, int permissionId){
         if(ContextCompat.checkSelfPermission(MainActivity.this, permission)!= PackageManager.PERMISSION_GRANTED){//没有权限需要动态获取
             //动态请求权限
-            Flag = false;
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission},permissionId);
         } else {
             Flag = true;

@@ -75,30 +75,17 @@
             android:id="@+id/tv_name"
             android:layout_width="100dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="40dp"
             android:gravity="center_vertical"
             android:text="Name"
             android:textSize="15dp" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/btn_showmenu"
-                android:layout_width="25dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/show_menu"
-                android:layout_gravity="right" />
-        </FrameLayout>
-
         <LinearLayout
             android:id="@+id/liner_right"
-            android:layout_width="match_parent"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:orientation="vertical"
+            android:visibility="gone"
             >
 
             <TextView
@@ -113,8 +100,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
                 android:gravity="center_vertical"
+                android:visibility="gone"
                 android:text="Email" />
         </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/btn_showmenu"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/show_menu"
+                android:layout_gravity="center_vertical|right" />
+        </FrameLayout>
 
     </LinearLayout>
 

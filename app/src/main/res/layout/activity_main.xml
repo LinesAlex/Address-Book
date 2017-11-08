@@ -4,11 +4,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#eee">
+
     <SearchView
+        android:id="@+id/sv_search"
         android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
-        android:layout_height="30dp"
-        android:background="#eee" />
+        android:layout_height="50dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:background="#eee"
+        android:queryHint="请输入搜索内容" />
 
     <LinearLayout
         android:layout_width="match_parent"
