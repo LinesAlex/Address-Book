@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
+import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.wentao.messagemanagement.db.CallInfo;
+import com.wentao.messagemanagement.db.MessageInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,15 +24,18 @@ import java.util.Date;
 
 public class GetContactsInfo {
     public static ArrayList<ContactsInfo> ContactsInfos = new ArrayList<ContactsInfo>();//联系人基本信息
+
     public static ArrayList<CallInfo> getCallInfo(String phoneNumber,String id) {
         ArrayList<CallInfo> infos = new ArrayList<>();
-        CallInfo callInfo = new CallInfo();
-        callInfo.setId(id);
-        Cursor cursor = ActivityOfContactsInfo.getInstance().getContentResolver().query(
-                CallLog.Calls.CONTENT_URI, null, CallLog.Calls.NUMBER + "=" + phoneNumber.replace("-","").replace(" ",""),
-                null, CallLog.Calls.DEFAULT_SORT_ORDER);
+        Cursor cursor = ActivityOfContactsInfo.getInstance().getContentResolver().query(CallLog.Calls.CONTENT_URI
+                , null, CallLog.Calls.NUMBER + "=" + phoneNumber.replace("-","").replace(" ","")
+                , null, CallLog.Calls.DEFAULT_SORT_ORDER);
+
         if (cursor != null && cursor.moveToFirst()) {
             do {
+                CallInfo callInfo = new CallInfo();
+                callInfo.setId(id);
+                callInfo.setPhoneNumber(phoneNumber.replace("-","").replace(" ",""));
                 //号码
                 //cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
                 //呼叫类型
@@ -48,7 +53,7 @@ public class GetContactsInfo {
                         callInfo.setType("挂断");//应该是挂断.根据我手机类型判断出的
                         break;
                 }
-                SimpleDateFormat sfd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sfd = new SimpleDateFormat("MM月dd日 HH:mm");
                 Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE))));
                 //呼叫时间
                 callInfo.setTime(sfd.format(date));
@@ -59,55 +64,47 @@ public class GetContactsInfo {
         }
         return infos;
     }
-    private static String formatDuration(long duration) {
-        StringBuilder sb = new StringBuilder();
-
-        if (duration == 0) {
-            sb.append("00:00");
-        } else if (duration > 0 && duration < 60) {
-            sb.append("00:");
-            if (duration < 10) {
-                sb.append("0");
-            }
-            sb.append(duration);
-
-        } else if (duration > 60 && duration < 3600) {
-
-            long min = duration / 60;
-            long sec = duration % 60;
-            if (min < 10) {
-                sb.append("0");
-            }
-            sb.append(min);
-            sb.append(":");
-
-            if (sec < 10) {
-                sb.append("0");
-            }
-            sb.append(sec);
-        } else if (duration > 3600) {
-            long hour = duration / 3600;
-            long min = duration % 3600 / 60;
-            long sec = duration % 3600 % 60;
-            if (hour < 10) {
-                sb.append("0");
-            }
-            sb.append(hour);
-            sb.append(":");
-
-            if (min < 10) {
-                sb.append("0");
-            }
-            sb.append(min);
-            sb.append(":");
-
-            if (sec < 10) {
-                sb.append("0");
-            }
-            sb.append(sec);
+    public static ArrayList<MessageInfo> getMessageInfo(String phoneNumber, String id){
+        ArrayList<MessageInfo> infos = new ArrayList<>();
+        Cursor cursor = ActivityOfContactsInfo.getInstance().getContentResolver().query(Telephony.Sms.CONTENT_URI
+                , null, null
+                , null, Telephony.Sms.DEFAULT_SORT_ORDER);
+        if (cursor != null && cursor.moveToFirst()) {
+            do{
+                if (phoneNumber.compareTo(cursor.getString(cursor.getColumnIndex(Telephony.Sms.ADDRESS))) == 0) {
+                    MessageInfo info = new MessageInfo();
+                    info.setId(id);
+                    info.setPhoneNumber(phoneNumber.replace("-", "").replace(" ", ""));
+                    info.setName(cursor.getString(cursor.getColumnIndex(Telephony.Sms.PERSON)));
+                    info.setSmsbody(cursor.getString(cursor.getColumnIndex(Telephony.Sms.BODY)));
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日 HH:mm");
+                    Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex(Telephony.Sms.DATE))));
+                    info.setDate(dateFormat.format(date));
+                    switch (Integer.parseInt(cursor.getString(cursor.getColumnIndex(Telephony.Sms.TYPE)))) {
+                        case Telephony.Sms.MESSAGE_TYPE_SENT:
+                            info.setType("送达");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_DRAFT:
+                            info.setType("草稿");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_FAILED:
+                            info.setType("发送失败");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_INBOX:
+                            info.setType("接收");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
+                            info.setType("待发");
+                            break;
+                        default:info.setType("重新发送");break;
+                    }
+                    if (info.getSmsbody() == null)
+                        info.setSmsbody("-");
+                    infos.add(info);
+                }
+            }while(cursor.moveToNext());
         }
-
-        return sb.toString();
+        return infos;
     }
 
     private void getContacts() {//_________________________________finish___________________________________
@@ -160,4 +157,56 @@ public class GetContactsInfo {
     public void initContactsInfos(){//输出以ContactsInfo为元素的ArrayList.
         getContacts();
     }
+
+    private static String formatDuration(long duration) {
+        StringBuilder sb = new StringBuilder();
+
+        if (duration == 0) {
+            sb.append("00:00");
+        } else if (duration > 0 && duration < 60) {
+            sb.append("00:");
+            if (duration < 10) {
+                sb.append("0");
+            }
+            sb.append(duration);
+
+        } else if (duration > 60 && duration < 3600) {
+
+            long min = duration / 60;
+            long sec = duration % 60;
+            if (min < 10) {
+                sb.append("0");
+            }
+            sb.append(min);
+            sb.append(":");
+
+            if (sec < 10) {
+                sb.append("0");
+            }
+            sb.append(sec);
+        } else if (duration > 3600) {
+            long hour = duration / 3600;
+            long min = duration % 3600 / 60;
+            long sec = duration % 3600 % 60;
+            if (hour < 10) {
+                sb.append("0");
+            }
+            sb.append(hour);
+            sb.append(":");
+
+            if (min < 10) {
+                sb.append("0");
+            }
+            sb.append(min);
+            sb.append(":");
+
+            if (sec < 10) {
+                sb.append("0");
+            }
+            sb.append(sec);
+        }
+
+        return sb.toString();
+    }
+
 }

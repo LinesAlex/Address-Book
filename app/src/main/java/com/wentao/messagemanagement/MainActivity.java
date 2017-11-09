@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         getPermission(Manifest.permission.CALL_PHONE, 2);
         getPermission(Manifest.permission.SEND_SMS, 3);
         getPermission(Manifest.permission.READ_CALL_LOG,4);
+        getPermission(Manifest.permission.READ_SMS, 5);
         if (Flag) {
             getContactsInfo.initContactsInfos();
             initListView();

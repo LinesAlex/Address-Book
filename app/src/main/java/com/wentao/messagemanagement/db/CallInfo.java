@@ -9,6 +9,10 @@ public class CallInfo {
     private String type;
     private String time;
     private String duration;
+    private String phoneNumber;
+
+    public String getPhoneNumber() {return phoneNumber;}
+    public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
 
     public String getId() {return Id;}
     public void setId(String id) {Id = id;}

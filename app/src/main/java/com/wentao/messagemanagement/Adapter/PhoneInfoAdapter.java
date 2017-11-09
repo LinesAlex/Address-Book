@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.CallInfo;
 
@@ -23,7 +25,6 @@ public class PhoneInfoAdapter extends ArrayAdapter<CallInfo>{
     private int resourceId;
     private View view;
     private TextView tv_time, tv_type, tv_duration;
-    private Button btn_call_page;
     private ImageView iv_type;
     public PhoneInfoAdapter(@NonNull Context context, int textViewResourceId, @NonNull List<CallInfo> objects) {
         super(context, textViewResourceId, objects);
@@ -44,7 +45,7 @@ public class PhoneInfoAdapter extends ArrayAdapter<CallInfo>{
         tv_type = (TextView) view.findViewById(R.id.tv_type);
         tv_duration = (TextView) view.findViewById(R.id.tv_duration);
         iv_type = (ImageView) view.findViewById(R.id.iv_type);
-        btn_call_page = (Button) view.findViewById(R.id.btn_call_page);
+
     }
     private void setView(CallInfo item) {
         tv_time.setText(item.getTime());
@@ -54,20 +55,8 @@ public class PhoneInfoAdapter extends ArrayAdapter<CallInfo>{
             case "呼入" :iv_type.setImageResource(R.drawable.icon_call_in);break;
             case "呼出" :iv_type.setImageResource(R.drawable.icon_call_out);break;
             case "未接" :iv_type.setImageResource(R.drawable.icon_call_miss);break;
-            case "挂断" :iv_type.setImageResource(R.drawable.icon_call_miss);break;
+            case "挂断" :iv_type.setImageResource(R.drawable.icon_call_handup);break;
             default:break;
         }
-        btn_call_page.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                String phoneNumber = view.
-//                if(ActivityCompat.checkSelfPermission(MainActivity.getInstance(),
-//                        Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-//                    Intent intent = new Intent(Intent.ACTION_CALL);
-//                    intent.setData(Uri.parse("tel:" + phoneNumber));
-//                    MainActivity.getInstance().startActivity(intent);
-//                }//// TODO: 2017/11/8  
-            }
-        });
     }
 }
