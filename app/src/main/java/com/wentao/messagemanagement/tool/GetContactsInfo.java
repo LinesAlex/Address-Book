@@ -1,16 +1,17 @@
-package com.wentao.messagemanagement;
+package com.wentao.messagemanagement.tool;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
-import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.wentao.messagemanagement.Activity.ActivityOfContactsInfo;
+import com.wentao.messagemanagement.Activity.MainActivity;
 import com.wentao.messagemanagement.db.CallInfo;
+import com.wentao.messagemanagement.db.ContactsInfo;
 import com.wentao.messagemanagement.db.MessageInfo;
 
 import java.text.SimpleDateFormat;
@@ -23,50 +24,42 @@ import java.util.Date;
  */
 
 public class GetContactsInfo {
-    public static ArrayList<ContactsInfo> ContactsInfos = new ArrayList<ContactsInfo>();//联系人基本信息
-
+    public static ArrayList<ContactsInfo> ContactsInfos= new ArrayList<>();//联系人基本信息
+    public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
+    public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日 HH:mm");
+    //初始化ContactsInfos
     public static ArrayList<CallInfo> getCallInfo(String phoneNumber,String id) {
-        ArrayList<CallInfo> infos = new ArrayList<>();
+        CallInfos.clear();
+        phoneNumber = phoneNumber.replace("-","").replace(" ","");
         Cursor cursor = ActivityOfContactsInfo.getInstance().getContentResolver().query(CallLog.Calls.CONTENT_URI
-                , null, CallLog.Calls.NUMBER + "=" + phoneNumber.replace("-","").replace(" ","")
+                , null, CallLog.Calls.NUMBER + "=" + phoneNumber
                 , null, CallLog.Calls.DEFAULT_SORT_ORDER);
-
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 CallInfo callInfo = new CallInfo();
                 callInfo.setId(id);
-                callInfo.setPhoneNumber(phoneNumber.replace("-","").replace(" ",""));
-                //号码
-                //cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                //呼叫类型
+                callInfo.setPhoneNumber(phoneNumber);
                 switch (Integer.parseInt(cursor.getString(cursor.getColumnIndex(CallLog.Calls.TYPE)))) {
-                    case CallLog.Calls.INCOMING_TYPE:
-                        callInfo.setType("呼入");
-                        break;
-                    case CallLog.Calls.OUTGOING_TYPE:
-                        callInfo.setType("呼出");
-                        break;
-                    case CallLog.Calls.MISSED_TYPE:
-                        callInfo.setType("未接");
-                        break;
-                    default:
-                        callInfo.setType("挂断");//应该是挂断.根据我手机类型判断出的
-                        break;
+                    case CallLog.Calls.INCOMING_TYPE:callInfo.setType("呼入");break;
+                    case CallLog.Calls.OUTGOING_TYPE:callInfo.setType("呼出");break;
+                    case CallLog.Calls.MISSED_TYPE:  callInfo.setType("未接");break;
+                    default:callInfo.setType("挂断");break;
                 }
-                SimpleDateFormat sfd = new SimpleDateFormat("MM月dd日 HH:mm");
                 Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE))));
                 //呼叫时间
-                callInfo.setTime(sfd.format(date));
+                callInfo.setTime(dateFormat.format(date));
                 //通话时长
                 callInfo.setDuration(formatDuration(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION))));
-                infos.add(callInfo);
+                CallInfos.add(callInfo);
             }while(cursor.moveToNext());
         }
-        return infos;
+        return CallInfos;
     }
-    public static ArrayList<MessageInfo> getMessageInfo(String phoneNumber, String id){
-        ArrayList<MessageInfo> infos = new ArrayList<>();
-        Cursor cursor = ActivityOfContactsInfo.getInstance().getContentResolver().query(Telephony.Sms.CONTENT_URI
+
+    public static ArrayList<MessageInfo> getMessageInfo(String phoneNumber, String id ,AppCompatActivity activity){
+        MessageInfos.clear();
+        Cursor cursor = activity.getContentResolver().query(Telephony.Sms.CONTENT_URI
                 , null, null
                 , null, Telephony.Sms.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {
@@ -77,58 +70,45 @@ public class GetContactsInfo {
                     info.setPhoneNumber(phoneNumber.replace("-", "").replace(" ", ""));
                     info.setName(cursor.getString(cursor.getColumnIndex(Telephony.Sms.PERSON)));
                     info.setSmsbody(cursor.getString(cursor.getColumnIndex(Telephony.Sms.BODY)));
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日 HH:mm");
                     Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex(Telephony.Sms.DATE))));
                     info.setDate(dateFormat.format(date));
                     switch (Integer.parseInt(cursor.getString(cursor.getColumnIndex(Telephony.Sms.TYPE)))) {
-                        case Telephony.Sms.MESSAGE_TYPE_SENT:
-                            info.setType("送达");
-                            break;
-                        case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                            info.setType("草稿");
-                            break;
-                        case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                            info.setType("发送失败");
-                            break;
-                        case Telephony.Sms.MESSAGE_TYPE_INBOX:
-                            info.setType("接收");
-                            break;
-                        case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                            info.setType("待发");
-                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_SENT:   info.setType("送达");    break;
+                        case Telephony.Sms.MESSAGE_TYPE_DRAFT:  info.setType("草稿");    break;
+                        case Telephony.Sms.MESSAGE_TYPE_FAILED: info.setType("发送失败"); break;
+                        case Telephony.Sms.MESSAGE_TYPE_INBOX:  info.setType("接收");    break;
+                        case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
                         default:info.setType("重新发送");break;
                     }
                     if (info.getSmsbody() == null)
                         info.setSmsbody("-");
-                    infos.add(info);
+                    MessageInfos.add(info);
                 }
             }while(cursor.moveToNext());
         }
-        return infos;
+        return MessageInfos;
     }
 
-    private void getContacts() {//_________________________________finish___________________________________
+    public static ArrayList<ContactsInfo>  getContacts() {//_________________________________finish___________________________________
         //联系人的Uri，也就是content://com.android.contacts/contacts
-
+        ContactsInfos.clear();
         Uri uriContent = ContactsContract.Contacts.CONTENT_URI;
         Uri uriPhone = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         Uri uriEmail = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
+
         String emailId = ContactsContract.CommonDataKinds.Email.CONTACT_ID;
         String phoneId = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
-        String[] projection = new String[] {
-                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.DISPLAY_NAME,
-                ContactsContract.Contacts.SORT_KEY_PRIMARY};//指定获取_id和display_name两列数据，display_name即为姓名
-        String[] phoneProjection = new String[] {
-                ContactsContract.CommonDataKinds.Phone.NUMBER};//指定获取NUMBER这一列数据
-        String[] emailProjection = new String[] {
-                ContactsContract.CommonDataKinds.Email.ADDRESS};//指定获取ADDRESS这一列数据
-        Cursor cursorOfContactsInfo = MainActivity.getInstance().getContentResolver().query(
-                uriContent, projection, null, null, null);//根据Uri查询相应的ContentProvider，cursor为获取到的数据集
+
+        String[] projection = new String[] {ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Contacts.SORT_KEY_PRIMARY};//指定获取_id和display_name两列数据，display_name即为姓名
+        String[] phoneProjection = new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER};//指定获取NUMBER这一列数据
+        String[] emailProjection = new String[] {ContactsContract.CommonDataKinds.Email.ADDRESS};//指定获取ADDRESS这一列数据
+
+        Cursor cursorOfContactsInfo = MainActivity.getInstance().getContentResolver().query(uriContent, projection, null, null, null);//根据Uri查询相应的ContentProvider，cursor为获取到的数据集
+
         if (cursorOfContactsInfo != null && cursorOfContactsInfo.moveToFirst()) {
             do {
                 ContactsInfo contactsInfo = new ContactsInfo();
-                contactsInfo.setId(cursorOfContactsInfo.getInt(0));
+                contactsInfo.setId(cursorOfContactsInfo.getString(0));
                 contactsInfo.setName(cursorOfContactsInfo.getString(1));//获取姓名
                 contactsInfo.setPinyin(cursorOfContactsInfo.getString(2).substring(0,1));
                 getInfo(uriPhone, phoneProjection, contactsInfo, phoneId, contactsInfo.getPhoneNumber());
@@ -137,14 +117,10 @@ public class GetContactsInfo {
             } while (cursorOfContactsInfo.moveToNext());
         }
         sortContactsInfos();
+        return ContactsInfos;
     }
-    private void sortContactsInfos(){
-        Collections.sort(ContactsInfos,new ContactsComparator());//比较
-        for (int i = 0; i < ContactsInfos.size(); i++) {
-            ContactsInfos.get(i).setCount(i + 1);
-        }
-    }
-    private ArrayList<String> getInfo(Uri uri, String[] projection, ContactsInfo info, String id, ArrayList<String> setStr){
+
+    private static ArrayList<String> getInfo(Uri uri, String[] projection, ContactsInfo info, String id, ArrayList<String> setStr){
         Cursor cursor = MainActivity.getInstance().getContentResolver().query(uri, projection,id  + "=" + info.getId(), null, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -153,9 +129,12 @@ public class GetContactsInfo {
         }
         return setStr;
     }
-    //初始化ContactsInfos
-    public void initContactsInfos(){//输出以ContactsInfo为元素的ArrayList.
-        getContacts();
+
+    private static void sortContactsInfos(){
+        Collections.sort(ContactsInfos,new ContactsComparator());//比较
+        for (int i = 0; i < ContactsInfos.size(); i++) {
+            ContactsInfos.get(i).setCount(i + 1);
+        }
     }
 
     private static String formatDuration(long duration) {

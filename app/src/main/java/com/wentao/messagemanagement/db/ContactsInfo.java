@@ -1,4 +1,4 @@
-package com.wentao.messagemanagement;
+package com.wentao.messagemanagement.db;
 
 
 import java.util.ArrayList;
@@ -8,20 +8,21 @@ import java.util.ArrayList;
  */
 
 public class ContactsInfo {
-    private int id = 0;
+
     private int count = 0;
+    private String id = null;
     private String name = null;
     private String pinyin = null;
-    private ArrayList<String> email = new ArrayList<String>();
-    private ArrayList<String> phoneNumber = new ArrayList<String>();
+    private ArrayList<String> email = new ArrayList<>();
+    private ArrayList<String> phoneNumber = new ArrayList<>();
 
     public String getPinyin() {return pinyin;}
     public void setPinyin(String pinyin) {this.pinyin = pinyin;}
 
-    public int getId() {
+    public String getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -50,15 +51,14 @@ public class ContactsInfo {
     @Override
     public String toString() {
         StringBuilder sbContactInfo = new StringBuilder();
-                sbContactInfo.append(
-                        "Count : " + getCount() + "\nName : " + getName());
+                sbContactInfo.append("Count : ").append(getCount()).append("\nName : ").append(getName());
         for (int i = 0; i < getPhoneNumber().size(); i++)
         {
-            sbContactInfo.append("\nPhoneNumber : " + getPhoneNumber(i));
+            sbContactInfo.append("\nPhoneNumber : ").append(getPhoneNumber(i));
         }
         for (int i = 0; i < getEmail().size(); i++)
         {
-            sbContactInfo.append("\nEmail : " + getEmail(i));
+            sbContactInfo.append("\nEmail : ").append(getEmail(i));
         }
         return sbContactInfo.toString();
     }

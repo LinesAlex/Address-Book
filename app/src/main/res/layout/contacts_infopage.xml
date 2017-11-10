@@ -252,7 +252,8 @@
                     <ListView
                         android:id="@+id/lv_phone_call"
                         android:layout_width="match_parent"
-                        android:layout_height="69dp"
+                        android:layout_height="70dp"
+                        android:scrollbars="none"
                         android:visibility="gone" />
 
                     <TextView
@@ -320,11 +321,13 @@
                         android:visibility="gone"/>
                     <TextView
                         android:id="@+id/none_message_info"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="无更多信息..."
+                        android:layout_gravity="center"
+                        android:text="查看更多消息..."
+                        android:textColor="#334"
+                        android:scrollbars="none"
                         android:textSize="13dp"
-                        android:textStyle="italic"
                         android:visibility="gone" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>

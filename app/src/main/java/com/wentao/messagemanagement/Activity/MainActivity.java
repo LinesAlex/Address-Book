@@ -1,4 +1,4 @@
-package com.wentao.messagemanagement;
+package com.wentao.messagemanagement.Activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -18,15 +19,17 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
+import com.wentao.messagemanagement.Adapter.ContactsAdapter;
+import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private GetContactsInfo getContactsInfo = new GetContactsInfo();
+
+    private ContactsAdapter contactsAdapter;
     private ListView contactsListView;
-    private SearchView searchView;
-    private boolean Flag = false;
+    private SwipeRefreshLayout swipeRefresh;
+
     //获取MainActivity上下文
     private static MainActivity instance;
     public static MainActivity getInstance() {
@@ -38,36 +41,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         instance = MainActivity.this;
-        getPermission(Manifest.permission.READ_CONTACTS, 1);
-        getPermission(Manifest.permission.CALL_PHONE, 2);
-        getPermission(Manifest.permission.SEND_SMS, 3);
-        getPermission(Manifest.permission.READ_CALL_LOG,4);
-        getPermission(Manifest.permission.READ_SMS, 5);
-        if (Flag) {
-            getContactsInfo.initContactsInfos();
-            initListView();
-        }
+        initListView();
     }
 
     //初始化ListView
     private void initListView(){
-        searchView = (SearchView) findViewById(R.id.sv_search);
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {refresh();}}
+        );
+        SearchView searchView = (SearchView) findViewById(R.id.sv_search);
         searchView.setIconifiedByDefault(true);//显示图标及输入框
         searchView.setSubmitButtonEnabled(true);//添加提交搜索按钮
-        ArrayList<ContactsInfo> items = GetContactsInfo.ContactsInfos;
         contactsListView = (ListView) findViewById(R.id.lv_contacts);
-        ContactsAdapter adapter = new ContactsAdapter(
-                MainActivity.this,
-                R.layout.contacts_item,
-                items);
-        contactsListView.setAdapter(adapter);//将姓名及电话号码显示到ListView上
+        contactsAdapter = new ContactsAdapter(MainActivity.this, R.layout.contacts_item, GetContactsInfo.getContacts());//第一次
+        contactsListView.setAdapter(contactsAdapter);//将姓名及电话号码显示到ListView上
         contactsListView.setTextFilterEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText != null && newText.length() != 0){
@@ -81,6 +77,26 @@ public class MainActivity extends AppCompatActivity {
         setCatalog();
     }
 
+    private void refresh() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        GetContactsInfo.getContacts();
+                        contactsAdapter.notifyDataSetChanged();
+                        swipeRefresh.setRefreshing(false);
+                    }
+                });
+            }
+        }).start();
+    }
     //为ListView添加侧边栏
     private void setCatalog() {
         WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -121,40 +137,5 @@ public class MainActivity extends AppCompatActivity {
         return letterText;
     }
     //获取动态权限
-    private void getPermission(String permission, int permissionId){
-        if(ContextCompat.checkSelfPermission(MainActivity.this, permission)!= PackageManager.PERMISSION_GRANTED){//没有权限需要动态获取
-            //动态请求权限
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission},permissionId);
-        } else {
-            Flag = true;
-        }
-    }
-    //onRequestPermissionsResult获取动态权限后调用函数
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Flag = true;
-                } else {
-                    Flag = false;
-                    Toast.makeText(MainActivity.this,"没有读取通讯录的权限。", Toast.LENGTH_SHORT).show();
-                }break;
-            case 2:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Flag = true;
-                } else {
-                    Flag = false;
-                    Toast.makeText(MainActivity.this,"没有拨打电话的权限。", Toast.LENGTH_SHORT).show();
-                }break;
-            case 3:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Flag = true;
-                } else {
-                    Flag = false;
-                    Toast.makeText(MainActivity.this,"没有发送短信的权限。", Toast.LENGTH_SHORT).show();
-                }break;
-            default:break;
-        }
-    }
+
 }

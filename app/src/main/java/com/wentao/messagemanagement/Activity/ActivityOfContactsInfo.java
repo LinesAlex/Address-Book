@@ -1,4 +1,4 @@
-package com.wentao.messagemanagement;
+package com.wentao.messagemanagement.Activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -11,19 +11,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Adapter.PhoneInfoAdapter;
+import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.CallInfo;
 import com.wentao.messagemanagement.db.MessageInfo;
 
@@ -50,6 +49,8 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
             R.drawable.background_2,
             R.drawable.background_3,
             R.drawable.background_4};
+    private String phoneNumber;
+    private String id;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,43 +83,21 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
     }
-    private void setListView(String phoneNumber, String id) {
-        //通话信息ListView设置
-        ArrayList<CallInfo> callInfos = GetContactsInfo.getCallInfo(phoneNumber,id);
-        PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ActivityOfContactsInfo.this, R.layout.callinfo_item, callInfos);
-        lv_phone_call.setAdapter(phoneInfoAdapter);
-        int height = lv_phone_call.getLayoutParams().height;
-        int size = callInfos.size();
-        ViewGroup.LayoutParams params = lv_phone_call.getLayoutParams();
-        params.height = height * size;
-        lv_phone_call.setLayoutParams(params);
-        //finish
 
-        //短信消息ListView设置
-
-        ArrayList<MessageInfo> messageInfos = GetContactsInfo.getMessageInfo(phoneNumber, id);
-        MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ActivityOfContactsInfo.this, R.layout.messageinfo_item, messageInfos);
-        lv_message.setAdapter(messageInfoAdapter);
-        height = lv_message.getLayoutParams().height;
-        size = messageInfos.size();
-        params = lv_message.getLayoutParams();
-        params.height = height * size;
-        lv_message.setLayoutParams(params);
-    }
     private void setView() {
         Intent intent = getIntent();
-        int id = 0;
-        String phoneNumber = intent.getStringExtra("phone");
+        phoneNumber = intent.getStringExtra("phone");
+        id = intent.getStringExtra("id");
         String name = intent.getStringExtra("name");
         String email = intent.getStringExtra("email");
         String count = intent.getStringExtra("count");
-        intent.getIntExtra("id",id);
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {actionBar.setDisplayHomeAsUpEnabled(true);}
         iv_background.setImageResource(imageId[Integer.parseInt(count) % 4]);
         collapsingToolbarLayout.setTitle(name);
-        setListView(phoneNumber,id + "");
+        setListView();
 
         intro_name.setText(checkOutIntroInfo(name));
         intro_phone.setText(checkOutIntroInfo(phoneNumber));
@@ -129,26 +108,47 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
 
         btn_show_call.setOnClickListener(new OnClickButtonListener());
         btn_show_message.setOnClickListener(new OnClickButtonListener());
-        btn_message_page.setOnClickListener(new OnClickButtonListener(phoneNumber));
-        btn_call_page.setOnClickListener(new OnClickButtonListener(phoneNumber));
+        none_message_info.setOnClickListener(new OnClickButtonListener());
+        btn_message_page.setOnClickListener(new OnClickButtonListener());
+        btn_call_page.setOnClickListener(new OnClickButtonListener());
+    }
 
+    private void setListView() {
+        //通话信息ListView设置
+        GetContactsInfo.getCallInfo(phoneNumber,id);
+        PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ActivityOfContactsInfo.this, R.layout.callinfo_item, GetContactsInfo.CallInfos);
+        lv_phone_call.setAdapter(phoneInfoAdapter);
+        int height = lv_phone_call.getLayoutParams().height;
+        int size = GetContactsInfo.CallInfos.size();
+        ViewGroup.LayoutParams params = lv_phone_call.getLayoutParams();
+        params.height = height * size;
+        lv_phone_call.setLayoutParams(params);
+        //finish
+
+        //短信消息ListView设置
+        GetContactsInfo.getMessageInfo(phoneNumber, id, ActivityOfContactsInfo.this);
+        MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ActivityOfContactsInfo.this, R.layout.messageinfo_item, GetContactsInfo.MessageInfos);
+        lv_message.setAdapter(messageInfoAdapter);
+        height = lv_message.getLayoutParams().height;
+        size = GetContactsInfo.MessageInfos.size();
+        params = lv_message.getLayoutParams();
+        if (size > 5) {
+            params.height = height * 5;
+        } else {
+            params.height = height * size;
+        }
+        lv_message.setLayoutParams(params);
     }
 
     private String checkOutIntroInfo(String str) {
-        final String info = str;
-        if (info == null || info.startsWith("NULL")) {
+        if (str == null || str.startsWith("NULL")) {
             return "...";
         } else {
-            return info;
+            return str;
         }
     }
 
-    class OnClickButtonListener implements View.OnClickListener {
-        private String phoneNumber;
-        public OnClickButtonListener(String phoneNumber) {
-            this.phoneNumber = phoneNumber;
-        }
-        public OnClickButtonListener() {super();}
+    private class OnClickButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -172,13 +172,10 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                     }
                 } break;
                 case R.id.btn_message_page : {
-                    if(ActivityCompat.checkSelfPermission(MainActivity.getInstance(),
-                            Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                        Uri uri = Uri.parse("smsto:" + phoneNumber);
-                        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-                        intent.putExtra("sms_body", "");
-                        MainActivity.getInstance().startActivity(intent);
-                    }
+                    Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfMessageInfo.class);
+                    intent.putExtra("phone", phoneNumber);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
                 }break;
                 case R.id.btn_show_message : {
                     if (lv_message.getVisibility() == View.GONE) {
@@ -190,6 +187,12 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                         lv_message.setVisibility(View.GONE);
                         none_message_info.setVisibility(View.GONE);
                     }
+                }break;
+                case R.id.none_message_info : {
+                    Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfMessageInfo.class);
+                    intent.putExtra("phone", phoneNumber);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
                 }break;
             }
         }

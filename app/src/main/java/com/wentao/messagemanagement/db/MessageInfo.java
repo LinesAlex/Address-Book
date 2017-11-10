@@ -20,9 +20,7 @@ public class MessageInfo {
         this.id = id;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+    public String getPhoneNumber() {return phoneNumber;}
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,10 +40,10 @@ public class PhoneInfoAdapter extends ArrayAdapter<CallInfo>{
         return view;
     }
     private void initView() {
-        tv_time = (TextView) view.findViewById(R.id.tv_time);
-        tv_type = (TextView) view.findViewById(R.id.tv_type);
-        tv_duration = (TextView) view.findViewById(R.id.tv_duration);
-        iv_type = (ImageView) view.findViewById(R.id.iv_type);
+        tv_time = view.findViewById(R.id.tv_time);
+        tv_type = view.findViewById(R.id.tv_type);
+        tv_duration = view.findViewById(R.id.tv_duration);
+        iv_type = view.findViewById(R.id.iv_type);
 
     }
     private void setView(CallInfo item) {

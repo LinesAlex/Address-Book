@@ -1,4 +1,6 @@
-package com.wentao.messagemanagement;
+package com.wentao.messagemanagement.tool;
+
+import com.wentao.messagemanagement.db.ContactsInfo;
 
 import java.util.Comparator;
 

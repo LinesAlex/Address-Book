@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.MessageInfo;
-
 import java.util.List;
 
 /**
@@ -36,13 +35,14 @@ public class MessageInfoAdapter extends ArrayAdapter<MessageInfo> {
         view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
         MessageInfo item = getItem(position);
 
+        assert item != null;
         switch (item.getType()) {
             case "送达":
             case "草稿":
             case "发送失败":
             case "待发":
             case "重新发送": {initView(1);}break;
-            case "接收":{initView(0);}break;
+            case "接收":     {initView(0);}break;
             default:break;
         }
         setView(item);
@@ -53,16 +53,16 @@ public class MessageInfoAdapter extends ArrayAdapter<MessageInfo> {
         switch (choice)
         {
             case 0:{
-                tv_sms_time = (TextView) view.findViewById(R.id.tv_sms_time_get);
-                tv_sms_message = (TextView) view.findViewById(R.id.tv_sms_message_get);
-                tv_sms_type = (TextView) view.findViewById(R.id.tv_sms_type_get);
-                linear = (LinearLayout) view.findViewById(R.id.linear_get);
+                tv_sms_time = view.findViewById(R.id.tv_sms_time_get);
+                tv_sms_message = view.findViewById(R.id.tv_sms_message_get);
+                tv_sms_type = view.findViewById(R.id.tv_sms_type_get);
+                linear = view.findViewById(R.id.linear_get);
             }break;
             case 1:{
-                tv_sms_time = (TextView) view.findViewById(R.id.tv_sms_time_send);
-                tv_sms_message = (TextView) view.findViewById(R.id.tv_sms_message_send);
-                tv_sms_type = (TextView) view.findViewById(R.id.tv_sms_type_send);
-                linear = (LinearLayout) view.findViewById(R.id.linear_send);
+                tv_sms_time = view.findViewById(R.id.tv_sms_time_send);
+                tv_sms_message = view.findViewById(R.id.tv_sms_message_send);
+                tv_sms_type = view.findViewById(R.id.tv_sms_type_send);
+                linear = view.findViewById(R.id.linear_send);
             }break;
         }
     }
