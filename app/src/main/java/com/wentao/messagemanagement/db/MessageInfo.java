@@ -16,9 +16,7 @@ public class MessageInfo {
     public void setName(String name) {this.name = name;}
 
     public String getId() {return id;}
-    public void setId(String id) {
-        this.id = id;
-    }
+    public void setId(String id) {this.id = id;}
 
     public String getPhoneNumber() {return phoneNumber;}
     public void setPhoneNumber(String phoneNumber) {
@@ -45,4 +43,12 @@ public class MessageInfo {
     public void setType(String type) {
         this.type = type;
     }
+
+    public MessageInfo(String phoneNumber, String smsbody, String date, String type) {
+        this.phoneNumber = phoneNumber;
+        this.smsbody = smsbody;
+        this.date = date;
+        this.type = type;
+    }
+    public MessageInfo(){}
 }

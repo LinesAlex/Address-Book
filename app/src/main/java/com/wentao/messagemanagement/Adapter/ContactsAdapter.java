@@ -136,6 +136,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
                     Intent intent = new Intent(MainActivity.getInstance(), ActivityOfMessageInfo.class);
                     intent.putExtra("phone", ((TextView) view.findViewById(R.id.tv_phone)).getText());
                     intent.putExtra("id", item.getId());
+                    intent.putExtra("name", item.getName());
                     MainActivity.getInstance().startActivity(intent);
                 }break;
                 case R.id.btn_info : {

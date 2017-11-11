@@ -1,11 +1,8 @@
 package com.wentao.messagemanagement.Activity;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,8 +21,7 @@ import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.R;
 
 public class MainActivity extends AppCompatActivity {
-
-
+    
     private ContactsAdapter contactsAdapter;
     private ListView contactsListView;
     private SwipeRefreshLayout swipeRefresh;
@@ -74,6 +70,16 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.btn_addition);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ActivityOfAddContact.class);
+                intent.putExtra("Flag",false);
+                startActivity(intent);
+            }
+        });//// TODO: 2017/11/11
+
         setCatalog();
     }
 

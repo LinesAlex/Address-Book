@@ -27,7 +27,6 @@ public class GetContactsInfo {
     public static ArrayList<ContactsInfo> ContactsInfos= new ArrayList<>();//联系人基本信息
     public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
     public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日 HH:mm");
     //初始化ContactsInfos
     public static ArrayList<CallInfo> getCallInfo(String phoneNumber,String id) {
         CallInfos.clear();
@@ -48,7 +47,7 @@ public class GetContactsInfo {
                 }
                 Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(CallLog.Calls.DATE))));
                 //呼叫时间
-                callInfo.setTime(dateFormat.format(date));
+                callInfo.setTime(MTime.formatForDate(date));
                 //通话时长
                 callInfo.setDuration(formatDuration(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION))));
                 CallInfos.add(callInfo);
@@ -71,7 +70,7 @@ public class GetContactsInfo {
                     info.setName(cursor.getString(cursor.getColumnIndex(Telephony.Sms.PERSON)));
                     info.setSmsbody(cursor.getString(cursor.getColumnIndex(Telephony.Sms.BODY)));
                     Date date = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex(Telephony.Sms.DATE))));
-                    info.setDate(dateFormat.format(date));
+                    info.setDate(MTime.formatForDate(date));
                     switch (Integer.parseInt(cursor.getString(cursor.getColumnIndex(Telephony.Sms.TYPE)))) {
                         case Telephony.Sms.MESSAGE_TYPE_SENT:   info.setType("送达");    break;
                         case Telephony.Sms.MESSAGE_TYPE_DRAFT:  info.setType("草稿");    break;
@@ -86,6 +85,7 @@ public class GetContactsInfo {
                 }
             }while(cursor.moveToNext());
         }
+        Collections.reverse(MessageInfos);
         return MessageInfos;
     }
 

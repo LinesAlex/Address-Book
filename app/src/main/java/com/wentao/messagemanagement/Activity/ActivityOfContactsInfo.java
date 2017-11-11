@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import com.wentao.messagemanagement.db.CallInfo;
 import com.wentao.messagemanagement.db.MessageInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Administrator on 2017/11/4.
@@ -40,6 +42,7 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
     private ListView lv_phone_call, lv_message;
     private Button btn_call_page, btn_show_call, btn_message_page,btn_show_message;
     private TextView none_call_info, none_message_info, intro_name, intro_phone, intro_email , intro_address, intro_job, intro_age;
+    private FloatingActionButton btn_to_add;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private static ActivityOfContactsInfo instance;
     public static ActivityOfContactsInfo getInstance() {
@@ -49,8 +52,7 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
             R.drawable.background_2,
             R.drawable.background_3,
             R.drawable.background_4};
-    private String phoneNumber;
-    private String id;
+    private String phoneNumber, id, name;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +60,8 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         instance = ActivityOfContactsInfo.this;
         initView();
         setView();
-
     }
+
     private void initView() {
         none_call_info = (TextView) findViewById(R.id.none_call_info);
         none_message_info = (TextView) findViewById(R.id.none_message_info);
@@ -82,13 +84,15 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         iv_background = (ImageView) findViewById(R.id.background_image_view);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+
+        btn_to_add = (FloatingActionButton) findViewById(R.id.btn_to_add);
     }
 
     private void setView() {
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("phone");
         id = intent.getStringExtra("id");
-        String name = intent.getStringExtra("name");
+        name = intent.getStringExtra("name");
         String email = intent.getStringExtra("email");
         String count = intent.getStringExtra("count");
 
@@ -111,6 +115,7 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         none_message_info.setOnClickListener(new OnClickButtonListener());
         btn_message_page.setOnClickListener(new OnClickButtonListener());
         btn_call_page.setOnClickListener(new OnClickButtonListener());
+        btn_to_add.setOnClickListener(new OnClickButtonListener());
     }
 
     private void setListView() {
@@ -127,6 +132,7 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
 
         //短信消息ListView设置
         GetContactsInfo.getMessageInfo(phoneNumber, id, ActivityOfContactsInfo.this);
+        Collections.reverse(GetContactsInfo.MessageInfos);
         MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ActivityOfContactsInfo.this, R.layout.messageinfo_item, GetContactsInfo.MessageInfos);
         lv_message.setAdapter(messageInfoAdapter);
         height = lv_message.getLayoutParams().height;
@@ -171,10 +177,12 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                         none_call_info.setVisibility(View.GONE);
                     }
                 } break;
-                case R.id.btn_message_page : {
+                case R.id.btn_message_page :
+                case R.id.none_message_info : {
                     Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfMessageInfo.class);
                     intent.putExtra("phone", phoneNumber);
                     intent.putExtra("id", id);
+                    intent.putExtra("name", name);
                     startActivity(intent);
                 }break;
                 case R.id.btn_show_message : {
@@ -188,10 +196,15 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                         none_message_info.setVisibility(View.GONE);
                     }
                 }break;
-                case R.id.none_message_info : {
-                    Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfMessageInfo.class);
-                    intent.putExtra("phone", phoneNumber);
-                    intent.putExtra("id", id);
+                case R.id.btn_to_add :{
+                    Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfAddContact.class);
+                    intent.putExtra("Flag", true);
+                    intent.putExtra("name", intro_name.getText());
+                    intent.putExtra("phone", intro_phone.getText());
+                    intent.putExtra("email", intro_email.getText());
+                    intent.putExtra("address", intro_address.getText());
+                    intent.putExtra("job", intro_job.getText());
+                    intent.putExtra("age", intro_age.getText());
                     startActivity(intent);
                 }break;
             }
