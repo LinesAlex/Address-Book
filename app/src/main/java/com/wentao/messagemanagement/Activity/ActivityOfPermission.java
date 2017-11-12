@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.wentao.messagemanagement.R;
 
+
 /**
  * Created by Administrator on 2017/11/10.
  */
@@ -33,14 +34,12 @@ public class ActivityOfPermission extends AppCompatActivity {
         finish();
     }
     private void getPermission(String[] permission, int permissionId){
-
             boolean a = ContextCompat.checkSelfPermission(ActivityOfPermission.this, permission[0]) != PackageManager.PERMISSION_GRANTED;
             if (a) {//没有权限需要动态获取
                 ActivityCompat.requestPermissions(ActivityOfPermission.this, permission, permissionId); //动态请求权限
             } else {
                 openPage();
             }
-
     }
 //    onRequestPermissionsResult获取动态权限后调用函数
     @Override

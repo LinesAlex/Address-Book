@@ -13,6 +13,7 @@ public class ContactsInfo {
     private String id = null;
     private String name = null;
     private String pinyin = null;
+
     private ArrayList<String> email = new ArrayList<>();
     private ArrayList<String> phoneNumber = new ArrayList<>();
 

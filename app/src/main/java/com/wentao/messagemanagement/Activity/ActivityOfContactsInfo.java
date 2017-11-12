@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +23,14 @@ import android.widget.TextView;
 
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Adapter.PhoneInfoAdapter;
+import com.wentao.messagemanagement.db.Intro;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.CallInfo;
-import com.wentao.messagemanagement.db.MessageInfo;
 
-import java.util.ArrayList;
+import org.litepal.crud.DataSupport;
+
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/11/4.
@@ -98,18 +100,38 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {actionBar.setDisplayHomeAsUpEnabled(true);}
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         iv_background.setImageResource(imageId[Integer.parseInt(count) % 4]);
         collapsingToolbarLayout.setTitle(name);
         setListView();
-
-        intro_name.setText(checkOutIntroInfo(name));
-        intro_phone.setText(checkOutIntroInfo(phoneNumber));
-        intro_email.setText(checkOutIntroInfo(email));
-        intro_address.setText(checkOutIntroInfo(null));
-        intro_job.setText(checkOutIntroInfo(null));
-        intro_age.setText(checkOutIntroInfo(null));
-
+        if (DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("mid = ?", id).find(Intro.class).size() > 0) {
+            List<Intro> intros = DataSupport.where("mid = ?", id).find(Intro.class);
+            Intro intro = intros.get(0);
+            intro_name.setText(checkOutIntroInfo(intro.getName()));
+            intro_phone.setText(checkOutIntroInfo(intro.getPhone()));
+            intro_email.setText(checkOutIntroInfo(intro.getEmail()));
+            intro_address.setText(checkOutIntroInfo(intro.getAddress()));
+            intro_job.setText(checkOutIntroInfo(intro.getJob()));
+            intro_age.setText(checkOutIntroInfo(intro.getAge()));
+        } else {
+            Intro intro = new Intro();
+            String n = checkOutIntroInfo(name);
+            String p = checkOutIntroInfo(phoneNumber);
+            String e = checkOutIntroInfo(email);
+            intro_name.setText(n);
+            intro_phone.setText(p);
+            intro_email.setText(e);
+            intro_address.setText("");
+            intro_job.setText("");
+            intro_age.setText("");
+            intro.setName(n);
+            intro.setPhone(p);
+            intro.setEmail(e);
+            intro.setMid(id);
+            intro.save();
+        }
         btn_show_call.setOnClickListener(new OnClickButtonListener());
         btn_show_message.setOnClickListener(new OnClickButtonListener());
         none_message_info.setOnClickListener(new OnClickButtonListener());
@@ -147,8 +169,8 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
     }
 
     private String checkOutIntroInfo(String str) {
-        if (str == null || str.startsWith("NULL")) {
-            return "...";
+        if (str == null || str.contains("NULL")) {
+            return "";
         } else {
             return str;
         }
@@ -199,12 +221,8 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                 case R.id.btn_to_add :{
                     Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfAddContact.class);
                     intent.putExtra("Flag", true);
-                    intent.putExtra("name", intro_name.getText());
-                    intent.putExtra("phone", intro_phone.getText());
-                    intent.putExtra("email", intro_email.getText());
-                    intent.putExtra("address", intro_address.getText());
-                    intent.putExtra("job", intro_job.getText());
-                    intent.putExtra("age", intro_age.getText());
+                    intent.putExtra("id", id);
+                    intent.putExtra("name", name);
                     startActivity(intent);
                 }break;
             }

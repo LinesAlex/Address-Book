@@ -5,7 +5,7 @@ package com.wentao.messagemanagement.db;
  */
 
 public class CallInfo {
-    private String Id;
+    private String id;
     private String type;
     private String time;
     private String duration;
@@ -14,8 +14,8 @@ public class CallInfo {
     public String getPhoneNumber() {return phoneNumber;}
     public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
 
-    public String getId() {return Id;}
-    public void setId(String id) {Id = id;}
+    public String getId() {return id;}
+    public void setId(String id) {this.id = id;}
 
     public String getType() {return type;}
     public void setType(String type) {this.type = type;}

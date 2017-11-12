@@ -6,7 +6,6 @@ import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.wentao.messagemanagement.Activity.ActivityOfContactsInfo;
 import com.wentao.messagemanagement.Activity.MainActivity;
@@ -14,7 +13,6 @@ import com.wentao.messagemanagement.db.CallInfo;
 import com.wentao.messagemanagement.db.ContactsInfo;
 import com.wentao.messagemanagement.db.MessageInfo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -49,7 +47,7 @@ public class GetContactsInfo {
                 //呼叫时间
                 callInfo.setTime(MTime.formatForDate(date));
                 //通话时长
-                callInfo.setDuration(formatDuration(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION))));
+                callInfo.setDuration(MTime.formatDuration(cursor.getLong(cursor.getColumnIndexOrThrow(CallLog.Calls.DURATION))));
                 CallInfos.add(callInfo);
             }while(cursor.moveToNext());
         }
@@ -111,8 +109,8 @@ public class GetContactsInfo {
                 contactsInfo.setId(cursorOfContactsInfo.getString(0));
                 contactsInfo.setName(cursorOfContactsInfo.getString(1));//获取姓名
                 contactsInfo.setPinyin(cursorOfContactsInfo.getString(2).substring(0,1));
-                getInfo(uriPhone, phoneProjection, contactsInfo, phoneId, contactsInfo.getPhoneNumber());
-                getInfo(uriEmail, emailProjection, contactsInfo, emailId, contactsInfo.getEmail());
+                getInfo( contactsInfo, contactsInfo.getPhoneNumber(), uriPhone, phoneProjection, phoneId);
+                getInfo( contactsInfo, contactsInfo.getEmail(), uriEmail, emailProjection, emailId);
                 ContactsInfos.add(contactsInfo);
             } while (cursorOfContactsInfo.moveToNext());
         }
@@ -120,7 +118,7 @@ public class GetContactsInfo {
         return ContactsInfos;
     }
 
-    private static ArrayList<String> getInfo(Uri uri, String[] projection, ContactsInfo info, String id, ArrayList<String> setStr){
+    private static ArrayList<String> getInfo( ContactsInfo info, ArrayList<String> setStr, Uri uri, String[] projection, String id){
         Cursor cursor = MainActivity.getInstance().getContentResolver().query(uri, projection,id  + "=" + info.getId(), null, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -136,56 +134,4 @@ public class GetContactsInfo {
             ContactsInfos.get(i).setCount(i + 1);
         }
     }
-
-    private static String formatDuration(long duration) {
-        StringBuilder sb = new StringBuilder();
-
-        if (duration == 0) {
-            sb.append("00:00");
-        } else if (duration > 0 && duration < 60) {
-            sb.append("00:");
-            if (duration < 10) {
-                sb.append("0");
-            }
-            sb.append(duration);
-
-        } else if (duration > 60 && duration < 3600) {
-
-            long min = duration / 60;
-            long sec = duration % 60;
-            if (min < 10) {
-                sb.append("0");
-            }
-            sb.append(min);
-            sb.append(":");
-
-            if (sec < 10) {
-                sb.append("0");
-            }
-            sb.append(sec);
-        } else if (duration > 3600) {
-            long hour = duration / 3600;
-            long min = duration % 3600 / 60;
-            long sec = duration % 3600 % 60;
-            if (hour < 10) {
-                sb.append("0");
-            }
-            sb.append(hour);
-            sb.append(":");
-
-            if (min < 10) {
-                sb.append("0");
-            }
-            sb.append(min);
-            sb.append(":");
-
-            if (sec < 10) {
-                sb.append("0");
-            }
-            sb.append(sec);
-        }
-
-        return sb.toString();
-    }
-
 }
