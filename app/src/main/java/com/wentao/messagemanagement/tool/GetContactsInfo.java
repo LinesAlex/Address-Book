@@ -1,17 +1,25 @@
 package com.wentao.messagemanagement.tool;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.wentao.messagemanagement.Activity.ActivityOfAddContact;
 import com.wentao.messagemanagement.Activity.ActivityOfContactsInfo;
 import com.wentao.messagemanagement.Activity.MainActivity;
 import com.wentao.messagemanagement.db.CallInfo;
 import com.wentao.messagemanagement.db.ContactsInfo;
 import com.wentao.messagemanagement.db.MessageInfo;
+
+import org.litepal.tablemanager.Connector;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +34,8 @@ public class GetContactsInfo {
     public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
     public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
     //初始化ContactsInfos
+
+
     public static ArrayList<CallInfo> getCallInfo(String phoneNumber,String id) {
         CallInfos.clear();
         phoneNumber = phoneNumber.replace("-","").replace(" ","");
@@ -36,6 +46,7 @@ public class GetContactsInfo {
             do {
                 CallInfo callInfo = new CallInfo();
                 callInfo.setId(id);
+
                 callInfo.setPhoneNumber(phoneNumber);
                 switch (Integer.parseInt(cursor.getString(cursor.getColumnIndex(CallLog.Calls.TYPE)))) {
                     case CallLog.Calls.INCOMING_TYPE:callInfo.setType("呼入");break;
@@ -133,5 +144,119 @@ public class GetContactsInfo {
         for (int i = 0; i < ContactsInfos.size(); i++) {
             ContactsInfos.get(i).setCount(i + 1);
         }
+    }
+
+    public static boolean update(String id, String phone, String name, String email, boolean[] FlagOfInfo) {
+        //插入raw_contacts表，并获取_id属性
+        String rawId = getRawId(ActivityOfAddContact.getInstance(), id);
+        ContentResolver resolver = ActivityOfAddContact.getInstance().getContentResolver();
+        ContentValues values = new ContentValues();
+        if (!name.equals("")) {
+            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);
+            values.put(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, name);
+            resolver.update(ContactsContract.Data.CONTENT_URI
+                    , values
+                    , ContactsContract.Data.RAW_CONTACT_ID + " = ?"
+                    , new String[]{rawId});
+
+        }
+
+        if (!phone.equals("") && !FlagOfInfo[1]) {
+            values.clear();
+            values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
+            values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
+            resolver.update(ContactsContract.Data.CONTENT_URI
+                    , values
+                    , ContactsContract.Data.RAW_CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"
+                    , new String[]{rawId, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE});
+        } else if (FlagOfInfo[1]){
+            values.clear();
+            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
+            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+            values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
+            values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
+            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
+        }
+
+        if (!email.equals("") && !FlagOfInfo[2]) {
+            values.clear();
+            values.put(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_MOBILE);
+            values.put(ContactsContract.CommonDataKinds.Email.ADDRESS, email);
+            resolver.update(ContactsContract.Data.CONTENT_URI
+                    , values
+                    , ContactsContract.Data.RAW_CONTACT_ID + "= ? AND " + ContactsContract.Data.MIMETYPE + " = ?"
+                    , new String[]{rawId, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE});
+        } else if (FlagOfInfo[2]) {
+            values.clear();
+            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
+            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE);
+            values.put(ContactsContract.CommonDataKinds.Email.ADDRESS, email);
+            values.put(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_MOBILE);
+            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
+        }
+        return true;
+    }
+    public static String insert(String phone, String name, String email) {
+
+        ContentResolver resolver = ActivityOfAddContact.getInstance().getContentResolver();
+        ContentValues values = new ContentValues();
+        long rawId = ContentUris.parseId(resolver.insert(ContactsContract.RawContacts.CONTENT_URI, values));
+        if (!name.equals("")) {
+            values.clear();
+            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
+            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);
+            values.put(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, name);
+            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
+        }
+        if (!phone.equals("")) {
+            values.clear();
+            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
+            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+            values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
+            values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
+            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
+        }
+        if (!email.equals("")) {
+            values.clear();
+            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
+            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE);
+            values.put(ContactsContract.CommonDataKinds.Email.ADDRESS, email);
+            values.put(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_MOBILE);
+            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
+        }
+        return getId(ActivityOfAddContact.getInstance(), rawId + "");
+    }
+    public static boolean delete(Context context, String id) {
+        String rawId = getRawId(context, id);
+        context.getContentResolver().delete(
+                ContactsContract.RawContacts.CONTENT_URI
+                , ContactsContract.RawContacts._ID + " = ?"
+                , new String[]{rawId});
+        return true;
+    }
+    public static String getRawId(Context context, String id) {
+        Cursor cursor = context.getContentResolver().query(
+                ContactsContract.RawContacts.CONTENT_URI, null,
+                ContactsContract.RawContacts.CONTACT_ID +" = ?",
+                new String[]{id}, null);
+        String rawId = "";
+        if (cursor.moveToFirst())
+        {
+            // 读取第一条记录的RawContacts._ID列的值
+            rawId = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts._ID));
+        }
+        return rawId;
+    }
+    public static String getId(Context context, String rawid){
+        Cursor cursor = context.getContentResolver().query(
+                ContactsContract.RawContacts.CONTENT_URI, null,
+                ContactsContract.RawContacts._ID + " = ?",
+                new String[]{rawid}, null);
+        String id = "";
+        if (cursor.moveToFirst())
+        {
+            id = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.CONTACT_ID));
+        }
+        return id;
     }
 }

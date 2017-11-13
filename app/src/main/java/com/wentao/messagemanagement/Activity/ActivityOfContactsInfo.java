@@ -7,7 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -223,11 +225,12 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                     intent.putExtra("Flag", true);
                     intent.putExtra("id", id);
                     intent.putExtra("name", name);
-                    startActivity(intent);
+                    startActivityForResult(intent, 2);
                 }break;
             }
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -236,5 +239,29 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 2 :
+                if (resultCode == RESULT_OK) {
+                    String name = data.getStringExtra("name");
+                    Snackbar.make(collapsingToolbarLayout, "联系人 " + name + " 修改成功!", Snackbar.LENGTH_SHORT).show();
+                    if (DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("mid = ?", id).find(Intro.class).size() > 0) {
+                        List<Intro> intros = DataSupport.where("mid = ?", id).find(Intro.class);
+                        Intro intro = intros.get(0);
+                        intro_name.setText(checkOutIntroInfo(intro.getName()));
+                        intro_phone.setText(checkOutIntroInfo(intro.getPhone()));
+                        intro_email.setText(checkOutIntroInfo(intro.getEmail()));
+                        intro_address.setText(checkOutIntroInfo(intro.getAddress()));
+                        intro_job.setText(checkOutIntroInfo(intro.getJob()));
+                        intro_age.setText(checkOutIntroInfo(intro.getAge()));
+                        collapsingToolbarLayout.setTitle(checkOutIntroInfo(intro.getName()));
+                        super.onRestart();
+                    }
+                }break;
+            default : break;
+        }
     }
 }

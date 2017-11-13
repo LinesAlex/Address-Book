@@ -167,7 +167,7 @@
                                     android:ems="10"
                                     android:inputType="textPersonName"
                                     android:textSize="12dp"
-                                    android:hint="Email" />
+                                    android:hint="Address" />
                             </TableRow>
                             <TableRow
                                 android:layout_width="match_parent"
