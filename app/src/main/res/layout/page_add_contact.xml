@@ -97,7 +97,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="姓名"
                                     android:textColor="#000"
-                                    android:textSize="15dp" />
+                                    android:textSize="15sp" />
 
                                 <EditText
                                     android:id="@+id/et_name_add"
@@ -105,7 +105,7 @@
                                     android:layout_height="wrap_content"
                                     android:ems="10"
                                     android:inputType="textPersonName"
-                                    android:textSize="12dp"
+                                    android:textSize="12sp"
                                     android:hint="Name" />
                             </TableRow>
                             <TableRow
@@ -118,14 +118,14 @@
                                     android:layout_height="wrap_content"
                                     android:text="电话"
                                     android:textColor="#000"
-                                    android:textSize="15dp" />
+                                    android:textSize="15sp" />
                                 <EditText
                                     android:id="@+id/et_phone_add"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:ems="10"
-                                    android:inputType="textPersonName"
-                                    android:textSize="12dp"
+                                    android:inputType="phone"
+                                    android:textSize="12sp"
                                     android:hint="Phone" />
                             </TableRow>
                             <TableRow
@@ -138,14 +138,14 @@
                                     android:layout_height="wrap_content"
                                     android:text="邮箱"
                                     android:textColor="#000"
-                                    android:textSize="15dp" />
+                                    android:textSize="15sp" />
                                 <EditText
                                     android:id="@+id/et_email_add"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:ems="10"
-                                    android:inputType="textPersonName"
-                                    android:textSize="12dp"
+                                    android:inputType="textEmailAddress"
+                                    android:textSize="12sp"
                                     android:hint="Email" />
                             </TableRow>
                             <TableRow
@@ -158,15 +158,15 @@
                                     android:layout_height="wrap_content"
                                     android:text="地址"
                                     android:textColor="#000"
-                                    android:textSize="15dp" />
+                                    android:textSize="15sp" />
 
                                 <EditText
                                     android:id="@+id/et_address_add"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:ems="10"
-                                    android:inputType="textPersonName"
-                                    android:textSize="12dp"
+                                    android:inputType="textPostalAddress"
+                                    android:textSize="12sp"
                                     android:hint="Address" />
                             </TableRow>
                             <TableRow
@@ -179,15 +179,15 @@
                                     android:layout_height="wrap_content"
                                     android:text="工作"
                                     android:textColor="#000"
-                                    android:textSize="15dp" />
+                                    android:textSize="15sp" />
 
                                 <EditText
                                     android:id="@+id/et_job_add"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:ems="10"
-                                    android:inputType="textPersonName"
-                                    android:textSize="12dp"
+                                    android:inputType="text"
+                                    android:textSize="12sp"
                                     android:hint="Job" />
                             </TableRow>
 
@@ -201,14 +201,14 @@
                                     android:layout_height="wrap_content"
                                     android:text="年龄"
                                     android:textColor="#000"
-                                    android:textSize="15dp" />
+                                    android:textSize="15sp" />
                                 <EditText
                                     android:id="@+id/et_age_add"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:ems="10"
-                                    android:inputType="textPersonName"
-                                    android:textSize="12dp"
+                                    android:inputType="number"
+                                    android:textSize="12sp"
                                     android:hint="Age"  />
                             </TableRow>
                         </TableLayout>
@@ -222,9 +222,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_margin="16dp"
-            app:backgroundTint="#333344"
-            app:rippleColor="#000"
-            android:src="@drawable/icon_right"/>
+            app:backgroundTint="#000"
+            app:rippleColor="#334"
+            android:src="@drawable/fbutton_right"/>
     </android.support.design.widget.CoordinatorLayout>
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,4 +1,4 @@
-package com.wentao.messagemanagement;
+package com.wentao.messagemanagement.Receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.util.Log;
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.db.MessageInfo;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
-import com.wentao.messagemanagement.tool.MTime;
+import com.wentao.messagemanagement.tool.TimeTool;
 
 import java.util.Date;
 
@@ -40,7 +40,7 @@ public class MessageReceiver extends BroadcastReceiver{
             for (SmsMessage currentMessage : message) {
                 strBody.append(currentMessage.getDisplayMessageBody());
                 number.append(currentMessage.getDisplayOriginatingAddress());
-                strTime = MTime.formatForDate(new Date(currentMessage.getTimestampMillis()));
+                strTime = TimeTool.formatForDate(new Date(currentMessage.getTimestampMillis()));
             }
             String smsBody = strBody.toString();
             String smsNumber = number.toString();

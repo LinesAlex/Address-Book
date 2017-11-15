@@ -1,20 +1,20 @@
 package com.wentao.messagemanagement.Activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +38,7 @@ import java.util.List;
  * Created by Administrator on 2017/11/4.
  */
 
-public class ActivityOfContactsInfo extends AppCompatActivity {
+public class ContactsInfo extends AppCompatActivity {
 
 
     private Toolbar toolbar;
@@ -46,10 +46,10 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
     private ListView lv_phone_call, lv_message;
     private Button btn_call_page, btn_show_call, btn_message_page,btn_show_message;
     private TextView none_call_info, none_message_info, intro_name, intro_phone, intro_email , intro_address, intro_job, intro_age;
-    private FloatingActionButton btn_to_add;
+    private FloatingActionButton btn_to_add, btn_to_delete;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    private static ActivityOfContactsInfo instance;
-    public static ActivityOfContactsInfo getInstance() {
+    private static ContactsInfo instance;
+    public static ContactsInfo getInstance() {
         return instance;
     }
     private int[] imageId = new int[]{R.drawable.background_1,
@@ -60,8 +60,8 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.contacts_infopage);
-        instance = ActivityOfContactsInfo.this;
+        setContentView(R.layout.page_contacts_info);
+        instance = ContactsInfo.this;
         initView();
         setView();
     }
@@ -90,6 +90,7 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
         btn_to_add = (FloatingActionButton) findViewById(R.id.btn_to_add);
+        btn_to_delete = (FloatingActionButton) findViewById(R.id.btn_to_delete);
     }
 
     private void setView() {
@@ -134,18 +135,20 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
             intro.setMid(id);
             intro.save();
         }
-        btn_show_call.setOnClickListener(new OnClickButtonListener());
-        btn_show_message.setOnClickListener(new OnClickButtonListener());
-        none_message_info.setOnClickListener(new OnClickButtonListener());
-        btn_message_page.setOnClickListener(new OnClickButtonListener());
-        btn_call_page.setOnClickListener(new OnClickButtonListener());
-        btn_to_add.setOnClickListener(new OnClickButtonListener());
+        OnClickButtonListener listener = new OnClickButtonListener();
+        btn_show_call.setOnClickListener(listener);
+        btn_show_message.setOnClickListener(listener);
+        none_message_info.setOnClickListener(listener);
+        btn_message_page.setOnClickListener(listener);
+        btn_call_page.setOnClickListener(listener);
+        btn_to_add.setOnClickListener(listener);
+        btn_to_delete.setOnClickListener(listener);
     }
 
     private void setListView() {
         //通话信息ListView设置
         GetContactsInfo.getCallInfo(phoneNumber,id);
-        PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ActivityOfContactsInfo.this, R.layout.callinfo_item, GetContactsInfo.CallInfos);
+        PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ContactsInfo.this, R.layout.item_call_info, GetContactsInfo.CallInfos);
         lv_phone_call.setAdapter(phoneInfoAdapter);
         int height = lv_phone_call.getLayoutParams().height;
         int size = GetContactsInfo.CallInfos.size();
@@ -155,9 +158,9 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         //finish
 
         //短信消息ListView设置
-        GetContactsInfo.getMessageInfo(phoneNumber, id, ActivityOfContactsInfo.this);
+        GetContactsInfo.getMessageInfo(phoneNumber, id, ContactsInfo.this);
         Collections.reverse(GetContactsInfo.MessageInfos);
-        MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ActivityOfContactsInfo.this, R.layout.messageinfo_item, GetContactsInfo.MessageInfos);
+        MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ContactsInfo.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
         lv_message.setAdapter(messageInfoAdapter);
         height = lv_message.getLayoutParams().height;
         size = GetContactsInfo.MessageInfos.size();
@@ -183,27 +186,27 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.btn_call_page : {
-                    if(ActivityCompat.checkSelfPermission(MainActivity.getInstance(),
+                    if(ActivityCompat.checkSelfPermission(ContactsList.getInstance(),
                             Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                         Intent intent = new Intent(Intent.ACTION_CALL);
                         intent.setData(Uri.parse("tel:" + phoneNumber));
-                        MainActivity.getInstance().startActivity(intent);
+                        ContactsList.getInstance().startActivity(intent);
                     }
                 }break;
                 case R.id.btn_show_call : {
                     if (lv_phone_call.getVisibility() == View.GONE) {
-                        btn_show_call.setBackgroundResource(R.drawable.show_menu_bottom);
+                        btn_show_call.setBackgroundResource(R.drawable.button_show_menu_2);
                         lv_phone_call.setVisibility(View.VISIBLE);
                         none_call_info.setVisibility(View.VISIBLE);
                     } else {
-                        btn_show_call.setBackgroundResource(R.drawable.show_menu);
+                        btn_show_call.setBackgroundResource(R.drawable.button_show_menu_1);
                         lv_phone_call.setVisibility(View.GONE);
                         none_call_info.setVisibility(View.GONE);
                     }
                 } break;
                 case R.id.btn_message_page :
                 case R.id.none_message_info : {
-                    Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfMessageInfo.class);
+                    Intent intent = new Intent(ContactsInfo.this, MessageInfo.class);
                     intent.putExtra("phone", phoneNumber);
                     intent.putExtra("id", id);
                     intent.putExtra("name", name);
@@ -211,22 +214,41 @@ public class ActivityOfContactsInfo extends AppCompatActivity {
                 }break;
                 case R.id.btn_show_message : {
                     if (lv_message.getVisibility() == View.GONE) {
-                        btn_show_message.setBackgroundResource(R.drawable.show_menu_bottom);
+                        btn_show_message.setBackgroundResource(R.drawable.button_show_menu_2);
                         lv_message.setVisibility(View.VISIBLE);
                         none_message_info.setVisibility(View.VISIBLE);
                     } else {
-                        btn_show_message.setBackgroundResource(R.drawable.show_menu);
+                        btn_show_message.setBackgroundResource(R.drawable.button_show_menu_1);
                         lv_message.setVisibility(View.GONE);
                         none_message_info.setVisibility(View.GONE);
                     }
                 }break;
                 case R.id.btn_to_add :{
-                    Intent intent = new Intent(ActivityOfContactsInfo.this, ActivityOfAddContact.class);
+                    Intent intent = new Intent(ContactsInfo.this, AddContact.class);
                     intent.putExtra("Flag", true);
                     intent.putExtra("id", id);
                     intent.putExtra("name", name);
                     startActivityForResult(intent, 2);
                 }break;
+                case R.id.btn_to_delete :{
+                    AlertDialog.Builder dialog = new AlertDialog.Builder (ContactsInfo.this);
+                    dialog.setTitle("删除联系人");
+                    dialog.setMessage("是否要删除联系人 " + name + " ?");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            GetContactsInfo.delete(ContactsInfo.this, id);
+                            finish();
+                        }
+                    });
+                    dialog.setNegativeButton("放弃", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    dialog.show();
+                }
             }
         }
     }

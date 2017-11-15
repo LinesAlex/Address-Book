@@ -49,7 +49,7 @@
                 android:id="@+id/tv_count"
                 android:layout_width="30dp"
                 android:layout_height="17dp"
-                android:background="@drawable/number_icon"
+                android:background="@drawable/tag_number"
                 android:layout_marginTop="3dp"
                 android:gravity="center"
                 android:text="22"
@@ -64,7 +64,7 @@
             android:layout_height="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/fristname_icon_1"
+            android:background="@drawable/icon_first_name"
             android:gravity="center"
             android:text="A"
             android:textColor="#000"
@@ -113,7 +113,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/show_menu"
+                android:background="@drawable/button_show_menu_1"
                 android:layout_gravity="center_vertical|right" />
         </FrameLayout>
 
@@ -130,7 +130,7 @@
 
         <Button
             android:id="@+id/btn_call"
-            android:background="@drawable/icon_phone_gray"
+            android:background="@drawable/icon_contact_phone"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="50dp"
@@ -138,7 +138,7 @@
 
         <Button
             android:id="@+id/btn_message"
-            android:background="@drawable/icon_message_gray"
+            android:background="@drawable/icon_contact_message"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="30dp"
@@ -146,7 +146,7 @@
 
         <Button
             android:id="@+id/btn_info"
-            android:background="@drawable/icon_info_gray"
+            android:background="@drawable/icon_contact_info"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="30dp"/>

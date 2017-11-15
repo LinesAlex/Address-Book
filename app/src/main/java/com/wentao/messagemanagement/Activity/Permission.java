@@ -11,17 +11,24 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.tool.GetContactsInfo;
 
 
 /**
  * Created by Administrator on 2017/11/10.
  */
 
-public class ActivityOfPermission extends AppCompatActivity {
+public class Permission extends AppCompatActivity {
+    private static Permission instance;
+    public static Permission getInstance() {
+        return instance;
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.begin_page);
+        setContentView(R.layout.page_begin);
+        instance = Permission.this;
+        GetContactsInfo.getContacts(instance);
         String[] permission = new String[] {
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.CALL_PHONE,
@@ -29,14 +36,14 @@ public class ActivityOfPermission extends AppCompatActivity {
         getPermission(permission, 0);
     }
     private void openPage() {
-        Intent intent = new Intent(ActivityOfPermission.this, MainActivity.class);
+        Intent intent = new Intent(Permission.this, MessageAndCall.class);
         startActivity(intent);
         finish();
     }
     private void getPermission(String[] permission, int permissionId){
-            boolean a = ContextCompat.checkSelfPermission(ActivityOfPermission.this, permission[0]) != PackageManager.PERMISSION_GRANTED;
+            boolean a = ContextCompat.checkSelfPermission(Permission.this, permission[0]) != PackageManager.PERMISSION_GRANTED;
             if (a) {//没有权限需要动态获取
-                ActivityCompat.requestPermissions(ActivityOfPermission.this, permission, permissionId); //动态请求权限
+                ActivityCompat.requestPermissions(Permission.this, permission, permissionId); //动态请求权限
             } else {
                 openPage();
             }
@@ -52,7 +59,7 @@ public class ActivityOfPermission extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openPage();
                 } else {
-                    Toast.makeText(ActivityOfPermission.this, "请给予权限", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Permission.this, "请给予权限", Toast.LENGTH_SHORT).show();
                 }break;
             default:
         }

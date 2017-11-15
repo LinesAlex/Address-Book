@@ -33,13 +33,24 @@
                 app:layout_collapseMode="pin"/>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_to_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="mini"
+        android:layout_marginRight="15dp"
+        app:backgroundTint="#db4c4b"
+        app:rippleColor="#933"
+        android:src="@drawable/fbutton_contact_delete"
+        app:layout_anchor="@id/appBar"
+        app:layout_anchorGravity="bottom|end" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_to_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/icon_more_info"
+        android:layout_margin="70dp"
+        android:src="@drawable/fbutton_contact_update"
         app:layout_anchor="@id/appBar"
         app:layout_anchorGravity="bottom|end" />
 
@@ -239,14 +250,14 @@
                             android:layout_height="30dp"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:background="@drawable/icon_phone_gray" />
+                            android:background="@drawable/icon_contact_phone" />
 
                         <Button
                             android:id="@+id/btn_show_call"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_marginLeft="10dp"
-                            android:background="@drawable/show_menu" />
+                            android:background="@drawable/button_show_menu_1" />
                     </LinearLayout>
 
                     <ListView
@@ -304,14 +315,14 @@
                             android:layout_height="30dp"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:background="@drawable/icon_message_gray" />
+                            android:background="@drawable/icon_contact_message" />
 
                         <Button
                             android:id="@+id/btn_show_message"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_marginLeft="10dp"
-                            android:background="@drawable/show_menu" />
+                            android:background="@drawable/button_show_menu_1" />
                     </LinearLayout>
 
                     <ListView

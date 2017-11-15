@@ -34,7 +34,6 @@ public class MessageInfoAdapter extends ArrayAdapter<MessageInfo> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
         MessageInfo item = getItem(position);
-
         assert item != null;
         switch (item.getType()) {
             case "送达":

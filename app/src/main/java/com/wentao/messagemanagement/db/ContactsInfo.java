@@ -40,14 +40,12 @@ public class ContactsInfo {
         return email.get(Index);
     }
 
-    public void setEmail(ArrayList<String> email) {this.email = email;}
-    public void setEmail(int index, String email) {this.email.add(index, email);}
+    public void setEmail(String email) {this.email.add(email);}
 
     public ArrayList<String> getPhoneNumber() {return phoneNumber;}
     public String getPhoneNumber(int Index) {return phoneNumber.get(Index);}
 
-    public void setPhoneNumber(ArrayList<String> phoneNumber) {this.phoneNumber = phoneNumber;}
-    public void setPhoneNumber(int index, String phoneNumber) {this.phoneNumber.add(index, phoneNumber);}
+    public void setPhoneNumber(String phoneNumber) {this.phoneNumber.add(phoneNumber);}
 
     @Override
     public String toString() {

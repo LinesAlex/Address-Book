@@ -9,7 +9,11 @@ public class CallInfo {
     private String type;
     private String time;
     private String duration;
+    private String name;
     private String phoneNumber;
+
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
 
     public String getPhoneNumber() {return phoneNumber;}
     public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}

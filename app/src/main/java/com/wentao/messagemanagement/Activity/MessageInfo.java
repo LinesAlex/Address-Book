@@ -1,6 +1,5 @@
 package com.wentao.messagemanagement.Activity;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,38 +7,36 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
-import com.wentao.messagemanagement.MessageReceiver;
+import com.wentao.messagemanagement.Receiver.MessageReceiver;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.MessageInfo;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
-import com.wentao.messagemanagement.tool.MTime;
+import com.wentao.messagemanagement.tool.TimeTool;
 
 /**
  * Created by Administrator on 2017/11/10.
  */
 
-public class ActivityOfMessageInfo extends AppCompatActivity{
+public class MessageInfo extends AppCompatActivity{
     private ListView lv_message_page;
     private EditText et_enter_message;
     private Toolbar toolbar;
     private ImageButton btn_send_message;
     private MessageInfoAdapter messageInfoAdapter;
     private String phone, id, name;
-    private static ActivityOfMessageInfo instance;
-    public static ActivityOfMessageInfo getInstance() {return instance;}
+    private static MessageInfo instance;
+    public static MessageInfo getInstance() {return instance;}
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.message_infopage);
-        instance = ActivityOfMessageInfo.this;
+        setContentView(R.layout.page_message_info);
+        instance = MessageInfo.this;
         initView();
         setView();
         setListView();
@@ -64,8 +61,8 @@ public class ActivityOfMessageInfo extends AppCompatActivity{
         btn_send_message.setOnClickListener(new OnClickViewListener());
     }
     private void setListView() {
-        GetContactsInfo.getMessageInfo(phone, id, ActivityOfMessageInfo.this);
-        messageInfoAdapter = new MessageInfoAdapter(ActivityOfMessageInfo.this, R.layout.messageinfo_item, GetContactsInfo.MessageInfos);
+        GetContactsInfo.getMessageInfo(phone, id, MessageInfo.this);
+        messageInfoAdapter = new MessageInfoAdapter(MessageInfo.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
         lv_message_page.setAdapter(messageInfoAdapter);
         MessageReceiver.setAdapter(messageInfoAdapter);
     }
@@ -79,7 +76,7 @@ public class ActivityOfMessageInfo extends AppCompatActivity{
                         et_enter_message.setText("");
                         SmsManager sms = SmsManager.getDefault();
                         sms.sendTextMessage(phone, null, message, null, null);
-                        MessageInfo messageInfo = new MessageInfo(phone,message,MTime.getTime(),"送达");
+                        com.wentao.messagemanagement.db.MessageInfo messageInfo = new com.wentao.messagemanagement.db.MessageInfo(phone,message, TimeTool.getTime(),"送达");
                         GetContactsInfo.MessageInfos.add(messageInfo);
                         messageInfoAdapter.notifyDataSetChanged();
                     }

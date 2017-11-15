@@ -22,22 +22,22 @@ import com.wentao.messagemanagement.Adapter.ContactsAdapter;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.R;
 
-public class MainActivity extends AppCompatActivity {
+public class ContactsList extends AppCompatActivity {
     
     private ContactsAdapter contactsAdapter;
     private ListView contactsListView;
     private SwipeRefreshLayout swipeRefresh;
     //获取MainActivity上下文
-    private static MainActivity instance;
-    public static MainActivity getInstance() {
+    private static ContactsList instance;
+    public static ContactsList getInstance() {
         return instance;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        instance = MainActivity.this;
+        setContentView(R.layout.page_contacts_list);
+        instance = ContactsList.this;
         initListView();
     }
 
@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
         searchView.setIconifiedByDefault(true);//显示图标及输入框
         searchView.setSubmitButtonEnabled(true);//添加提交搜索按钮
         contactsListView = (ListView) findViewById(R.id.lv_contacts);
-        contactsAdapter = new ContactsAdapter(MainActivity.this, R.layout.contacts_item, GetContactsInfo.getContacts());//第一次
+
+        contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts,GetContactsInfo.ContactsInfos);//第一次
         contactsListView.setAdapter(contactsAdapter);//将姓名及电话号码显示到ListView上
         contactsListView.setTextFilterEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ActivityOfAddContact.class);
+                Intent intent = new Intent(ContactsList.this, AddContact.class);
                 intent.putExtra("Flag",false);
                 startActivityForResult(intent, 1);
             }
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        GetContactsInfo.getContacts();
+                        GetContactsInfo.getContacts(instance);
                         contactsAdapter.notifyDataSetChanged();
                         swipeRefresh.setRefreshing(false);
                     }
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
     //setListSideBar设置侧边栏及其OnTouch事件
     private TextView setListSideBar(final String letter, int letterHeight) {
-        TextView letterText = new TextView(MainActivity.this);
+        TextView letterText = new TextView(ContactsList.this);
         letterText.setText(letter);
         letterText.setTextSize(letterHeight / 5 - 6);
         letterText.setHeight(letterHeight - 10);
@@ -133,9 +134,9 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if (ContactsAdapter.LetterToPosition.containsKey(letter)) {
                             contactsListView.setSelection(ContactsAdapter.LetterToPosition.get(letter));
-                            Toast.makeText(MainActivity.this, letter, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ContactsList.this, letter, Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(MainActivity.this, "NULL " + letter, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ContactsList.this, "NULL " + letter, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

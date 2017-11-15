@@ -25,9 +25,9 @@ import java.util.List;
  * Created by Administrator on 2017/11/11.
  */
 
-public class ActivityOfAddContact extends AppCompatActivity {
-    private static ActivityOfAddContact instance;
-    public static ActivityOfAddContact getInstance() {
+public class AddContact extends AppCompatActivity {
+    private static AddContact instance;
+    public static AddContact getInstance() {
         return instance;
     }
     private boolean Flag;
@@ -39,8 +39,8 @@ public class ActivityOfAddContact extends AppCompatActivity {
     private boolean[] FlagOfInfo = new boolean[3];
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.addcontact_page);
-        instance = ActivityOfAddContact.this;
+        setContentView(R.layout.page_add_contact);
+        instance = AddContact.this;
         initView();
         setView();
     }
@@ -90,7 +90,7 @@ public class ActivityOfAddContact extends AppCompatActivity {
                     String name = checkOutIntroInfo(et_name.getText().toString());
                     String email = checkOutIntroInfo(et_email.getText().toString());
                     if (phone.equals("") || phone.equals("")) {
-                        AlertDialog.Builder dialog = new AlertDialog.Builder (ActivityOfAddContact.this);
+                        AlertDialog.Builder dialog = new AlertDialog.Builder (AddContact.this);
                         dialog.setTitle("无法执行此操作");
                         dialog.setMessage("未填写姓名或电话号码!\n是否放弃编辑?");
                         dialog.setCancelable(false);
