@@ -8,7 +8,10 @@ import android.database.Cursor;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.telecom.Call;
+import android.util.Log;
 
 import com.wentao.messagemanagement.Activity.AddContact;
 import com.wentao.messagemanagement.Activity.ContactsInfo;
@@ -18,6 +21,7 @@ import com.wentao.messagemanagement.db.MessageInfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 
 /**
  * Created by Administrator on 2017/11/4.
@@ -27,9 +31,83 @@ public class GetContactsInfo {
     public static ArrayList<com.wentao.messagemanagement.db.ContactsInfo> ContactsInfos= new ArrayList<>();//联系人基本信息
     public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
     public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
+
+    public static LinkedList<MessageInfo> AllMessages = new LinkedList<>();
+    public static LinkedList<CallInfo> AllCalls = new LinkedList<>();
+
+    public static LinkedList<MessageInfo> getAllMessages(Context context){
+        AllMessages.clear();
+        String[] projection = new String[] {
+                Telephony.Sms.ADDRESS
+                , Telephony.Sms.PERSON
+                , Telephony.Sms.BODY
+                , Telephony.Sms.DATE
+                , Telephony.Sms.TYPE};
+        Cursor cursor = context.getContentResolver().query(
+                Telephony.Sms.CONTENT_URI
+                , projection
+                , null
+                , null
+                , Telephony.Sms.DEFAULT_SORT_ORDER);
+        if (cursor != null && cursor.moveToFirst()) {
+            do{
+                    MessageInfo info = new MessageInfo();
+                    info.setPhoneNumber(cursor.getLong(0) + "");
+                    info.setName(cursor.getString(1));
+                    info.setSmsbody(cursor.getString(2).equals("") ? "-" : cursor.getString(2));
+                    Date date = new Date(Long.parseLong(cursor.getString(3)));
+                    info.setDate(TimeTool.formatForDate(date));
+                    switch (Integer.parseInt(cursor.getString(4))) {
+                        case Telephony.Sms.MESSAGE_TYPE_SENT:   info.setType("送达");    break;
+                        case Telephony.Sms.MESSAGE_TYPE_DRAFT:  info.setType("草稿");    break;
+                        case Telephony.Sms.MESSAGE_TYPE_FAILED: info.setType("发送失败"); break;
+                        case Telephony.Sms.MESSAGE_TYPE_INBOX:  info.setType("接收");    break;
+                        case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
+                        default:info.setType("重新发送");break;
+                    }
+                    AllMessages.add(info);
+            }while(cursor.moveToNext());
+        }
+        Collections.reverse(AllMessages);
+        return AllMessages;
+    }
+    public static LinkedList<CallInfo> getAllCalls(Context context) {
+        AllCalls.clear();
+        String[] projection = new String[] {
+                CallLog.Calls.CACHED_NAME
+                , CallLog.Calls.TYPE
+                , CallLog.Calls.DATE
+                , CallLog.Calls.DURATION
+                , CallLog.Calls.NUMBER
+        };
+        Cursor cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI
+                , projection
+                , null
+                , null
+                , CallLog.Calls.DEFAULT_SORT_ORDER);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                CallInfo callInfo = new CallInfo();
+                callInfo.setName(cursor.getString(0));
+                switch (Integer.parseInt(cursor.getString(1))) {
+                    case CallLog.Calls.INCOMING_TYPE:callInfo.setType("呼入");break;
+                    case CallLog.Calls.OUTGOING_TYPE:callInfo.setType("呼出");break;
+                    case CallLog.Calls.MISSED_TYPE:  callInfo.setType("未接");break;
+                    default:callInfo.setType("挂断");break;
+                }
+                //呼叫时间
+                Date date = new Date(Long.parseLong(cursor.getString(2)));
+                callInfo.setTime(TimeTool.formatForDate(date));
+                //通话时长
+                callInfo.setDuration(TimeTool.formatDuration(cursor.getLong(3)));
+                callInfo.setPhoneNumber(cursor.getLong(4) + "");
+                AllCalls.add(callInfo);
+            }while(cursor.moveToNext());
+        }
+        return AllCalls;
+    }
+
     //初始化ContactsInfos
-
-
     public static ArrayList<CallInfo> getCallInfo(String phoneNumber,String id) {
         CallInfos.clear();
         String[] projection = new String[] {

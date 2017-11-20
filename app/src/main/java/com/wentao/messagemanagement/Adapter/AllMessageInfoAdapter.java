@@ -11,16 +11,15 @@ import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.MessageInfo;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Created by Administrator on 2017/11/14.
  */
 
 public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAdapter.ViewHolder>{
-    private ArrayList<MessageInfo> mMessageInfos;
-    public AllMessageInfoAdapter(ArrayList<MessageInfo> messageInfos) {
-        mMessageInfos = messageInfos;
-    }
+    private LinkedList<MessageInfo> mMessageInfos;
+    public AllMessageInfoAdapter(LinkedList<MessageInfo> messageInfos) {mMessageInfos = messageInfos;}
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
@@ -30,19 +29,31 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+//        MessageInfo messageInfo = mMessageInfos.get(position);
+//        holder.tv_time_mc.setText(messageInfo.getDate().split(" ")[1]);
+//        holder.tv_day_mc.setText(messageInfo.getDate().split(" ")[0]);
+//        String message = messageInfo.getSmsbody();
+//        holder.tv_info_mc.setText(message.length() > 10 ? message.substring(0, 10) + "..." : message);
+//        holder.tv_name_mc.setText(messageInfo.getName());
+//        holder.tv_first_letter.setText(messageInfo.getName().substring(0, 1));
         MessageInfo messageInfo = mMessageInfos.get(position);
-        holder.tv_time_mc.setText(messageInfo.getDate().split(" ")[1]);
-        holder.tv_day_mc.setText(messageInfo.getDate().split(" ")[0]);
+        holder.tv_time_mc.setText(check(messageInfo.getDate()));
+        holder.tv_day_mc.setText(check(messageInfo.getDate()));
         String message = messageInfo.getSmsbody();
-        holder.tv_info_mc.setText(message.length() > 10 ? message.substring(0, 10) + "..." : message);
-        holder.tv_name_mc.setText(messageInfo.getName());
-        holder.tv_first_letter.setText(messageInfo.getName().substring(0, 1));
+        holder.tv_info_mc.setText(check(message.length() > 10 ? message.substring(0, 10) + "..." : message));
+        holder.tv_name_mc.setText(check(messageInfo.getName()));
+        holder.tv_first_letter.setText(check(messageInfo.getName()));
     }
-
+    private String check(String str) {
+        if (str == null || str.isEmpty()) {
+            return "";
+        } else {
+            return str;
+        }
+    }
     @Override
     public int getItemCount() {
-        mMessageInfos.size();
-        return 0;
+        return  mMessageInfos.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

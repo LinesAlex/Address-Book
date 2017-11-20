@@ -35,7 +35,7 @@
             android:theme="@style/MyActivityTheme">
         </activity>
         <activity
-            android:name=".Activity.MessageInfo">
+            android:name=".Activity.MessagePage">
         </activity>
         <activity
             android:name=".Activity.AddContact">

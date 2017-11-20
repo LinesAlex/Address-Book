@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import java.util.List;
 
@@ -13,18 +14,17 @@ import java.util.List;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> fragments;
-    private Context context;
     private String[] titles;
-    public MyFragmentPagerAdapter(FragmentManager fm, Context context
-            , List<Fragment>  fragments, String[] titles) {
+    private Context context;
+    public MyFragmentPagerAdapter(FragmentManager fm, Context context, List<Fragment>  fragments, String[] titles) {
         super(fm);
         this.fragments = fragments;
-        this.context = context;
         this.titles = titles;
+        this.context = context;
     }
-
     @Override
     public  Fragment getItem(int position) {
+        Log.i("FragmentAdapter : ", "do this");
         return fragments.get(position);
     }
 

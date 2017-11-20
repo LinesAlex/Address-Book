@@ -31,35 +31,29 @@ public class AddContact extends AppCompatActivity {
         return instance;
     }
     private boolean Flag;
-    private TextView tv_contact_info;
-    private FloatingActionButton btn_right;
     private EditText et_name, et_phone, et_email, et_address, et_job, et_age;
-    private Toolbar toolbar;
     private String id;
     private boolean[] FlagOfInfo = new boolean[3];
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_add_contact);
         instance = AddContact.this;
-        initView();
-        setView();
-    }
-    private void initView() {
+        //------------------------------------------------------------------------------------------
         et_name = (EditText) findViewById(R.id.et_name_add);
         et_phone = (EditText) findViewById(R.id.et_phone_add);
         et_email = (EditText) findViewById(R.id.et_email_add);
         et_address = (EditText) findViewById(R.id.et_address_add);
         et_job = (EditText) findViewById(R.id.et_job_add);
         et_age = (EditText) findViewById(R.id.et_age_add);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        btn_right = (FloatingActionButton) findViewById(R.id.btn_right);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        FloatingActionButton btn_right = (FloatingActionButton) findViewById(R.id.btn_right);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("简讯");
-        if (actionBar != null) {actionBar.setDisplayHomeAsUpEnabled(true);}
-        tv_contact_info = (TextView) findViewById(R.id.tv_contact_info);
-    }
-    private void setView() {
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        TextView tv_contact_info = (TextView) findViewById(R.id.tv_contact_info);
+        //------------------------------------------------------------------------------------------
         Intent intent = getIntent();
         Flag = intent.getBooleanExtra("Flag", Flag);
         id = intent.getStringExtra("id");
@@ -80,15 +74,15 @@ public class AddContact extends AppCompatActivity {
         }
         btn_right.setOnClickListener(new OnClickButtonListener());
     }
-    class OnClickButtonListener implements View.OnClickListener{
+    private class OnClickButtonListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.btn_right : {
                     Intro intro = new Intro();
-                    String phone = checkOutIntroInfo(et_phone.getText().toString());
-                    String name = checkOutIntroInfo(et_name.getText().toString());
-                    String email = checkOutIntroInfo(et_email.getText().toString());
+                    String phone = check(et_phone.getText().toString());
+                    String name = check(et_name.getText().toString());
+                    String email = check(et_email.getText().toString());
                     if (phone.equals("") || phone.equals("")) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder (AddContact.this);
                         dialog.setTitle("无法执行此操作");
@@ -112,9 +106,9 @@ public class AddContact extends AppCompatActivity {
                             intro.setPhone(phone);
                             intro.setName(name);
                             intro.setEmail(email);
-                            intro.setAddress(checkOutIntroInfo(et_address.getText().toString()));
-                            intro.setJob(checkOutIntroInfo(et_job.getText().toString()));
-                            intro.setAge(checkOutIntroInfo(et_age.getText().toString()));
+                            intro.setAddress(check(et_address.getText().toString()));
+                            intro.setJob(check(et_job.getText().toString()));
+                            intro.setAge(check(et_age.getText().toString()));
                             intro.updateAll("mid = ?", id);
                         } else {//insert
                             String id = GetContactsInfo.insert(phone, name, email);
@@ -122,9 +116,9 @@ public class AddContact extends AppCompatActivity {
                             intro.setPhone(phone);
                             intro.setName(name);
                             intro.setEmail(email);
-                            intro.setAddress(checkOutIntroInfo(et_address.getText().toString()));
-                            intro.setJob(checkOutIntroInfo(et_job.getText().toString()));
-                            intro.setAge(checkOutIntroInfo(et_age.getText().toString()));
+                            intro.setAddress(check(et_address.getText().toString()));
+                            intro.setJob(check(et_job.getText().toString()));
+                            intro.setAge(check(et_age.getText().toString()));
                             intro.save();
                         }
                         Intent intent = new Intent();
@@ -136,7 +130,7 @@ public class AddContact extends AppCompatActivity {
             }
         }
     }
-    private String checkOutIntroInfo(String str) {
+    private String check(String str) {
         if (str == null || str.contains("NULL")) {
             return "";
         } else {

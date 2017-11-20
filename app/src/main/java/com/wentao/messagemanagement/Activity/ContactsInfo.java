@@ -41,12 +41,10 @@ import java.util.List;
 public class ContactsInfo extends AppCompatActivity {
 
 
-    private Toolbar toolbar;
-    private ImageView iv_background;
     private ListView lv_phone_call, lv_message;
-    private Button btn_call_page, btn_show_call, btn_message_page,btn_show_message;
+    private Button btn_show_call;
+    private Button btn_show_message;
     private TextView none_call_info, none_message_info, intro_name, intro_phone, intro_email , intro_address, intro_job, intro_age;
-    private FloatingActionButton btn_to_add, btn_to_delete;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private static ContactsInfo instance;
     public static ContactsInfo getInstance() {
@@ -62,20 +60,16 @@ public class ContactsInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_contacts_info);
         instance = ContactsInfo.this;
-        initView();
-        setView();
-    }
-
-    private void initView() {
+        //------------------------------------------------------------------------------------------
         none_call_info = (TextView) findViewById(R.id.none_call_info);
         none_message_info = (TextView) findViewById(R.id.none_message_info);
 
+        Button btn_call_page = (Button) findViewById(R.id.btn_call_page);
         lv_phone_call = (ListView) findViewById(R.id.lv_phone_call);
-        btn_call_page = (Button) findViewById(R.id.btn_call_page);
         btn_show_call = (Button) findViewById(R.id.btn_show_call);
 
+        Button btn_message_page = (Button) findViewById(R.id.btn_message_page);
         lv_message = (ListView) findViewById(R.id.lv_message);
-        btn_message_page = (Button) findViewById(R.id.btn_message_page);
         btn_show_message = (Button) findViewById(R.id.btn_show_message);
 
         intro_name = (TextView) findViewById(R.id.intro_name);
@@ -85,15 +79,13 @@ public class ContactsInfo extends AppCompatActivity {
         intro_job = (TextView) findViewById(R.id.intro_job);
         intro_age = (TextView) findViewById(R.id.intro_age);
 
-        iv_background = (ImageView) findViewById(R.id.background_image_view);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ImageView iv_background = (ImageView) findViewById(R.id.background_image_view);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
-        btn_to_add = (FloatingActionButton) findViewById(R.id.btn_to_add);
-        btn_to_delete = (FloatingActionButton) findViewById(R.id.btn_to_delete);
-    }
-
-    private void setView() {
+        FloatingActionButton btn_to_add = (FloatingActionButton) findViewById(R.id.btn_to_add);
+        FloatingActionButton btn_to_delete = (FloatingActionButton) findViewById(R.id.btn_to_delete);
+        //-------------------------------------初始化------------------------------------------------
         Intent intent = getIntent();
         phoneNumber = intent.getStringExtra("phone");
         id = intent.getStringExtra("id");
@@ -108,21 +100,21 @@ public class ContactsInfo extends AppCompatActivity {
         }
         iv_background.setImageResource(imageId[Integer.parseInt(count) % 4]);
         collapsingToolbarLayout.setTitle(name);
-        setListView();
+
         if (DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("mid = ?", id).find(Intro.class).size() > 0) {
             List<Intro> intros = DataSupport.where("mid = ?", id).find(Intro.class);
             Intro intro = intros.get(0);
-            intro_name.setText(checkOutIntroInfo(intro.getName()));
-            intro_phone.setText(checkOutIntroInfo(intro.getPhone()));
-            intro_email.setText(checkOutIntroInfo(intro.getEmail()));
-            intro_address.setText(checkOutIntroInfo(intro.getAddress()));
-            intro_job.setText(checkOutIntroInfo(intro.getJob()));
-            intro_age.setText(checkOutIntroInfo(intro.getAge()));
+            intro_name.setText(check(intro.getName()));
+            intro_phone.setText(check(intro.getPhone()));
+            intro_email.setText(check(intro.getEmail()));
+            intro_address.setText(check(intro.getAddress()));
+            intro_job.setText(check(intro.getJob()));
+            intro_age.setText(check(intro.getAge()));
         } else {
             Intro intro = new Intro();
-            String n = checkOutIntroInfo(name);
-            String p = checkOutIntroInfo(phoneNumber);
-            String e = checkOutIntroInfo(email);
+            String n = check(name);
+            String p = check(phoneNumber);
+            String e = check(email);
             intro_name.setText(n);
             intro_phone.setText(p);
             intro_email.setText(e);
@@ -143,9 +135,7 @@ public class ContactsInfo extends AppCompatActivity {
         btn_call_page.setOnClickListener(listener);
         btn_to_add.setOnClickListener(listener);
         btn_to_delete.setOnClickListener(listener);
-    }
-
-    private void setListView() {
+        //-----------------------------------------设置----------------------------------------------
         //通话信息ListView设置
         GetContactsInfo.getCallInfo(phoneNumber,id);
         PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ContactsInfo.this, R.layout.item_call_info, GetContactsInfo.CallInfos);
@@ -171,9 +161,11 @@ public class ContactsInfo extends AppCompatActivity {
             params.height = height * size;
         }
         lv_message.setLayoutParams(params);
+        //------------------------------------------设置ListView-------------------------------------
     }
 
-    private String checkOutIntroInfo(String str) {
+
+    private String check(String str) {
         if (str == null || str.contains("NULL")) {
             return "";
         } else {
@@ -206,7 +198,7 @@ public class ContactsInfo extends AppCompatActivity {
                 } break;
                 case R.id.btn_message_page :
                 case R.id.none_message_info : {
-                    Intent intent = new Intent(ContactsInfo.this, MessageInfo.class);
+                    Intent intent = new Intent(ContactsInfo.this, MessagePage.class);
                     intent.putExtra("phone", phoneNumber);
                     intent.putExtra("id", id);
                     intent.putExtra("name", name);
@@ -253,6 +245,7 @@ public class ContactsInfo extends AppCompatActivity {
         }
     }
 
+    //菜单返回键
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -263,6 +256,7 @@ public class ContactsInfo extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //获取返回菜单
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -273,13 +267,13 @@ public class ContactsInfo extends AppCompatActivity {
                     if (DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("mid = ?", id).find(Intro.class).size() > 0) {
                         List<Intro> intros = DataSupport.where("mid = ?", id).find(Intro.class);
                         Intro intro = intros.get(0);
-                        intro_name.setText(checkOutIntroInfo(intro.getName()));
-                        intro_phone.setText(checkOutIntroInfo(intro.getPhone()));
-                        intro_email.setText(checkOutIntroInfo(intro.getEmail()));
-                        intro_address.setText(checkOutIntroInfo(intro.getAddress()));
-                        intro_job.setText(checkOutIntroInfo(intro.getJob()));
-                        intro_age.setText(checkOutIntroInfo(intro.getAge()));
-                        collapsingToolbarLayout.setTitle(checkOutIntroInfo(intro.getName()));
+                        intro_name.setText(check(intro.getName()));
+                        intro_phone.setText(check(intro.getPhone()));
+                        intro_email.setText(check(intro.getEmail()));
+                        intro_address.setText(check(intro.getAddress()));
+                        intro_job.setText(check(intro.getJob()));
+                        intro_age.setText(check(intro.getAge()));
+                        collapsingToolbarLayout.setTitle(check(intro.getName()));
                         super.onRestart();
                     }
                 }break;

@@ -48,21 +48,19 @@ public class ContactsList extends AppCompatActivity {
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh() {refresh();}}
-        );
+            public void onRefresh() {refresh();}});
+
         SearchView searchView = (SearchView) findViewById(R.id.sv_search);
         searchView.setIconifiedByDefault(true);//显示图标及输入框
         searchView.setSubmitButtonEnabled(true);//添加提交搜索按钮
-        contactsListView = (ListView) findViewById(R.id.lv_contacts);
 
+        contactsListView = (ListView) findViewById(R.id.lv_contacts);
         contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts,GetContactsInfo.ContactsInfos);//第一次
         contactsListView.setAdapter(contactsAdapter);//将姓名及电话号码显示到ListView上
         contactsListView.setTextFilterEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+            public boolean onQueryTextSubmit(String query) {return false;}
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText != null && newText.length() != 0){
@@ -73,16 +71,13 @@ public class ContactsList extends AppCompatActivity {
                 return true;
             }
         });
-        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.btn_addition);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton actionButton = (FloatingActionButton) findViewById(R.id.btn_addition);
+        actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ContactsList.this, AddContact.class);
                 intent.putExtra("Flag",false);
-                startActivityForResult(intent, 1);
-            }
-        });
-
+                startActivityForResult(intent, 1);}});
         setCatalog();
     }
 
@@ -90,22 +85,16 @@ public class ContactsList extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                try {Thread.sleep(2000);} catch (InterruptedException e) {e.printStackTrace();}
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         GetContactsInfo.getContacts(instance);
                         contactsAdapter.notifyDataSetChanged();
-                        swipeRefresh.setRefreshing(false);
-                    }
-                });
-            }
-        }).start();
+                        swipeRefresh.setRefreshing(false);}});
+            }}).start();
     }
+
     //为ListView添加侧边栏
     private void setCatalog() {
         WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -119,6 +108,7 @@ public class ContactsList extends AppCompatActivity {
             catalog.addView(setListSideBar(str,letterHeight));
         }
     }
+
     //setListSideBar设置侧边栏及其OnTouch事件
     private TextView setListSideBar(final String letter, int letterHeight) {
         TextView letterText = new TextView(ContactsList.this);
@@ -145,8 +135,6 @@ public class ContactsList extends AppCompatActivity {
         });
         return letterText;
     }
-    //获取动态权限
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

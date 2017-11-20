@@ -18,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wentao.messagemanagement.Activity.ContactsInfo;
-import com.wentao.messagemanagement.Activity.MessageInfo;
+import com.wentao.messagemanagement.Activity.MessagePage;
 import com.wentao.messagemanagement.Activity.ContactsList;
 import com.wentao.messagemanagement.R;
 
@@ -214,7 +214,7 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
                     }
                 }break;
                 case R.id.btn_message : {
-                    Intent intent = new Intent(ContactsList.getInstance(), MessageInfo.class);
+                    Intent intent = new Intent(ContactsList.getInstance(), MessagePage.class);
                     intent.putExtra("phone", ((TextView) view.findViewById(R.id.tv_phone)).getText());
                     intent.putExtra("id", item.getId());
                     intent.putExtra("name", item.getName());
