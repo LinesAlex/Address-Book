@@ -39,10 +39,10 @@ public class GetContactsInfo {
         AllMessages.clear();
         String[] projection = new String[] {
                 Telephony.Sms.ADDRESS
-                , Telephony.Sms.PERSON
                 , Telephony.Sms.BODY
                 , Telephony.Sms.DATE
-                , Telephony.Sms.TYPE};
+                , Telephony.Sms.TYPE
+                , Telephony.Sms.PERSON};
         Cursor cursor = context.getContentResolver().query(
                 Telephony.Sms.CONTENT_URI
                 , projection
@@ -53,11 +53,10 @@ public class GetContactsInfo {
             do{
                     MessageInfo info = new MessageInfo();
                     info.setPhoneNumber(cursor.getLong(0) + "");
-                    info.setName(cursor.getString(1));
-                    info.setSmsbody(cursor.getString(2).equals("") ? "-" : cursor.getString(2));
-                    Date date = new Date(Long.parseLong(cursor.getString(3)));
+                    info.setSmsbody(cursor.getString(1).equals("") ? "-" : cursor.getString(1));
+                    Date date = new Date(Long.parseLong(cursor.getString(2)));
                     info.setDate(TimeTool.formatForDate(date));
-                    switch (Integer.parseInt(cursor.getString(4))) {
+                    switch (Integer.parseInt(cursor.getString(3))) {
                         case Telephony.Sms.MESSAGE_TYPE_SENT:   info.setType("送达");    break;
                         case Telephony.Sms.MESSAGE_TYPE_DRAFT:  info.setType("草稿");    break;
                         case Telephony.Sms.MESSAGE_TYPE_FAILED: info.setType("发送失败"); break;
@@ -65,6 +64,7 @@ public class GetContactsInfo {
                         case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
                         default:info.setType("重新发送");break;
                     }
+                    info.setName(cursor.getString(4));
                     AllMessages.add(info);
             }while(cursor.moveToNext());
         }
@@ -74,11 +74,11 @@ public class GetContactsInfo {
     public static LinkedList<CallInfo> getAllCalls(Context context) {
         AllCalls.clear();
         String[] projection = new String[] {
-                CallLog.Calls.CACHED_NAME
-                , CallLog.Calls.TYPE
+                CallLog.Calls.TYPE
                 , CallLog.Calls.DATE
                 , CallLog.Calls.DURATION
                 , CallLog.Calls.NUMBER
+                , CallLog.Calls.CACHED_NAME
         };
         Cursor cursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI
                 , projection
@@ -88,19 +88,19 @@ public class GetContactsInfo {
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 CallInfo callInfo = new CallInfo();
-                callInfo.setName(cursor.getString(0));
-                switch (Integer.parseInt(cursor.getString(1))) {
+                switch (Integer.parseInt(cursor.getString(0))) {
                     case CallLog.Calls.INCOMING_TYPE:callInfo.setType("呼入");break;
                     case CallLog.Calls.OUTGOING_TYPE:callInfo.setType("呼出");break;
                     case CallLog.Calls.MISSED_TYPE:  callInfo.setType("未接");break;
                     default:callInfo.setType("挂断");break;
                 }
                 //呼叫时间
-                Date date = new Date(Long.parseLong(cursor.getString(2)));
+                Date date = new Date(Long.parseLong(cursor.getString(1)));
                 callInfo.setTime(TimeTool.formatForDate(date));
                 //通话时长
-                callInfo.setDuration(TimeTool.formatDuration(cursor.getLong(3)));
-                callInfo.setPhoneNumber(cursor.getLong(4) + "");
+                callInfo.setDuration(TimeTool.formatDuration(cursor.getLong(2)));
+                callInfo.setPhoneNumber(cursor.getLong(3) + "");
+                callInfo.setName(cursor.getString(4));
                 AllCalls.add(callInfo);
             }while(cursor.moveToNext());
         }
@@ -328,12 +328,14 @@ public class GetContactsInfo {
                 , new String[]{rawId});
         return true;
     }
+
     private static String getRawId(Context context, String id) {
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.RawContacts.CONTENT_URI,
                 new String[] {ContactsContract.RawContacts._ID},
                 ContactsContract.RawContacts.CONTACT_ID +" = ?",
                 new String[]{id}, null);
+        assert cursor != null;
         return cursor.moveToFirst() ? cursor.getString(0) : "";
     }
     private static String getId(Context context, String rawid){
@@ -342,6 +344,7 @@ public class GetContactsInfo {
                 new String[] {ContactsContract.RawContacts.CONTACT_ID},
                 ContactsContract.RawContacts._ID + " = ?",
                 new String[]{rawid}, null);
+        assert cursor != null;
         return cursor.moveToFirst() ? cursor.getString(0) : "";
     }
 }

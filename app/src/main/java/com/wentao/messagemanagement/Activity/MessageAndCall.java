@@ -50,7 +50,6 @@ public class MessageAndCall extends AppCompatActivity {
         ArrayList<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(new CallPageFragment());
         fragmentList.add(new MessagePageFragment());
-        Log.i("MessageAndCall : ", "do this");
         MyFragmentPagerAdapter pagerAdapter = new MyFragmentPagerAdapter(
                 getSupportFragmentManager()
                 , MessageAndCall.this

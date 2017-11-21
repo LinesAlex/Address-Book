@@ -40,12 +40,12 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
     private Button btn_info, btn_message, btn_call, btn_show_menu;
     private static LinearLayout PriorLinear;//用于menu的显示
     private static Button PriorMenu;
-//----------------------------------------------------------------
+//----------------------------------------------------------------用于getFilter()方法
     private final Object mLock = new Object();
     private ArrayList<com.wentao.messagemanagement.db.ContactsInfo> mObjects;
     private ArrayList<com.wentao.messagemanagement.db.ContactsInfo> mOriginalValues;
     private boolean visibleFlag=true;
-//----------------------------------------------------------------用于getFilter()方法
+//----------------------------------------------------------------
     static public HashMap<String, Integer> LetterToPosition = new HashMap<>();
     public ContactsAdapter(@NonNull Context context, int textViewResourceId, @NonNull List<com.wentao.messagemanagement.db.ContactsInfo> objects) {
         super(context, textViewResourceId, objects);
