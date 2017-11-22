@@ -11,7 +11,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.db.input.MContacts;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
+
+import org.litepal.crud.DataSupport;
 
 
 /**
@@ -28,7 +31,6 @@ public class Permission extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_begin);
         instance = Permission.this;
-        GetContactsInfo.getContacts(instance);
         String[] permission = new String[] {
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.CALL_PHONE,

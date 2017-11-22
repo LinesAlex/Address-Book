@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Adapter.PhoneInfoAdapter;
-import com.wentao.messagemanagement.db.Intro;
+import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.R;
 
@@ -38,7 +38,7 @@ import java.util.List;
  * Created by Administrator on 2017/11/4.
  */
 
-public class ContactsInfo extends AppCompatActivity {
+public class ContactInfo extends AppCompatActivity {
 
 
     private ListView lv_phone_call, lv_message;
@@ -46,8 +46,8 @@ public class ContactsInfo extends AppCompatActivity {
     private Button btn_show_message;
     private TextView none_call_info, none_message_info, intro_name, intro_phone, intro_email , intro_address, intro_job, intro_age;
     private CollapsingToolbarLayout collapsingToolbarLayout;
-    private static ContactsInfo instance;
-    public static ContactsInfo getInstance() {
+    private static ContactInfo instance;
+    public static ContactInfo getInstance() {
         return instance;
     }
     private int[] imageId = new int[]{R.drawable.background_1,
@@ -59,7 +59,7 @@ public class ContactsInfo extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_contacts_info);
-        instance = ContactsInfo.this;
+        instance = ContactInfo.this;
         //------------------------------------------------------------------------------------------
         none_call_info = (TextView) findViewById(R.id.none_call_info);
         none_message_info = (TextView) findViewById(R.id.none_message_info);
@@ -138,7 +138,7 @@ public class ContactsInfo extends AppCompatActivity {
         //-----------------------------------------设置----------------------------------------------
         //通话信息ListView设置
         GetContactsInfo.getCallInfo(phoneNumber,id);
-        PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ContactsInfo.this, R.layout.item_call_info, GetContactsInfo.CallInfos);
+        PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ContactInfo.this, R.layout.item_call_info, GetContactsInfo.CallInfos);
         lv_phone_call.setAdapter(phoneInfoAdapter);
         int height = lv_phone_call.getLayoutParams().height;
         int size = GetContactsInfo.CallInfos.size();
@@ -148,9 +148,9 @@ public class ContactsInfo extends AppCompatActivity {
         //finish
 
         //短信消息ListView设置
-        GetContactsInfo.getMessageInfo(phoneNumber, id, ContactsInfo.this);
+        GetContactsInfo.getMessageInfo(phoneNumber, id, ContactInfo.this);
         Collections.reverse(GetContactsInfo.MessageInfos);
-        MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ContactsInfo.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
+        MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ContactInfo.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
         lv_message.setAdapter(messageInfoAdapter);
         height = lv_message.getLayoutParams().height;
         size = GetContactsInfo.MessageInfos.size();
@@ -198,7 +198,7 @@ public class ContactsInfo extends AppCompatActivity {
                 } break;
                 case R.id.btn_message_page :
                 case R.id.none_message_info : {
-                    Intent intent = new Intent(ContactsInfo.this, MessagePage.class);
+                    Intent intent = new Intent(ContactInfo.this, MessagePage.class);
                     intent.putExtra("phone", phoneNumber);
                     intent.putExtra("id", id);
                     intent.putExtra("name", name);
@@ -216,21 +216,21 @@ public class ContactsInfo extends AppCompatActivity {
                     }
                 }break;
                 case R.id.btn_to_add :{
-                    Intent intent = new Intent(ContactsInfo.this, AddContact.class);
+                    Intent intent = new Intent(ContactInfo.this, AddContact.class);
                     intent.putExtra("Flag", true);
                     intent.putExtra("id", id);
                     intent.putExtra("name", name);
                     startActivityForResult(intent, 2);
                 }break;
                 case R.id.btn_to_delete :{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder (ContactsInfo.this);
+                    AlertDialog.Builder dialog = new AlertDialog.Builder (ContactInfo.this);
                     dialog.setTitle("删除联系人");
                     dialog.setMessage("是否要删除联系人 " + name + " ?");
                     dialog.setCancelable(false);
                     dialog.setPositiveButton("确定", new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            GetContactsInfo.delete(ContactsInfo.this, id);
+                            GetContactsInfo.delete(ContactInfo.this, id);
                             finish();
                         }
                     });

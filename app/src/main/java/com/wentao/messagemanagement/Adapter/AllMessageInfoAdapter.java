@@ -1,7 +1,6 @@
 package com.wentao.messagemanagement.Adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +8,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.Intro;
-import com.wentao.messagemanagement.db.MessageInfo;
+import com.wentao.messagemanagement.db.input.Intro;
+import com.wentao.messagemanagement.db.output.MessageInfo;
 
 import org.litepal.crud.DataSupport;
 

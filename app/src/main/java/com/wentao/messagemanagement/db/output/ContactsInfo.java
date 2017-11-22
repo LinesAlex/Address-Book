@@ -1,4 +1,4 @@
-package com.wentao.messagemanagement.db;
+package com.wentao.messagemanagement.db.output;
 
 
 import java.util.ArrayList;

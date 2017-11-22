@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wentao.messagemanagement.Adapter.ContactsAdapter;
+import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.R;
 
@@ -55,7 +57,7 @@ public class ContactsList extends AppCompatActivity {
         searchView.setSubmitButtonEnabled(true);//添加提交搜索按钮
 
         contactsListView = (ListView) findViewById(R.id.lv_contacts);
-        contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts,GetContactsInfo.ContactsInfos);//第一次
+        contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts, DataHandler.getContacts());//第一次GetContactsInfo.ContactsInfos
         contactsListView.setAdapter(contactsAdapter);//将姓名及电话号码显示到ListView上
         contactsListView.setTextFilterEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

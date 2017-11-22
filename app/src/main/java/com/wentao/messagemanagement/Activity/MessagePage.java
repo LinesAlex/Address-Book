@@ -15,7 +15,7 @@ import android.widget.ListView;
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Receiver.MessageReceiver;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.MessageInfo;
+import com.wentao.messagemanagement.db.output.MessageInfo;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.tool.TimeTool;
 

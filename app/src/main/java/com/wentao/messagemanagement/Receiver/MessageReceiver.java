@@ -8,7 +8,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
-import com.wentao.messagemanagement.db.MessageInfo;
+import com.wentao.messagemanagement.db.output.MessageInfo;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.tool.TimeTool;
 

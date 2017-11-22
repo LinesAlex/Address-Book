@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.MessageInfo;
+import com.wentao.messagemanagement.db.output.MessageInfo;
 import java.util.List;
 
 /**

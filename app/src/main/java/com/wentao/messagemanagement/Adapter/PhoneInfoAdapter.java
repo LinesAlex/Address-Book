@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.CallInfo;
+import com.wentao.messagemanagement.db.output.CallInfo;
 
 import java.util.List;
 

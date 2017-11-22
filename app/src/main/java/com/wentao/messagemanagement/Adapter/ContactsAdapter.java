@@ -17,10 +17,11 @@ import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.wentao.messagemanagement.Activity.ContactsInfo;
+import com.wentao.messagemanagement.Activity.ContactInfo;
 import com.wentao.messagemanagement.Activity.MessagePage;
 import com.wentao.messagemanagement.Activity.ContactsList;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.db.output.ContactsInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ import java.util.List;
  * Created by Administrator on 2017/11/4.
  */
 
-public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.db.ContactsInfo> {
+public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     private int resourceId;
     private View view;
 
@@ -42,21 +43,21 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
     private static Button PriorMenu;
 //----------------------------------------------------------------用于getFilter()方法
     private final Object mLock = new Object();
-    private ArrayList<com.wentao.messagemanagement.db.ContactsInfo> mObjects;
-    private ArrayList<com.wentao.messagemanagement.db.ContactsInfo> mOriginalValues;
+    private ArrayList<ContactsInfo> mObjects;
+    private ArrayList<ContactsInfo> mOriginalValues;
     private boolean visibleFlag=true;
 //----------------------------------------------------------------
     static public HashMap<String, Integer> LetterToPosition = new HashMap<>();
-    public ContactsAdapter(@NonNull Context context, int textViewResourceId, @NonNull List<com.wentao.messagemanagement.db.ContactsInfo> objects) {
+    public ContactsAdapter(@NonNull Context context, int textViewResourceId, @NonNull List<ContactsInfo> objects) {
         super(context, textViewResourceId, objects);
-        mObjects = (ArrayList<com.wentao.messagemanagement.db.ContactsInfo>) objects;
+        mObjects = (ArrayList<ContactsInfo>) objects;
         resourceId = textViewResourceId;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        com.wentao.messagemanagement.db.ContactsInfo item = getItem(position);
+        ContactsInfo item = getItem(position);
         view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
         initView();
         if (visibleFlag) {setShowLine(item, position);}
@@ -71,7 +72,7 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
         liner_right.setVisibility(View.VISIBLE);
     }
 
-    private void setShowLine(com.wentao.messagemanagement.db.ContactsInfo item, int position){
+    private void setShowLine(ContactsInfo item, int position){
         String letter = item.getPinyin();
         if (!LetterToPosition.containsKey(letter)||LetterToPosition.containsValue(position))
         {
@@ -97,7 +98,7 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
         liner_right = view.findViewById(R.id.liner_right);
     }
 
-    private void setView(com.wentao.messagemanagement.db.ContactsInfo item) {
+    private void setView(ContactsInfo item) {
         btn_info.setOnClickListener(new ItemsClickListener(view, item));
         btn_message.setOnClickListener(new ItemsClickListener(view, item));
         btn_call.setOnClickListener(new ItemsClickListener(view, item));
@@ -133,7 +134,7 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
 
 
                 if (prefix == null || prefix.length() == 0) {
-                    final ArrayList<com.wentao.messagemanagement.db.ContactsInfo> list;
+                    final ArrayList<ContactsInfo> list;
                     synchronized (mLock) {
                         list = new ArrayList<>(mOriginalValues);
                     }
@@ -143,16 +144,16 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
                 } else {
 
                     final String prefixString = prefix.toString().toLowerCase();
-                    final ArrayList<com.wentao.messagemanagement.db.ContactsInfo> values;
+                    final ArrayList<ContactsInfo> values;
                     synchronized (mLock) {
                         values = new ArrayList<>(mOriginalValues);
                     }
 
                     final int count = values.size();
-                    final ArrayList<com.wentao.messagemanagement.db.ContactsInfo> newValues = new ArrayList<>();
+                    final ArrayList<ContactsInfo> newValues = new ArrayList<>();
 
                     for (int i = 0; i < count; i++) {
-                        final com.wentao.messagemanagement.db.ContactsInfo value = values.get(i);
+                        final ContactsInfo value = values.get(i);
                         final String nameText = value.getName().replace(" ", "").toLowerCase();//change
                         String phoneText = "";
                         for (String str : value.getPhoneNumber())
@@ -182,7 +183,7 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 //noinspection unchecked
-                mObjects = (ArrayList<com.wentao.messagemanagement.db.ContactsInfo>) results.values;
+                mObjects = (ArrayList<ContactsInfo>) results.values;
                 clear();
                 addAll(mObjects);
                 if (results.count > 0) {
@@ -196,8 +197,8 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
 
     private class ItemsClickListener implements View.OnClickListener {
         private View view;
-        private com.wentao.messagemanagement.db.ContactsInfo item;
-        ItemsClickListener(View view, com.wentao.messagemanagement.db.ContactsInfo item) {
+        private ContactsInfo item;
+        ItemsClickListener(View view, ContactsInfo item) {
             this.view = view;
             this.item = item;
         }
@@ -221,7 +222,7 @@ public class ContactsAdapter extends ArrayAdapter<com.wentao.messagemanagement.d
                     ContactsList.getInstance().startActivity(intent);
                 }break;
                 case R.id.btn_info : {
-                    Intent intent = new Intent(ContactsList.getInstance(), ContactsInfo.class);
+                    Intent intent = new Intent(ContactsList.getInstance(), ContactInfo.class);
                     intent.putExtra("name", ((TextView) view.findViewById(R.id.tv_name)).getText());
                     intent.putExtra("count", ((TextView) view.findViewById(R.id.tv_count)).getText());
                     intent.putExtra("phone", ((TextView) view.findViewById(R.id.tv_phone)).getText());

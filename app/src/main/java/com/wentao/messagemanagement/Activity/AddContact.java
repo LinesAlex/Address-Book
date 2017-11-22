@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.Intro;
+import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 
 import org.litepal.crud.DataSupport;

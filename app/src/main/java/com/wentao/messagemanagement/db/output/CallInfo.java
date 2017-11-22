@@ -1,4 +1,4 @@
-package com.wentao.messagemanagement.db;
+package com.wentao.messagemanagement.db.output;
 
 /**
  * Created by Administrator on 2017/11/8.

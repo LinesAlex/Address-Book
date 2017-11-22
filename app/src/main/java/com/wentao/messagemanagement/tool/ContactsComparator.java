@@ -1,6 +1,6 @@
 package com.wentao.messagemanagement.tool;
 
-import com.wentao.messagemanagement.db.ContactsInfo;
+import com.wentao.messagemanagement.db.output.ContactsInfo;
 
 import java.util.Comparator;
 
@@ -11,16 +11,12 @@ import java.util.Comparator;
 public class ContactsComparator implements Comparator<ContactsInfo> {
     @Override
     public int compare(ContactsInfo o1, ContactsInfo o2) {
-        ContactsInfo one, two;
-        one = o1;
-        two = o2;
-        String oneName = one.getName().substring(0,1);
-        String twoName = two.getName().substring(0,1);
-
-        int flag = one.getPinyin().compareTo(two.getPinyin());
+        String n1 = !o1.getName().isEmpty()?o1.getName().substring(0,1) : "#";
+        String n2 = o2.getName().isEmpty()?o2.getName().substring(0,1) : "#";
+        int flag = o1.getPinyin().compareTo(o2.getPinyin());
         if (flag > 0 )
             return 1;
-        else if (flag == 0 && oneName == twoName)
+        else if (flag == 0 && n1.equals(n2))
             return 0;
         else
             return -1;

@@ -31,7 +31,7 @@
             android:name=".Activity.ContactsList">
         </activity>
         <activity
-            android:name=".Activity.ContactsInfo"
+            android:name=".Activity.ContactInfo"
             android:theme="@style/MyActivityTheme">
         </activity>
         <activity

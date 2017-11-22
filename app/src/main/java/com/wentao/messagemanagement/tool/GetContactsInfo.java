@@ -8,15 +8,16 @@ import android.database.Cursor;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.telecom.Call;
-import android.util.Log;
 
 import com.wentao.messagemanagement.Activity.AddContact;
-import com.wentao.messagemanagement.Activity.ContactsInfo;
-import com.wentao.messagemanagement.db.CallInfo;
-import com.wentao.messagemanagement.db.MessageInfo;
+import com.wentao.messagemanagement.Activity.ContactInfo;
+import com.wentao.messagemanagement.db.output.CallInfo;
+import com.wentao.messagemanagement.db.output.ContactsInfo;
+import com.wentao.messagemanagement.db.input.MContacts;
+import com.wentao.messagemanagement.db.input.MEmail;
+import com.wentao.messagemanagement.db.input.MPhone;
+import com.wentao.messagemanagement.db.output.MessageInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
  */
 
 public class GetContactsInfo {
-    public static ArrayList<com.wentao.messagemanagement.db.ContactsInfo> ContactsInfos= new ArrayList<>();//联系人基本信息
+    public static ArrayList<ContactsInfo> ContactsInfos= new ArrayList<>();//联系人基本信息
     public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
     public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
 
@@ -51,21 +52,21 @@ public class GetContactsInfo {
                 , Telephony.Sms.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {
             do{
-                    MessageInfo info = new MessageInfo();
-                    info.setPhoneNumber(cursor.getLong(0) + "");
-                    info.setSmsbody(cursor.getString(1).equals("") ? "-" : cursor.getString(1));
-                    Date date = new Date(Long.parseLong(cursor.getString(2)));
-                    info.setDate(TimeTool.formatForDate(date));
-                    switch (Integer.parseInt(cursor.getString(3))) {
-                        case Telephony.Sms.MESSAGE_TYPE_SENT:   info.setType("送达");    break;
-                        case Telephony.Sms.MESSAGE_TYPE_DRAFT:  info.setType("草稿");    break;
-                        case Telephony.Sms.MESSAGE_TYPE_FAILED: info.setType("发送失败"); break;
-                        case Telephony.Sms.MESSAGE_TYPE_INBOX:  info.setType("接收");    break;
-                        case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
-                        default:info.setType("重新发送");break;
-                    }
-                    info.setName(cursor.getString(4));
-                    AllMessages.add(info);
+                MessageInfo info = new MessageInfo();
+                info.setPhoneNumber(cursor.getLong(0) + "");
+                info.setSmsbody(cursor.getString(1).equals("") ? "-" : cursor.getString(1));
+                Date date = new Date(Long.parseLong(cursor.getString(2)));
+                info.setDate(TimeTool.formatForDate(date));
+                switch (Integer.parseInt(cursor.getString(3))) {
+                    case Telephony.Sms.MESSAGE_TYPE_SENT:   info.setType("送达");    break;
+                    case Telephony.Sms.MESSAGE_TYPE_DRAFT:  info.setType("草稿");    break;
+                    case Telephony.Sms.MESSAGE_TYPE_FAILED: info.setType("发送失败"); break;
+                    case Telephony.Sms.MESSAGE_TYPE_INBOX:  info.setType("接收");    break;
+                    case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
+                    default:info.setType("重新发送");break;
+                }
+                info.setName(cursor.getString(4));
+                AllMessages.add(info);
             }while(cursor.moveToNext());
         }
         Collections.reverse(AllMessages);
@@ -116,7 +117,7 @@ public class GetContactsInfo {
                 , CallLog.Calls.DATE
                 , CallLog.Calls.DURATION
         };
-        Cursor cursor = ContactsInfo.getInstance().getContentResolver().query(CallLog.Calls.CONTENT_URI
+        Cursor cursor = ContactInfo.getInstance().getContentResolver().query(CallLog.Calls.CONTENT_URI
                 , projection
                 , CallLog.Calls.NUMBER + "=" + phoneNumber
                 , null
@@ -184,7 +185,7 @@ public class GetContactsInfo {
         return MessageInfos;
     }
 
-    public static ArrayList<com.wentao.messagemanagement.db.ContactsInfo>  getContacts(Context context) {
+    public static ArrayList<ContactsInfo>  getContacts(Context context) {
 //____________________________________________finish________________________________________________
         //联系人的Uri，也就是content://com.android.contacts/contacts
         ContactsInfos.clear();
@@ -192,40 +193,54 @@ public class GetContactsInfo {
                 ContactsContract.Contacts._ID
                 , ContactsContract.Contacts.DISPLAY_NAME
                 , ContactsContract.Contacts.SORT_KEY_PRIMARY};//指定获取_id和display_name两列数据，display_name即为姓名
-        String[] phoneProjection = new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER};//指定获取NUMBER这一列数据
-        String[] emailProjection = new String[] {ContactsContract.CommonDataKinds.Email.ADDRESS};//指定获取ADDRESS这一列数据
 
         Cursor cursorInfo = context.getContentResolver().query(
                 ContactsContract.Contacts.CONTENT_URI
                 , projection, null, null, null);//根据Uri查询相应的ContentProvider，cursor为获取到的数据集
         if (cursorInfo != null && cursorInfo.moveToFirst()) {
             do {
-                com.wentao.messagemanagement.db.ContactsInfo contactsInfo = new com.wentao.messagemanagement.db.ContactsInfo();
+                ContactsInfo contactsInfo = new ContactsInfo();
                 contactsInfo.setId(cursorInfo.getString(0));
                 contactsInfo.setName(cursorInfo.getString(1));//获取姓名
                 contactsInfo.setPinyin(cursorInfo.getString(2).substring(0,1));
+
+                MContacts contacts = new MContacts();
+                contacts.setMid(cursorInfo.getString(0));
+                contacts.setName(cursorInfo.getString(1));
+                contacts.setSurname(cursorInfo.getString(2).substring(0,1));
 //--------------------------------------get phone number-------------------------------------------
                 Cursor cursor = context.getContentResolver().query(
                         ContactsContract.CommonDataKinds.Phone.CONTENT_URI
-                        , phoneProjection
+                        , new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER}
                         , ContactsContract.CommonDataKinds.Phone.CONTACT_ID  + "=" + contactsInfo.getId()
                         , null, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     do {
+                        MPhone phone = new MPhone();
+                        phone.setMid(contacts.getMid());
+                        phone.setPhone(cursor.getLong(0) + "");
+                        phone.save();
+
                         contactsInfo.setPhoneNumber(cursor.getLong(0) + "");
                     } while (cursor.moveToNext());
                 }
 //--------------------------------------get email address-------------------------------------------
                 cursor = context.getContentResolver().query(
                         ContactsContract.CommonDataKinds.Email.CONTENT_URI
-                        , emailProjection
+                        , new String[] {ContactsContract.CommonDataKinds.Email.ADDRESS}
                         , ContactsContract.CommonDataKinds.Email.CONTACT_ID  + "=" + contactsInfo.getId()
                         , null, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     do {
+                        MEmail email = new MEmail();
+                        email.setMid(contacts.getMid());
+                        email.setEmail(cursor.getString(0));
+                        email.save();
+
                         contactsInfo.setEmail(cursor.getString(0));
                     } while (cursor.moveToNext());
                 }
+                contacts.save();
                 ContactsInfos.add(contactsInfo);
             } while (cursorInfo.moveToNext());
         }
