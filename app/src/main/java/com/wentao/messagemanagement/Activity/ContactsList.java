@@ -20,9 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wentao.messagemanagement.Adapter.ContactsAdapter;
+import com.wentao.messagemanagement.db.input.MContacts;
+import com.wentao.messagemanagement.db.output.ContactsInfo;
 import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.R;
+
+import org.litepal.crud.DataSupport;
 
 public class ContactsList extends AppCompatActivity {
     
@@ -40,26 +44,27 @@ public class ContactsList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_contacts_list);
         instance = ContactsList.this;
-        initListView();
-    }
 
-    //初始化ListView
-    private void initListView(){
+        if (DataSupport.findAll(MContacts.class).isEmpty()) {
+            GetContactsInfo.getContacts(instance);
+        }
 
+        //------------------------------------------------------------------------------------------
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh() {refresh();}});
+            public void onRefresh() {refresh();}});//Refresh
 
+        DataHandler.getContacts();
+        contactsListView = (ListView) findViewById(R.id.lv_contacts);
+        contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts, ContactsInfo.List);//第一次GetContactsInfo.ContactsInfos
+        contactsListView.setAdapter(contactsAdapter);//Set ListView
+
+        contactsListView.setTextFilterEnabled(true);
         SearchView searchView = (SearchView) findViewById(R.id.sv_search);
         searchView.setIconifiedByDefault(true);//显示图标及输入框
         searchView.setSubmitButtonEnabled(true);//添加提交搜索按钮
-
-        contactsListView = (ListView) findViewById(R.id.lv_contacts);
-        contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts, DataHandler.getContacts());//第一次GetContactsInfo.ContactsInfos
-        contactsListView.setAdapter(contactsAdapter);//将姓名及电话号码显示到ListView上
-        contactsListView.setTextFilterEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {return false;}
@@ -67,19 +72,16 @@ public class ContactsList extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 if (newText != null && newText.length() != 0){
                     contactsListView.setFilterText(newText);
-                } else {
-                    contactsListView.clearTextFilter();
-                }
-                return true;
-            }
-        });
+                } else {contactsListView.clearTextFilter();}
+                return true;}});//Search
+
         FloatingActionButton actionButton = (FloatingActionButton) findViewById(R.id.btn_addition);
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ContactsList.this, AddContact.class);
                 intent.putExtra("Flag",false);
-                startActivityForResult(intent, 1);}});
+                startActivityForResult(intent, 1);}});//Add Contacts
         setCatalog();
     }
 
@@ -91,10 +93,25 @@ public class ContactsList extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        GetContactsInfo.getContacts(instance);
+                        GetContactsInfo.getContacts(ContactsList.this);
+                        DataHandler.getContacts();
                         contactsAdapter.notifyDataSetChanged();
                         swipeRefresh.setRefreshing(false);}});
             }}).start();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 1 :
+                if (resultCode == RESULT_OK) {
+                    String name = data.getStringExtra("name");
+                    refresh();
+                    CoordinatorLayout coordinatorLayout =(CoordinatorLayout) findViewById(R.id.coordinator);
+                    Snackbar.make(coordinatorLayout, "联系人 " + name + " 添加成功!", Snackbar.LENGTH_SHORT).show();
+                }break;
+            default : break;
+        }
     }
 
     //为ListView添加侧边栏
@@ -138,17 +155,5 @@ public class ContactsList extends AppCompatActivity {
         return letterText;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case 1 :
-                if (resultCode == RESULT_OK) {
-                    String name = data.getStringExtra("name");
-                    refresh();
-                    CoordinatorLayout coordinatorLayout =(CoordinatorLayout) findViewById(R.id.coordinator);
-                    Snackbar.make(coordinatorLayout, "联系人 " + name + " 添加成功!", Snackbar.LENGTH_SHORT).show();
-                }break;
-            default : break;
-        }
-    }
+
 }

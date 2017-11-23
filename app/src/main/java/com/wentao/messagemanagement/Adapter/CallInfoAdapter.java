@@ -20,12 +20,12 @@ import java.util.List;
  * Created by Administrator on 2017/11/8.
  */
 
-public class PhoneInfoAdapter extends ArrayAdapter<CallInfo>{
+public class CallInfoAdapter extends ArrayAdapter<CallInfo>{
     private int resourceId;
     private View view;
     private TextView tv_time, tv_type, tv_duration;
     private ImageView iv_type;
-    public PhoneInfoAdapter(@NonNull Context context, int textViewResourceId, @NonNull List<CallInfo> objects) {
+    public CallInfoAdapter(@NonNull Context context, int textViewResourceId, @NonNull List<CallInfo> objects) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
     }
@@ -57,5 +57,6 @@ public class PhoneInfoAdapter extends ArrayAdapter<CallInfo>{
             case "挂断" :iv_type.setImageResource(R.drawable.icon_call_handup);break;
             default:break;
         }
+
     }
 }

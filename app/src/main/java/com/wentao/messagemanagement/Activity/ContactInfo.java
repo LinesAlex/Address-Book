@@ -24,8 +24,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
-import com.wentao.messagemanagement.Adapter.PhoneInfoAdapter;
+import com.wentao.messagemanagement.Adapter.CallInfoAdapter;
 import com.wentao.messagemanagement.db.input.Intro;
+import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.R;
 
@@ -54,7 +55,7 @@ public class ContactInfo extends AppCompatActivity {
             R.drawable.background_2,
             R.drawable.background_3,
             R.drawable.background_4};
-    private String phoneNumber, id, name;
+    private String id, phoneNumber;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,23 +88,12 @@ public class ContactInfo extends AppCompatActivity {
         FloatingActionButton btn_to_delete = (FloatingActionButton) findViewById(R.id.btn_to_delete);
         //-------------------------------------初始化------------------------------------------------
         Intent intent = getIntent();
-        phoneNumber = intent.getStringExtra("phone");
         id = intent.getStringExtra("id");
-        name = intent.getStringExtra("name");
-        String email = intent.getStringExtra("email");
-        String count = intent.getStringExtra("count");
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        iv_background.setImageResource(imageId[Integer.parseInt(count) % 4]);
-        collapsingToolbarLayout.setTitle(name);
-
-        if (DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("mid = ?", id).find(Intro.class).size() > 0) {
-            List<Intro> intros = DataSupport.where("mid = ?", id).find(Intro.class);
-            Intro intro = intros.get(0);
+        phoneNumber = DataHandler.getPhone(id);
+        String name = DataHandler.getName(id);
+        String email = DataHandler.getEmail(id);
+        Intro intro = DataHandler.getIntro(id);
+        if (intro != null) {
             intro_name.setText(check(intro.getName()));
             intro_phone.setText(check(intro.getPhone()));
             intro_email.setText(check(intro.getEmail()));
@@ -111,22 +101,12 @@ public class ContactInfo extends AppCompatActivity {
             intro_job.setText(check(intro.getJob()));
             intro_age.setText(check(intro.getAge()));
         } else {
-            Intro intro = new Intro();
-            String n = check(name);
-            String p = check(phoneNumber);
-            String e = check(email);
-            intro_name.setText(n);
-            intro_phone.setText(p);
-            intro_email.setText(e);
-            intro_address.setText("");
-            intro_job.setText("");
-            intro_age.setText("");
-            intro.setName(n);
-            intro.setPhone(p);
-            intro.setEmail(e);
-            intro.setMid(id);
-            intro.save();
+            intro_phone.setText(phoneNumber);
+            intro_name.setText(name);
+            intro_email.setText(email);
+            DataHandler.insertIntro(id, new String[] {phoneNumber, name, email, "", "", ""});
         }
+
         OnClickButtonListener listener = new OnClickButtonListener();
         btn_show_call.setOnClickListener(listener);
         btn_show_message.setOnClickListener(listener);
@@ -135,33 +115,43 @@ public class ContactInfo extends AppCompatActivity {
         btn_call_page.setOnClickListener(listener);
         btn_to_add.setOnClickListener(listener);
         btn_to_delete.setOnClickListener(listener);
+
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        iv_background.setImageResource(imageId[Integer.parseInt(id) % 4]);
+        collapsingToolbarLayout.setTitle(name);
         //-----------------------------------------设置----------------------------------------------
         //通话信息ListView设置
-        GetContactsInfo.getCallInfo(phoneNumber,id);
-        PhoneInfoAdapter phoneInfoAdapter = new PhoneInfoAdapter(ContactInfo.this, R.layout.item_call_info, GetContactsInfo.CallInfos);
-        lv_phone_call.setAdapter(phoneInfoAdapter);
-        int height = lv_phone_call.getLayoutParams().height;
-        int size = GetContactsInfo.CallInfos.size();
-        ViewGroup.LayoutParams params = lv_phone_call.getLayoutParams();
-        params.height = height * size;
-        lv_phone_call.setLayoutParams(params);
-        //finish
-
-        //短信消息ListView设置
-        GetContactsInfo.getMessageInfo(phoneNumber, id, ContactInfo.this);
-        Collections.reverse(GetContactsInfo.MessageInfos);
-        MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ContactInfo.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
-        lv_message.setAdapter(messageInfoAdapter);
-        height = lv_message.getLayoutParams().height;
-        size = GetContactsInfo.MessageInfos.size();
-        params = lv_message.getLayoutParams();
-        if (size > 5) {
-            params.height = height * 5;
-        } else {
+        if (!(phoneNumber.isEmpty() && phoneNumber.equals(""))){
+            GetContactsInfo.getCallInfo(phoneNumber,id);
+            CallInfoAdapter phoneInfoAdapter = new CallInfoAdapter(ContactInfo.this, R.layout.item_call_info, GetContactsInfo.CallInfos);
+            lv_phone_call.setAdapter(phoneInfoAdapter);
+            int height = lv_phone_call.getLayoutParams().height;
+            int size = GetContactsInfo.CallInfos.size();
+            ViewGroup.LayoutParams params = lv_phone_call.getLayoutParams();
             params.height = height * size;
+            lv_phone_call.setLayoutParams(params);
+            //finish
+
+            //短信消息ListView设置
+            GetContactsInfo.getMessageInfo(phoneNumber, id, ContactInfo.this);
+            Collections.reverse(GetContactsInfo.MessageInfos);
+            MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ContactInfo.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
+            lv_message.setAdapter(messageInfoAdapter);
+            height = lv_message.getLayoutParams().height;
+            size = GetContactsInfo.MessageInfos.size();
+            params = lv_message.getLayoutParams();
+            if (size > 5) {
+                params.height = height * 5;
+            } else {
+                params.height = height * size;
+            }
+            lv_message.setLayoutParams(params);
+            //------------------------------------------设置ListView-------------------------------------
         }
-        lv_message.setLayoutParams(params);
-        //------------------------------------------设置ListView-------------------------------------
     }
 
 
@@ -180,6 +170,7 @@ public class ContactInfo extends AppCompatActivity {
                 case R.id.btn_call_page : {
                     if(ActivityCompat.checkSelfPermission(ContactsList.getInstance(),
                             Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+
                         Intent intent = new Intent(Intent.ACTION_CALL);
                         intent.setData(Uri.parse("tel:" + phoneNumber));
                         ContactsList.getInstance().startActivity(intent);
@@ -199,9 +190,7 @@ public class ContactInfo extends AppCompatActivity {
                 case R.id.btn_message_page :
                 case R.id.none_message_info : {
                     Intent intent = new Intent(ContactInfo.this, MessagePage.class);
-                    intent.putExtra("phone", phoneNumber);
                     intent.putExtra("id", id);
-                    intent.putExtra("name", name);
                     startActivity(intent);
                 }break;
                 case R.id.btn_show_message : {
@@ -219,18 +208,18 @@ public class ContactInfo extends AppCompatActivity {
                     Intent intent = new Intent(ContactInfo.this, AddContact.class);
                     intent.putExtra("Flag", true);
                     intent.putExtra("id", id);
-                    intent.putExtra("name", name);
                     startActivityForResult(intent, 2);
                 }break;
                 case R.id.btn_to_delete :{
                     AlertDialog.Builder dialog = new AlertDialog.Builder (ContactInfo.this);
                     dialog.setTitle("删除联系人");
-                    dialog.setMessage("是否要删除联系人 " + name + " ?");
+                    dialog.setMessage("是否要删除此联系人 ?");
                     dialog.setCancelable(false);
                     dialog.setPositiveButton("确定", new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             GetContactsInfo.delete(ContactInfo.this, id);
+                            DataHandler.deleteIntro(id);
                             finish();
                         }
                     });

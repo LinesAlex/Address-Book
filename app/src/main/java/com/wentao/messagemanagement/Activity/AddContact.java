@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.input.Intro;
+import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 
 import org.litepal.crud.DataSupport;
@@ -83,43 +84,30 @@ public class AddContact extends AppCompatActivity {
                     String phone = check(et_phone.getText().toString());
                     String name = check(et_name.getText().toString());
                     String email = check(et_email.getText().toString());
-                    if (phone.equals("") || phone.equals("")) {
+                    String address = check(et_address.getText().toString());
+                    String job = check(et_job.getText().toString());
+                    String age = check(et_age.getText().toString());
+
+                    if (phone.equals("") || name.equals("")) {//电话不可为空
                         AlertDialog.Builder dialog = new AlertDialog.Builder (AddContact.this);
                         dialog.setTitle("无法执行此操作");
                         dialog.setMessage("未填写姓名或电话号码!\n是否放弃编辑?");
                         dialog.setCancelable(false);
                         dialog.setPositiveButton("重新编辑", new DialogInterface.OnClickListener(){
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
+                            public void onClick(DialogInterface dialog, int which) {}});
                         dialog.setNegativeButton("放弃", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        });
+                            public void onClick(DialogInterface dialog, int which) {finish();}});
                         dialog.show();
+
                     } else {
                         if (Flag) {//update
                             GetContactsInfo.update(id, phone, name, email, FlagOfInfo);
-                            intro.setPhone(phone);
-                            intro.setName(name);
-                            intro.setEmail(email);
-                            intro.setAddress(check(et_address.getText().toString()));
-                            intro.setJob(check(et_job.getText().toString()));
-                            intro.setAge(check(et_age.getText().toString()));
-                            intro.updateAll("mid = ?", id);
+                            DataHandler.updateIntro(id, new String[]{phone, name, email, address, job, age});
                         } else {//insert
                             String id = GetContactsInfo.insert(phone, name, email);
-                            intro.setMid(id);
-                            intro.setPhone(phone);
-                            intro.setName(name);
-                            intro.setEmail(email);
-                            intro.setAddress(check(et_address.getText().toString()));
-                            intro.setJob(check(et_job.getText().toString()));
-                            intro.setAge(check(et_age.getText().toString()));
-                            intro.save();
+                            DataHandler.updateIntro(id, new String[]{phone, name, email, address, job, age});
                         }
                         Intent intent = new Intent();
                         intent.putExtra("name", name);

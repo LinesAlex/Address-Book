@@ -9,15 +9,19 @@ import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.wentao.messagemanagement.Activity.AddContact;
 import com.wentao.messagemanagement.Activity.ContactInfo;
+import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.db.output.CallInfo;
 import com.wentao.messagemanagement.db.output.ContactsInfo;
 import com.wentao.messagemanagement.db.input.MContacts;
 import com.wentao.messagemanagement.db.input.MEmail;
 import com.wentao.messagemanagement.db.input.MPhone;
 import com.wentao.messagemanagement.db.output.MessageInfo;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,10 +33,8 @@ import java.util.LinkedList;
  */
 
 public class GetContactsInfo {
-    public static ArrayList<ContactsInfo> ContactsInfos= new ArrayList<>();//联系人基本信息
     public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
     public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
-
     public static LinkedList<MessageInfo> AllMessages = new LinkedList<>();
     public static LinkedList<CallInfo> AllCalls = new LinkedList<>();
 
@@ -65,13 +67,25 @@ public class GetContactsInfo {
                     case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
                     default:info.setType("重新发送");break;
                 }
-                info.setName(cursor.getString(4));
+
+
+                if (cursor.getString(4) == "")
+                    info.setName(cursor.getString(4));
+                else if (DataSupport.where("phone = ?",cursor.getLong(0) + "").find(MPhone.class).size() > 0) {
+                    String id = DataSupport.where("phone = ?",cursor.getLong(0) + "").find(MPhone.class).get(0).getMid();
+                    info.setName(DataHandler.getName(id));
+                    info.setId(id);
+                }else {
+                    info.setName(info.getPhoneNumber());
+                }
+
                 AllMessages.add(info);
             }while(cursor.moveToNext());
         }
         Collections.reverse(AllMessages);
         return AllMessages;
     }
+
     public static LinkedList<CallInfo> getAllCalls(Context context) {
         AllCalls.clear();
         String[] projection = new String[] {
@@ -101,7 +115,17 @@ public class GetContactsInfo {
                 //通话时长
                 callInfo.setDuration(TimeTool.formatDuration(cursor.getLong(2)));
                 callInfo.setPhoneNumber(cursor.getLong(3) + "");
-                callInfo.setName(cursor.getString(4));
+
+                if (cursor.getString(4) == "") {
+                    callInfo.setName(cursor.getString(4));
+                } else if (DataSupport.where("phone = ?",cursor.getLong(3) + "").find(MPhone.class).size() > 0) {
+                    String id = DataSupport.where("phone = ?",cursor.getLong(3) + "").find(MPhone.class).get(0).getMid();
+                    callInfo.setName(DataHandler.getName(id));
+                    callInfo.setId(id);
+                } else {
+                    callInfo.setName(callInfo.getPhoneNumber());
+                }
+
                 AllCalls.add(callInfo);
             }while(cursor.moveToNext());
         }
@@ -185,10 +209,12 @@ public class GetContactsInfo {
         return MessageInfos;
     }
 
-    public static ArrayList<ContactsInfo>  getContacts(Context context) {
+    public static void getContacts(Context context) {
+        DataSupport.deleteAll(MPhone.class);
+        DataSupport.deleteAll(MEmail.class);
+        DataSupport.deleteAll(MContacts.class);
 //____________________________________________finish________________________________________________
         //联系人的Uri，也就是content://com.android.contacts/contacts
-        ContactsInfos.clear();
         String[] projection = new String[] {
                 ContactsContract.Contacts._ID
                 , ContactsContract.Contacts.DISPLAY_NAME
@@ -199,10 +225,6 @@ public class GetContactsInfo {
                 , projection, null, null, null);//根据Uri查询相应的ContentProvider，cursor为获取到的数据集
         if (cursorInfo != null && cursorInfo.moveToFirst()) {
             do {
-                ContactsInfo contactsInfo = new ContactsInfo();
-                contactsInfo.setId(cursorInfo.getString(0));
-                contactsInfo.setName(cursorInfo.getString(1));//获取姓名
-                contactsInfo.setPinyin(cursorInfo.getString(2).substring(0,1));
 
                 MContacts contacts = new MContacts();
                 contacts.setMid(cursorInfo.getString(0));
@@ -212,7 +234,7 @@ public class GetContactsInfo {
                 Cursor cursor = context.getContentResolver().query(
                         ContactsContract.CommonDataKinds.Phone.CONTENT_URI
                         , new String[] {ContactsContract.CommonDataKinds.Phone.NUMBER}
-                        , ContactsContract.CommonDataKinds.Phone.CONTACT_ID  + "=" + contactsInfo.getId()
+                        , ContactsContract.CommonDataKinds.Phone.CONTACT_ID  + "=" + contacts.getMid()
                         , null, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     do {
@@ -220,15 +242,13 @@ public class GetContactsInfo {
                         phone.setMid(contacts.getMid());
                         phone.setPhone(cursor.getLong(0) + "");
                         phone.save();
-
-                        contactsInfo.setPhoneNumber(cursor.getLong(0) + "");
                     } while (cursor.moveToNext());
                 }
 //--------------------------------------get email address-------------------------------------------
                 cursor = context.getContentResolver().query(
                         ContactsContract.CommonDataKinds.Email.CONTENT_URI
                         , new String[] {ContactsContract.CommonDataKinds.Email.ADDRESS}
-                        , ContactsContract.CommonDataKinds.Email.CONTACT_ID  + "=" + contactsInfo.getId()
+                        , ContactsContract.CommonDataKinds.Email.CONTACT_ID  + "=" + contacts.getMid()
                         , null, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     do {
@@ -236,26 +256,12 @@ public class GetContactsInfo {
                         email.setMid(contacts.getMid());
                         email.setEmail(cursor.getString(0));
                         email.save();
-
-                        contactsInfo.setEmail(cursor.getString(0));
                     } while (cursor.moveToNext());
                 }
                 contacts.save();
-                ContactsInfos.add(contactsInfo);
             } while (cursorInfo.moveToNext());
         }
-        sortContactsInfos();
-        return ContactsInfos;
     }
-
-
-    private static void sortContactsInfos(){
-        Collections.sort(ContactsInfos,new ContactsComparator());//比较
-        for (int i = 0; i < ContactsInfos.size(); i++) {
-            ContactsInfos.get(i).setCount(i + 1);
-        }
-    }
-
     public static boolean update(String id, String phone, String name, String email, boolean[] FlagOfInfo) {
         //插入raw_contacts表，并获取_id属性
         String rawId = getRawId(AddContact.getInstance(), id);

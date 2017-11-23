@@ -2,13 +2,14 @@ package com.wentao.messagemanagement.db.output;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/11/4.
  */
 
 public class ContactsInfo {
-
+    static public List<ContactsInfo> List = new ArrayList<>();
     private int count = 0;
     private String id = null;
     private String name = null;

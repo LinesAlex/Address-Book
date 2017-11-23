@@ -47,18 +47,8 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
         holder.tv_time_mc.setText(check(callInfo.getTime()).split(" ")[1]);
         holder.tv_day_mc.setText(check(callInfo.getTime()).split(" ")[0]);
         holder.tv_info_mc.setText(check(callInfo.getType()));
-        if (DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("phone = ?",callInfo.getPhoneNumber()).find(Intro.class).size() > 0)
-        {
-            List<Intro> intro = DataSupport.where("phone = ?",callInfo.getPhoneNumber()).find(Intro.class);
-            holder.tv_name_mc.setText(intro.get(0).getName());
-            holder.tv_name_mc.setText(intro.get(0).getName().substring(0,1));
-        } else if(callInfo.getName() != null){
-            holder.tv_name_mc.setText(check(callInfo.getName()));
-            holder.tv_first_letter.setText(check(callInfo.getName()).substring(0,1));
-        }else {
-            holder.tv_name_mc.setText(check(callInfo.getPhoneNumber()));
-            holder.tv_first_letter.setText(check(callInfo.getPhoneNumber()).substring(0,1));
-        }
+        holder.tv_name_mc.setText(check(callInfo.getName()));
+        holder.tv_first_letter.setText(check(callInfo.getName()).substring(0,1));
         if (gonePositions.contains(position)) {
             holder.line_day.setVisibility(View.VISIBLE);}
         else {holder.line_day.setVisibility(View.GONE);}

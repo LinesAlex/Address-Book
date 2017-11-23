@@ -13,7 +13,7 @@ public class ContactsComparator implements Comparator<ContactsInfo> {
     public int compare(ContactsInfo o1, ContactsInfo o2) {
         String n1 = !o1.getName().isEmpty()?o1.getName().substring(0,1) : "#";
         String n2 = o2.getName().isEmpty()?o2.getName().substring(0,1) : "#";
-        int flag = o1.getPinyin().compareTo(o2.getPinyin());
+        int flag = o1.getPinyin().toLowerCase().compareTo(o2.getPinyin().toLowerCase());
         if (flag > 0 )
             return 1;
         else if (flag == 0 && n1.equals(n2))

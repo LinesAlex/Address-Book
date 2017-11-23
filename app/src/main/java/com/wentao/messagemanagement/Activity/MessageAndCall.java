@@ -39,9 +39,6 @@ public class MessageAndCall extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_message_and_call);
         instance = MessageAndCall.this;
-        if (DataSupport.findAll(MContacts.class).isEmpty()) {
-            GetContactsInfo.getContacts(instance);
-        }
         FloatingActionButton floatingActionButton =(FloatingActionButton) findViewById(R.id.btn_contact);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -15,9 +15,14 @@ import android.widget.ListView;
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Receiver.MessageReceiver;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.db.input.MContacts;
+import com.wentao.messagemanagement.db.input.MPhone;
 import com.wentao.messagemanagement.db.output.MessageInfo;
+import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.GetContactsInfo;
 import com.wentao.messagemanagement.tool.TimeTool;
+
+import org.litepal.crud.DataSupport;
 
 /**
  * Created by Administrator on 2017/11/10.
@@ -36,9 +41,10 @@ public class MessagePage extends AppCompatActivity{
         instance = MessagePage.this;
         //------------------------------------------------------------------------------------------
         Intent intent = getIntent();
-        final String phone = intent.getStringExtra("phone");
+
         final String id = intent.getStringExtra("id");
-        final String name = intent.getStringExtra("name");
+        final String phone = DataHandler.getPhone(id);
+        final String name = DataHandler.getName(id);
 
         ListView lv_message_page = (ListView) findViewById(R.id.lv_message_page);
         lv_message_page.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);

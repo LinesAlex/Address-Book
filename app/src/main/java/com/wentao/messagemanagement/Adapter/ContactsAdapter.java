@@ -22,6 +22,7 @@ import com.wentao.messagemanagement.Activity.MessagePage;
 import com.wentao.messagemanagement.Activity.ContactsList;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.ContactsInfo;
+import com.wentao.messagemanagement.tool.DataHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,8 +61,11 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
         ContactsInfo item = getItem(position);
         view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
         initView();
-        if (visibleFlag) {setShowLine(item, position);}
-        else {setSearchView();}
+        if (visibleFlag) {
+            setShowLine(item, position);
+        } else {
+            setSearchView();
+        }
         setView(item);
         return view;
     }
@@ -73,7 +77,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     }
 
     private void setShowLine(ContactsInfo item, int position){
-        String letter = item.getPinyin();
+        String letter = item.getPinyin().toUpperCase();
         if (!LetterToPosition.containsKey(letter)||LetterToPosition.containsValue(position))
         {
             liner_line.setVisibility(View.VISIBLE);
@@ -99,24 +103,67 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     }
 
     private void setView(ContactsInfo item) {
-        btn_info.setOnClickListener(new ItemsClickListener(view, item));
-        btn_message.setOnClickListener(new ItemsClickListener(view, item));
-        btn_call.setOnClickListener(new ItemsClickListener(view, item));
-        btn_show_menu.setOnClickListener(new ItemsClickListener(view, item));
+        btn_info.setOnClickListener(new ItemsClickListener(view, item.getId()));
+        btn_message.setOnClickListener(new ItemsClickListener(view, item.getId()));
+        btn_call.setOnClickListener(new ItemsClickListener(view, item.getId()));
+        btn_show_menu.setOnClickListener(new ItemsClickListener(view, item.getId()));
         tv_count.setText(item.getCount() + "");
         tv_name.setText(item.getName());
         tv_first_name.setText(item.getName().substring(0,1));
-        String phoneNumber = checkOutItem(item.getPhoneNumber());
-        String emailAdress = checkOutItem(item.getEmail());
-        tv_phone.setText(phoneNumber);
-        tv_email.setText(emailAdress);
+        tv_phone.setText(item.getPhoneNumber().get(0));
+        tv_email.setText(item.getEmail().get(0));
     }
 
-    //检测ArrayList元素是否为空
-    private String checkOutItem(ArrayList<String> str)
-    {
-        if (str.isEmpty()) {return "NULL";}
-        else {return str.get(0);}
+    private class ItemsClickListener implements View.OnClickListener {
+        private View view;
+        private String id;
+        ItemsClickListener(View view, String mid) {
+            this.view = view;
+            this.id = mid;
+        }
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.btn_call:{
+                    String phoneNumber = DataHandler.getPhone(id);
+                    if(ActivityCompat.checkSelfPermission(ContactsList.getInstance(),
+                            Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                        Intent intent = new Intent(Intent.ACTION_CALL);
+                        intent.setData(Uri.parse("tel:" + phoneNumber));
+                        ContactsList.getInstance().startActivity(intent);
+                    }
+                }break;
+                case R.id.btn_message : {
+                    Intent intent = new Intent(ContactsList.getInstance(), MessagePage.class);
+                    intent.putExtra("id", id);
+                    ContactsList.getInstance().startActivity(intent);
+                }break;
+                case R.id.btn_info : {
+                    Intent intent = new Intent(ContactsList.getInstance(), ContactInfo.class);
+                    intent.putExtra("id", id);
+                    ContactsList.getInstance().startActivity(intent);
+                }break;
+                case  R.id.btn_showmenu : {
+                    LinearLayout linear = view.findViewById(R.id.liner_info);
+                    Button menu = view.findViewById(R.id.btn_showmenu);
+                    if(linear.getVisibility() == View.GONE)
+                    {
+                        linear.setVisibility(View.VISIBLE);
+                        menu.setBackgroundResource(R.drawable.button_show_menu_2);
+                        if (PriorLinear != null && PriorMenu != null && PriorLinear != linear){
+                            PriorLinear.setVisibility(View.GONE);
+                            PriorMenu.setBackgroundResource(R.drawable.button_show_menu_1);
+                        }
+                    } else {
+                        menu.setBackgroundResource(R.drawable.button_show_menu_1);
+                        linear.setVisibility(View.GONE);
+                    }
+                    PriorMenu = menu;
+                    PriorLinear = linear;
+                }break;
+                default : break;
+            }
+        }
     }
 
     @NonNull
@@ -158,7 +205,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
                         String phoneText = "";
                         for (String str : value.getPhoneNumber())
                         {
-                            phoneText += " " + str.replace("-","").replace(" ","");
+                            phoneText += " " + str;
                         }
                         // First match against the whole, non-splitted value
                         if (nameText.contains(prefixString) || phoneText.contains(prefixString)) {
@@ -193,63 +240,5 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
                 }
             }
         };
-    }
-
-    private class ItemsClickListener implements View.OnClickListener {
-        private View view;
-        private ContactsInfo item;
-        ItemsClickListener(View view, ContactsInfo item) {
-            this.view = view;
-            this.item = item;
-        }
-        @Override
-        public void onClick(View v) {
-            switch(v.getId()) {
-                case R.id.btn_call:{
-                    String phoneNumber = checkOutItem(item.getPhoneNumber()).trim();
-                    if(ActivityCompat.checkSelfPermission(ContactsList.getInstance(),
-                            Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-                        Intent intent = new Intent(Intent.ACTION_CALL);
-                        intent.setData(Uri.parse("tel:" + phoneNumber));
-                        ContactsList.getInstance().startActivity(intent);
-                    }
-                }break;
-                case R.id.btn_message : {
-                    Intent intent = new Intent(ContactsList.getInstance(), MessagePage.class);
-                    intent.putExtra("phone", ((TextView) view.findViewById(R.id.tv_phone)).getText());
-                    intent.putExtra("id", item.getId());
-                    intent.putExtra("name", item.getName());
-                    ContactsList.getInstance().startActivity(intent);
-                }break;
-                case R.id.btn_info : {
-                    Intent intent = new Intent(ContactsList.getInstance(), ContactInfo.class);
-                    intent.putExtra("name", ((TextView) view.findViewById(R.id.tv_name)).getText());
-                    intent.putExtra("count", ((TextView) view.findViewById(R.id.tv_count)).getText());
-                    intent.putExtra("phone", ((TextView) view.findViewById(R.id.tv_phone)).getText());
-                    intent.putExtra("email", ((TextView) view.findViewById(R.id.tv_email)).getText());
-                    intent.putExtra("id", item.getId());
-                    ContactsList.getInstance().startActivity(intent);
-                }break;
-                case  R.id.btn_showmenu : {
-                    LinearLayout linear = view.findViewById(R.id.liner_info);
-                    Button menu = view.findViewById(R.id.btn_showmenu);
-                    if(linear.getVisibility() == View.GONE)
-                    {
-                        linear.setVisibility(View.VISIBLE);
-                        menu.setBackgroundResource(R.drawable.button_show_menu_2);
-                        if (PriorLinear != null && PriorMenu != null && PriorLinear != linear){
-                            PriorLinear.setVisibility(View.GONE);
-                            PriorMenu.setBackgroundResource(R.drawable.button_show_menu_1);
-                        }
-                    } else {
-                        menu.setBackgroundResource(R.drawable.button_show_menu_1);
-                        linear.setVisibility(View.GONE);
-                    }
-                    PriorMenu = menu;
-                    PriorLinear = linear;
-                }break;
-                default : break;
-            }
-        }
     }
 }
