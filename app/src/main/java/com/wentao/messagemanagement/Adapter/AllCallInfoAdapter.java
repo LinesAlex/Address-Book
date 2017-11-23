@@ -1,5 +1,10 @@
 package com.wentao.messagemanagement.Adapter;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.wentao.messagemanagement.Activity.ContactsList;
+import com.wentao.messagemanagement.Activity.MessageAndCall;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.CallInfo;
 import com.wentao.messagemanagement.db.input.Intro;
@@ -24,6 +31,7 @@ import java.util.List;
 public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.ViewHolder>{
     private static List<Integer> gonePositions = new ArrayList<>();
     private LinkedList<CallInfo> mCallInfos;
+    View view;
     public AllCallInfoAdapter(LinkedList<CallInfo> callInfos) {
         mCallInfos = callInfos;
         List<String> infos = new ArrayList<>();
@@ -36,14 +44,14 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        CallInfo callInfo = mCallInfos.get(position);
+        final CallInfo callInfo = mCallInfos.get(position);
         holder.tv_time_mc.setText(check(callInfo.getTime()).split(" ")[1]);
         holder.tv_day_mc.setText(check(callInfo.getTime()).split(" ")[0]);
         holder.tv_info_mc.setText(check(callInfo.getType()));
@@ -52,6 +60,18 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
         if (gonePositions.contains(position)) {
             holder.line_day.setVisibility(View.VISIBLE);}
         else {holder.line_day.setVisibility(View.GONE);}
+
+        view.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(ActivityCompat.checkSelfPermission(MessageAndCall.getInstance(),
+                        Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse("tel:" +  callInfo.getPhoneNumber()));
+                    MessageAndCall.getInstance().startActivity(intent);
+                }
+            }
+        });
     }
     private String check(String str) {
         if (str == null || str.isEmpty()) {

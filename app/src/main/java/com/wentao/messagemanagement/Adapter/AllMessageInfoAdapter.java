@@ -1,5 +1,6 @@
 package com.wentao.messagemanagement.Adapter;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.wentao.messagemanagement.Activity.MessageAndCall;
+import com.wentao.messagemanagement.Activity.MessagePage;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.db.output.MessageInfo;
@@ -25,6 +28,7 @@ import java.util.List;
 public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAdapter.ViewHolder>{
     private List<MessageInfo> mMessageInfos = new LinkedList<>();
     private static List<Integer> gonePositions = new ArrayList<>();
+    View view;
     public AllMessageInfoAdapter(LinkedList<MessageInfo> messageInfos) {
         List<String> phoneInfos = new LinkedList<>();
         for (MessageInfo info : messageInfos) {
@@ -45,31 +49,32 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        MessageInfo messageInfo = mMessageInfos.get(position);
+        final MessageInfo messageInfo = mMessageInfos.get(position);
         holder.tv_time_mc.setText(check(messageInfo.getDate()).split(" ")[1]);
         holder.tv_day_mc.setText(check(messageInfo.getDate()).split(" ")[0]);
         String message = messageInfo.getSmsbody();
         holder.tv_info_mc.setText(check(message.length() > 10 ? message.substring(0, 10) + "..." : message));
-        if (DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("phone = ?", messageInfo.getPhoneNumber()).find(Intro.class).size() > 0) {
-            List<Intro> intro = DataSupport.where("phone = ?", messageInfo.getPhoneNumber()).find(Intro.class);
-            holder.tv_name_mc.setText(intro.get(0).getName());
-            holder.tv_name_mc.setText(intro.get(0).getName().substring(0, 1));
-        } else if(messageInfo.getName() != null){
-            holder.tv_name_mc.setText(check(messageInfo.getName()));
-            holder.tv_first_letter.setText(check(messageInfo.getName()).substring(0,1));
-        } else {
-            holder.tv_name_mc.setText(check(messageInfo.getPhoneNumber()));
-            holder.tv_first_letter.setText(check(messageInfo.getPhoneNumber()).substring(0,1));
-        }
+        holder.tv_name_mc.setText(check(messageInfo.getName()));
+        holder.tv_first_letter.setText(check(messageInfo.getName()).substring(0,1));
         if (gonePositions.contains(position)) {holder.line_day.setVisibility(View.VISIBLE);}
         else {holder.line_day.setVisibility(View.GONE);}
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MessageAndCall.getInstance(), MessagePage.class);
+                intent.putExtra("phone", messageInfo.getPhoneNumber());
+                intent.putExtra("id", messageInfo.getId());
+                MessageAndCall.getInstance().startActivity(intent);
+            }
+        });
     }
     private String check(String str) {
         if (str == null || str.isEmpty()) {

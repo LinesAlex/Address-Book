@@ -57,6 +57,5 @@ public class CallInfoAdapter extends ArrayAdapter<CallInfo>{
             case "挂断" :iv_type.setImageResource(R.drawable.icon_call_handup);break;
             default:break;
         }
-
     }
 }

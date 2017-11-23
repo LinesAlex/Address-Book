@@ -41,10 +41,16 @@ public class MessagePage extends AppCompatActivity{
         instance = MessagePage.this;
         //------------------------------------------------------------------------------------------
         Intent intent = getIntent();
-
+        final String phone;
+        final String name;
         final String id = intent.getStringExtra("id");
-        final String phone = DataHandler.getPhone(id);
-        final String name = DataHandler.getName(id);
+        if (id == "" || id == null){
+            phone = intent.getStringExtra("phone");
+            name = phone;
+        } else {
+            phone = DataHandler.getPhone(id);
+            name = DataHandler.getName(id);
+        }
 
         ListView lv_message_page = (ListView) findViewById(R.id.lv_message_page);
         lv_message_page.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);

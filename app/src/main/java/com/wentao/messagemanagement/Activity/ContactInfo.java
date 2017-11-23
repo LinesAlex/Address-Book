@@ -170,7 +170,6 @@ public class ContactInfo extends AppCompatActivity {
                 case R.id.btn_call_page : {
                     if(ActivityCompat.checkSelfPermission(ContactsList.getInstance(),
                             Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
-
                         Intent intent = new Intent(Intent.ACTION_CALL);
                         intent.setData(Uri.parse("tel:" + phoneNumber));
                         ContactsList.getInstance().startActivity(intent);
