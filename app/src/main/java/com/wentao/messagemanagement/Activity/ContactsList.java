@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +22,7 @@ import com.wentao.messagemanagement.Adapter.ContactsAdapter;
 import com.wentao.messagemanagement.db.input.MContacts;
 import com.wentao.messagemanagement.db.output.ContactsInfo;
 import com.wentao.messagemanagement.tool.DataHandler;
-import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.tool.ContactsHandler;
 import com.wentao.messagemanagement.R;
 
 import org.litepal.crud.DataSupport;
@@ -46,7 +45,7 @@ public class ContactsList extends AppCompatActivity {
         instance = ContactsList.this;
 
         if (DataSupport.findAll(MContacts.class).isEmpty()) {
-            GetContactsInfo.getContacts(instance);
+            ContactsHandler.getContacts(instance);
         }
 
         //------------------------------------------------------------------------------------------
@@ -93,7 +92,7 @@ public class ContactsList extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        GetContactsInfo.getContacts(ContactsList.this);
+                        ContactsHandler.getContacts(ContactsList.this);
                         DataHandler.getContacts();
                         contactsAdapter.notifyDataSetChanged();
                         swipeRefresh.setRefreshing(false);}});

@@ -21,18 +21,23 @@ import com.wentao.messagemanagement.db.input.MEmail;
 import com.wentao.messagemanagement.db.input.MPhone;
 import com.wentao.messagemanagement.db.output.MessageInfo;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2017/11/4.
  */
 
-public class GetContactsInfo {
+public class ContactsHandler {
     public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
     public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
     public static LinkedList<MessageInfo> AllMessages = new LinkedList<>();
@@ -67,9 +72,7 @@ public class GetContactsInfo {
                     case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
                     default:info.setType("重新发送");break;
                 }
-
-
-                if (cursor.getString(4) == "")
+                if (Objects.equals(cursor.getString(4), ""))
                     info.setName(cursor.getString(4));
                 else if (DataSupport.where("phone = ?",cursor.getLong(0) + "").find(MPhone.class).size() > 0) {
                     String id = DataSupport.where("phone = ?",cursor.getLong(0) + "").find(MPhone.class).get(0).getMid();
@@ -78,7 +81,6 @@ public class GetContactsInfo {
                 }else {
                     info.setName(info.getPhoneNumber());
                 }
-
                 AllMessages.add(info);
             }while(cursor.moveToNext());
         }
@@ -116,7 +118,7 @@ public class GetContactsInfo {
                 callInfo.setDuration(TimeTool.formatDuration(cursor.getLong(2)));
                 callInfo.setPhoneNumber(cursor.getLong(3) + "");
 
-                if (cursor.getString(4) == "") {
+                if (Objects.equals(cursor.getString(4), "")) {
                     callInfo.setName(cursor.getString(4));
                 } else if (DataSupport.where("phone = ?",cursor.getLong(3) + "").find(MPhone.class).size() > 0) {
                     String id = DataSupport.where("phone = ?",cursor.getLong(3) + "").find(MPhone.class).get(0).getMid();
@@ -229,7 +231,8 @@ public class GetContactsInfo {
                 MContacts contacts = new MContacts();
                 contacts.setMid(cursorInfo.getString(0));
                 contacts.setName(cursorInfo.getString(1));
-                contacts.setSurname(cursorInfo.getString(2).substring(0,1));
+//                contacts.setSurname(cursorInfo.getString(2).substring(0,1));
+                contacts.setSurname(getPinyin(contacts.getName().charAt(0)));
 //--------------------------------------get phone number-------------------------------------------
                 Cursor cursor = context.getContentResolver().query(
                         ContactsContract.CommonDataKinds.Phone.CONTENT_URI
@@ -262,6 +265,8 @@ public class GetContactsInfo {
             } while (cursorInfo.moveToNext());
         }
     }
+
+
     public static boolean update(String id, String phone, String name, String email, boolean[] FlagOfInfo) {
         //插入raw_contacts表，并获取_id属性
         String rawId = getRawId(AddContact.getInstance(), id);
@@ -367,5 +372,12 @@ public class GetContactsInfo {
                 new String[]{rawid}, null);
         assert cursor != null;
         return cursor.moveToFirst() ? cursor.getString(0) : "";
+    }
+
+    private static String getPinyin(char name) {
+        String[] pinyin;
+        pinyin = PinyinHelper.toHanyuPinyinStringArray(name);
+        if(pinyin == null) return name + "";
+        return pinyin[0].charAt(0) + "";
     }
 }

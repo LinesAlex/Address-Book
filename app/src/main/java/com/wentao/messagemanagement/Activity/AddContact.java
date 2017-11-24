@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.tool.DataHandler;
-import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.tool.ContactsHandler;
 
 import org.litepal.crud.DataSupport;
 
@@ -103,10 +103,10 @@ public class AddContact extends AppCompatActivity {
 
                     } else {
                         if (Flag) {//update
-                            GetContactsInfo.update(id, phone, name, email, FlagOfInfo);
+                            ContactsHandler.update(id, phone, name, email, FlagOfInfo);
                             DataHandler.updateIntro(id, new String[]{phone, name, email, address, job, age});
                         } else {//insert
-                            String id = GetContactsInfo.insert(phone, name, email);
+                            String id = ContactsHandler.insert(phone, name, email);
                             DataHandler.updateIntro(id, new String[]{phone, name, email, address, job, age});
                         }
                         Intent intent = new Intent();

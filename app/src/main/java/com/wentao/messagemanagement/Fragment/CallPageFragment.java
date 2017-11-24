@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.wentao.messagemanagement.Adapter.AllCallInfoAdapter;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.tool.ContactsHandler;
 
 /**
  * Created by Administrator on 2017/11/14.
@@ -22,8 +22,8 @@ public class CallPageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_call, container, false);
         RecyclerView call = view.findViewById(R.id.rv_all_call);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        GetContactsInfo.getAllCalls(getContext());
-        AllCallInfoAdapter callInfoAdapter = new AllCallInfoAdapter(GetContactsInfo.AllCalls);
+        ContactsHandler.getAllCalls(getContext());
+        AllCallInfoAdapter callInfoAdapter = new AllCallInfoAdapter(ContactsHandler.AllCalls);
         call.setLayoutManager(manager);
         call.setAdapter(callInfoAdapter);
         return view;

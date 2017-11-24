@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.db.output.MessageInfo;
-import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.tool.ContactsHandler;
 import com.wentao.messagemanagement.tool.TimeTool;
 
 import java.util.Date;
@@ -51,7 +51,7 @@ public class MessageReceiver extends BroadcastReceiver{
 
             if (!Adapter.isEmpty()){
                 MessageInfo messageInfo = new MessageInfo(smsNumber, smsBody, strTime, "接收");
-                GetContactsInfo.MessageInfos.add(messageInfo);
+                ContactsHandler.MessageInfos.add(messageInfo);
                 Adapter.notifyDataSetChanged();
             }
 

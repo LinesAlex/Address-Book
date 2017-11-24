@@ -15,14 +15,10 @@ import android.widget.ListView;
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Receiver.MessageReceiver;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.input.MContacts;
-import com.wentao.messagemanagement.db.input.MPhone;
 import com.wentao.messagemanagement.db.output.MessageInfo;
 import com.wentao.messagemanagement.tool.DataHandler;
-import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.tool.ContactsHandler;
 import com.wentao.messagemanagement.tool.TimeTool;
-
-import org.litepal.crud.DataSupport;
 
 /**
  * Created by Administrator on 2017/11/10.
@@ -71,14 +67,14 @@ public class MessagePage extends AppCompatActivity{
                     SmsManager sms = SmsManager.getDefault();
                     sms.sendTextMessage(phone, null, message, null, null);
                     MessageInfo messageInfo = new MessageInfo(phone,message, TimeTool.getTime(),"送达");
-                    GetContactsInfo.MessageInfos.add(messageInfo);
+                    ContactsHandler.MessageInfos.add(messageInfo);
                     messageInfoAdapter.notifyDataSetChanged();
                 }
             }
         });
         //------------------------------------------------------------------------------------------
-        GetContactsInfo.getMessageInfo(phone, id, MessagePage.this);
-        messageInfoAdapter = new MessageInfoAdapter(MessagePage.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
+        ContactsHandler.getMessageInfo(phone, id, MessagePage.this);
+        messageInfoAdapter = new MessageInfoAdapter(MessagePage.this, R.layout.item_message_info, ContactsHandler.MessageInfos);
         lv_message_page.setAdapter(messageInfoAdapter);
         MessageReceiver.setAdapter(messageInfoAdapter);
     }

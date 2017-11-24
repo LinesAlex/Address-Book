@@ -27,7 +27,7 @@ import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Adapter.CallInfoAdapter;
 import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.tool.DataHandler;
-import com.wentao.messagemanagement.tool.GetContactsInfo;
+import com.wentao.messagemanagement.tool.ContactsHandler;
 import com.wentao.messagemanagement.R;
 
 import org.litepal.crud.DataSupport;
@@ -126,23 +126,23 @@ public class ContactInfo extends AppCompatActivity {
         //-----------------------------------------设置----------------------------------------------
         //通话信息ListView设置
         if (!(phoneNumber.isEmpty() && phoneNumber.equals(""))){
-            GetContactsInfo.getCallInfo(phoneNumber,id);
-            CallInfoAdapter phoneInfoAdapter = new CallInfoAdapter(ContactInfo.this, R.layout.item_call_info, GetContactsInfo.CallInfos);
+            ContactsHandler.getCallInfo(phoneNumber,id);
+            CallInfoAdapter phoneInfoAdapter = new CallInfoAdapter(ContactInfo.this, R.layout.item_call_info, ContactsHandler.CallInfos);
             lv_phone_call.setAdapter(phoneInfoAdapter);
             int height = lv_phone_call.getLayoutParams().height;
-            int size = GetContactsInfo.CallInfos.size();
+            int size = ContactsHandler.CallInfos.size();
             ViewGroup.LayoutParams params = lv_phone_call.getLayoutParams();
             params.height = height * size;
             lv_phone_call.setLayoutParams(params);
             //finish
 
             //短信消息ListView设置
-            GetContactsInfo.getMessageInfo(phoneNumber, id, ContactInfo.this);
-            Collections.reverse(GetContactsInfo.MessageInfos);
-            MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ContactInfo.this, R.layout.item_message_info, GetContactsInfo.MessageInfos);
+            ContactsHandler.getMessageInfo(phoneNumber, id, ContactInfo.this);
+            Collections.reverse(ContactsHandler.MessageInfos);
+            MessageInfoAdapter messageInfoAdapter = new MessageInfoAdapter(ContactInfo.this, R.layout.item_message_info, ContactsHandler.MessageInfos);
             lv_message.setAdapter(messageInfoAdapter);
             height = lv_message.getLayoutParams().height;
-            size = GetContactsInfo.MessageInfos.size();
+            size = ContactsHandler.MessageInfos.size();
             params = lv_message.getLayoutParams();
             if (size > 5) {
                 params.height = height * 5;
@@ -217,7 +217,7 @@ public class ContactInfo extends AppCompatActivity {
                     dialog.setPositiveButton("确定", new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            GetContactsInfo.delete(ContactInfo.this, id);
+                            ContactsHandler.delete(ContactInfo.this, id);
                             DataHandler.deleteIntro(id);
                             finish();
                         }

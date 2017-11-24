@@ -11,10 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.input.MContacts;
-import com.wentao.messagemanagement.tool.GetContactsInfo;
-
-import org.litepal.crud.DataSupport;
 
 
 /**

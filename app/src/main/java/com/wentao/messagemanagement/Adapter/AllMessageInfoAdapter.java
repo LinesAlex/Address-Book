@@ -65,8 +65,7 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
         holder.tv_first_letter.setText(check(messageInfo.getName()).substring(0,1));
         if (gonePositions.contains(position)) {holder.line_day.setVisibility(View.VISIBLE);}
         else {holder.line_day.setVisibility(View.GONE);}
-
-        view.setOnClickListener(new View.OnClickListener() {
+        holder.fl_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.getInstance(), MessagePage.class);
@@ -89,7 +88,7 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        FrameLayout line_day;
+        FrameLayout line_day, fl_click;
         TextView tv_day_mc, tv_first_letter, tv_name_mc, tv_info_mc, tv_time_mc;
         public ViewHolder(View view){
             super(view);
@@ -99,6 +98,7 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
             tv_name_mc = view.findViewById(R.id.tv_name_mc);
             tv_info_mc = view.findViewById(R.id.tv_info_mc);
             tv_time_mc = view.findViewById(R.id.tv_time_mc);
+            fl_click = view.findViewById(R.id.fl_click);
         }
     }
 }
