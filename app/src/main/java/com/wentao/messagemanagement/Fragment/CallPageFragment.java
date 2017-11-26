@@ -1,5 +1,6 @@
 package com.wentao.messagemanagement.Fragment;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,13 +22,14 @@ public class CallPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_call, container, false);
         RecyclerView call = view.findViewById(R.id.rv_all_call);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
         ContactsHandler.getAllCalls(getContext());
-        AllCallInfoAdapter callInfoAdapter = new AllCallInfoAdapter(ContactsHandler.AllCalls);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        AllCallInfoAdapter adapter = new AllCallInfoAdapter(ContactsHandler.AllCalls);
         call.setLayoutManager(manager);
-        call.setAdapter(callInfoAdapter);
+        call.setAdapter(adapter);
         return view;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,4 +39,6 @@ public class CallPageFragment extends Fragment {
     public void onPause() {
         super.onPause();
     }
+
+
 }

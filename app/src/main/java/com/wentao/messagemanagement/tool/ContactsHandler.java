@@ -9,21 +9,16 @@ import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.wentao.messagemanagement.Activity.AddContact;
-import com.wentao.messagemanagement.Activity.ContactInfo;
-import com.wentao.messagemanagement.db.input.Intro;
+import com.wentao.messagemanagement.Activity.ContactsPage;
 import com.wentao.messagemanagement.db.output.CallInfo;
-import com.wentao.messagemanagement.db.output.ContactsInfo;
 import com.wentao.messagemanagement.db.input.MContacts;
 import com.wentao.messagemanagement.db.input.MEmail;
 import com.wentao.messagemanagement.db.input.MPhone;
 import com.wentao.messagemanagement.db.output.MessageInfo;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
-import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import org.litepal.crud.DataSupport;
 
@@ -60,7 +55,8 @@ public class ContactsHandler {
         if (cursor != null && cursor.moveToFirst()) {
             do{
                 MessageInfo info = new MessageInfo();
-                info.setPhoneNumber(cursor.getLong(0) + "");
+                String phone = phoneCheck(cursor.getLong(0) + "");
+                info.setPhoneNumber(phone);
                 info.setSmsbody(cursor.getString(1).equals("") ? "-" : cursor.getString(1));
                 Date date = new Date(Long.parseLong(cursor.getString(2)));
                 info.setDate(TimeTool.formatForDate(date));
@@ -74,17 +70,16 @@ public class ContactsHandler {
                 }
                 if (Objects.equals(cursor.getString(4), ""))
                     info.setName(cursor.getString(4));
-                else if (DataSupport.where("phone = ?",cursor.getLong(0) + "").find(MPhone.class).size() > 0) {
-                    String id = DataSupport.where("phone = ?",cursor.getLong(0) + "").find(MPhone.class).get(0).getMid();
+                else if (DataSupport.where("phone = ?",phone).find(MPhone.class).size() > 0) {
+                    String id = DataSupport.where("phone = ?",phone).find(MPhone.class).get(0).getMid();
                     info.setName(DataHandler.getName(id));
                     info.setId(id);
                 }else {
-                    info.setName(info.getPhoneNumber());
+                    info.setName(phone);
                 }
                 AllMessages.add(info);
             }while(cursor.moveToNext());
         }
-        Collections.reverse(AllMessages);
         return AllMessages;
     }
 
@@ -113,19 +108,20 @@ public class ContactsHandler {
                 }
                 //呼叫时间
                 Date date = new Date(Long.parseLong(cursor.getString(1)));
+                String phone = phoneCheck(cursor.getLong(3) + "");
                 callInfo.setTime(TimeTool.formatForDate(date));
                 //通话时长
                 callInfo.setDuration(TimeTool.formatDuration(cursor.getLong(2)));
-                callInfo.setPhoneNumber(cursor.getLong(3) + "");
+                callInfo.setPhoneNumber(phone);
 
                 if (Objects.equals(cursor.getString(4), "")) {
                     callInfo.setName(cursor.getString(4));
-                } else if (DataSupport.where("phone = ?",cursor.getLong(3) + "").find(MPhone.class).size() > 0) {
-                    String id = DataSupport.where("phone = ?",cursor.getLong(3) + "").find(MPhone.class).get(0).getMid();
+                } else if (DataSupport.where("phone = ?",phone).find(MPhone.class).size() > 0) {
+                    String id = DataSupport.where("phone = ?",phone).find(MPhone.class).get(0).getMid();
                     callInfo.setName(DataHandler.getName(id));
                     callInfo.setId(id);
                 } else {
-                    callInfo.setName(callInfo.getPhoneNumber());
+                    callInfo.setName(phone);
                 }
 
                 AllCalls.add(callInfo);
@@ -143,7 +139,7 @@ public class ContactsHandler {
                 , CallLog.Calls.DATE
                 , CallLog.Calls.DURATION
         };
-        Cursor cursor = ContactInfo.getInstance().getContentResolver().query(CallLog.Calls.CONTENT_URI
+        Cursor cursor = ContactsPage.getInstance().getContentResolver().query(CallLog.Calls.CONTENT_URI
                 , projection
                 , CallLog.Calls.NUMBER + "=" + phoneNumber
                 , null
@@ -267,7 +263,7 @@ public class ContactsHandler {
     }
 
 
-    public static boolean update(String id, String phone, String name, String email, boolean[] FlagOfInfo) {
+    public static boolean update(String id, String phone, String name, String email, boolean Flag) {
         //插入raw_contacts表，并获取_id属性
         String rawId = getRawId(AddContact.getInstance(), id);
         ContentResolver resolver = AddContact.getInstance().getContentResolver();
@@ -281,7 +277,7 @@ public class ContactsHandler {
                     , new String[]{rawId});
 
         }
-        if (!phone.equals("") && !FlagOfInfo[1]) {
+        if (!phone.equals("")) {
             values.clear();
             values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
             values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
@@ -289,16 +285,17 @@ public class ContactsHandler {
                     , values
                     , ContactsContract.Data.RAW_CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"
                     , new String[]{rawId, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE});
-        } else if (FlagOfInfo[1]){
-            values.clear();
-            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
-            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-            values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
-            values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
-            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
         }
+//        else if (FlagOfInfo[1]){
+//            values.clear();
+//            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
+//            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+//            values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
+//            values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
+//            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
+//        }
 
-        if (!email.equals("") && !FlagOfInfo[2]) {
+        if (!email.equals("") && !Flag) {
             values.clear();
             values.put(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_MOBILE);
             values.put(ContactsContract.CommonDataKinds.Email.ADDRESS, email);
@@ -306,7 +303,7 @@ public class ContactsHandler {
                     , values
                     , ContactsContract.Data.RAW_CONTACT_ID + "= ? AND " + ContactsContract.Data.MIMETYPE + " = ?"
                     , new String[]{rawId, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE});
-        } else if (FlagOfInfo[2]) {
+        } else if (Flag) {
             values.clear();
             values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
             values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE);
@@ -346,9 +343,9 @@ public class ContactsHandler {
         }
         return getId(AddContact.getInstance(), rawId + "");
     }
-    public static boolean delete(Context context, String id) {
-        String rawId = getRawId(context, id);
-        context.getContentResolver().delete(
+    public static boolean delete(String id) {
+        String rawId = getRawId(ContactsPage.getInstance(), id);
+        ContactsPage.getInstance().getContentResolver().delete(
                 ContactsContract.RawContacts.CONTENT_URI
                 , ContactsContract.RawContacts._ID + " = ?"
                 , new String[]{rawId});
@@ -364,6 +361,7 @@ public class ContactsHandler {
         assert cursor != null;
         return cursor.moveToFirst() ? cursor.getString(0) : "";
     }
+
     private static String getId(Context context, String rawid){
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.RawContacts.CONTENT_URI,
@@ -374,10 +372,20 @@ public class ContactsHandler {
         return cursor.moveToFirst() ? cursor.getString(0) : "";
     }
 
-    private static String getPinyin(char name) {
+    public static String getPinyin(char name) {
         String[] pinyin;
         pinyin = PinyinHelper.toHanyuPinyinStringArray(name);
         if(pinyin == null) return name + "";
         return pinyin[0].charAt(0) + "";
+    }
+
+    private static String phoneCheck(String phone){
+        if (phone.substring(0,1) != "1") {
+            phone = ((phone.indexOf("1") != -1) && (phone.length() > 11)) ? phone.substring(phone.indexOf("1")) : phone;
+            return phone;
+        } else
+        {
+            return phone;
+        }
     }
 }

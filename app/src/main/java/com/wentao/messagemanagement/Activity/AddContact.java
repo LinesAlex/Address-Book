@@ -34,7 +34,6 @@ public class AddContact extends AppCompatActivity {
     private boolean Flag;
     private EditText et_name, et_phone, et_email, et_address, et_job, et_age;
     private String id;
-    private boolean[] FlagOfInfo = new boolean[3];
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_add_contact);
@@ -61,9 +60,6 @@ public class AddContact extends AppCompatActivity {
         if (Flag && DataSupport.findAll(Intro.class).size() > 0 && DataSupport.where("mid = ?", id).find(Intro.class).size() > 0) {
             List<Intro> intros = DataSupport.where("mid = ?", id).find(Intro.class);
             Intro intro = intros.get(0);
-            FlagOfInfo[0] = intro.getName().equals("");
-            FlagOfInfo[1] = intro.getPhone().equals("");
-            FlagOfInfo[2] = intro.getEmail().equals("");
             et_name.setText(intro.getName());
             et_phone.setText(intro.getPhone());
             et_email.setText(intro.getEmail());
@@ -80,7 +76,6 @@ public class AddContact extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.btn_right : {
-                    Intro intro = new Intro();
                     String phone = check(et_phone.getText().toString());
                     String name = check(et_name.getText().toString());
                     String email = check(et_email.getText().toString());
@@ -100,14 +95,11 @@ public class AddContact extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {finish();}});
                         dialog.show();
-
                     } else {
                         if (Flag) {//update
-                            ContactsHandler.update(id, phone, name, email, FlagOfInfo);
-                            DataHandler.updateIntro(id, new String[]{phone, name, email, address, job, age});
+                            DataHandler.updateData(id, new String[]{phone, name, email, address, job, age});
                         } else {//insert
-                            String id = ContactsHandler.insert(phone, name, email);
-                            DataHandler.updateIntro(id, new String[]{phone, name, email, address, job, age});
+                            DataHandler.insertData(new String[]{phone, name, email, address, job, age});
                         }
                         Intent intent = new Intent();
                         intent.putExtra("name", name);

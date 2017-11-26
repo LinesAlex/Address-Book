@@ -21,11 +21,11 @@ public class MessagePageFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
         RecyclerView message = view.findViewById(R.id.rv_all_message);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        message.setLayoutManager(manager);
         ContactsHandler.getAllMessages(getContext());
-        AllMessageInfoAdapter messageInfoAdapter = new AllMessageInfoAdapter(ContactsHandler.AllMessages);
-        message.setAdapter(messageInfoAdapter);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        AllMessageInfoAdapter adapter = new AllMessageInfoAdapter(ContactsHandler.AllMessages);
+        message.setLayoutManager(manager);
+        message.setAdapter(adapter);
         return view;
     }
     @Override

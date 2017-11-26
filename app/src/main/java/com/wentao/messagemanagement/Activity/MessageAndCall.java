@@ -8,12 +8,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.wentao.messagemanagement.Fragment.CallPageFragment;
 import com.wentao.messagemanagement.Fragment.MessagePageFragment;
 import com.wentao.messagemanagement.FragmentAdapter.MyFragmentPagerAdapter;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.tool.ContactsHandler;
 
 import java.util.ArrayList;
 

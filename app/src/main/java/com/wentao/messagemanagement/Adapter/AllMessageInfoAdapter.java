@@ -11,13 +11,9 @@ import android.widget.TextView;
 import com.wentao.messagemanagement.Activity.MessageAndCall;
 import com.wentao.messagemanagement.Activity.MessagePage;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.db.output.MessageInfo;
 
-import org.litepal.crud.DataSupport;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,26 +23,47 @@ import java.util.List;
 
 public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAdapter.ViewHolder>{
     private List<MessageInfo> mMessageInfos = new LinkedList<>();
-    private static List<Integer> gonePositions = new ArrayList<>();
+    private List<Integer> gonePositions = new ArrayList<>();
+    private int MessageIndex;
     View view;
-    public AllMessageInfoAdapter(LinkedList<MessageInfo> messageInfos) {
+
+    public AllMessageInfoAdapter(List<MessageInfo> infos) {
+        filterList(infos);
+    }
+
+    private void filterList(List<MessageInfo> infos) {
+        List<MessageInfo> otherMessage = new ArrayList<>();
+
         List<String> phoneInfos = new LinkedList<>();
-        for (MessageInfo info : messageInfos) {
+
+        for (MessageInfo info : infos) {
             if (!phoneInfos.contains(info.getPhoneNumber())) {
                 phoneInfos.add(info.getPhoneNumber());
-                mMessageInfos.add(info);
+                if (info.getPhoneNumber().startsWith("106"))
+                {
+                    otherMessage.add(info);
+                } else {
+                    mMessageInfos.add(info);
+                }
+            }
+        }
+        setGonePosition(mMessageInfos, 0);
+        setGonePosition(otherMessage, mMessageInfos.size() - 1);
+        MessageIndex = mMessageInfos.size() - 1;
+        mMessageInfos.addAll(otherMessage);
+    }
+
+    private void setGonePosition(List<MessageInfo> infos, int index) {
+        List<String> timeInfos = new ArrayList<>();
+        for (int i = 0; i < infos.size(); i++) {
+            if (!timeInfos.contains(infos.get(i).getDate().split(" ")[0])) {
+                timeInfos.add(infos.get(i).getDate().split(" ")[0]);
+                gonePositions.add(index + i);
             }
         }
 
-        Collections.reverse(mMessageInfos);
-        List<String> timeInfos = new ArrayList<>();
-        for (int i = 0; i < mMessageInfos.size(); i++) {
-            if (!timeInfos.contains(mMessageInfos.get(i).getDate().split(" ")[0])) {
-                timeInfos.add(mMessageInfos.get(i).getDate().split(" ")[0]);
-                gonePositions.add(i);
-            }
-        }
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
@@ -58,13 +75,15 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
     public void onBindViewHolder(ViewHolder holder, int position) {
         final MessageInfo messageInfo = mMessageInfos.get(position);
         holder.tv_time_mc.setText(check(messageInfo.getDate()).split(" ")[1]);
-        holder.tv_day_mc.setText(check(messageInfo.getDate()).split(" ")[0]);
         String message = messageInfo.getSmsbody();
-        holder.tv_info_mc.setText(check(message.length() > 10 ? message.substring(0, 10) + "..." : message));
+        holder.tv_info_mc.setText(check(message.length() > 15 ? message.substring(0, 15) + "..." : message));
         holder.tv_name_mc.setText(check(messageInfo.getName()));
         holder.tv_first_letter.setText(check(messageInfo.getName()).substring(0,1));
-        if (gonePositions.contains(position)) {holder.line_day.setVisibility(View.VISIBLE);}
-        else {holder.line_day.setVisibility(View.GONE);}
+        if (gonePositions.contains(position)) {
+            holder.tv_day_mc.setVisibility(View.VISIBLE);
+            holder.tv_day_mc.setText(check(messageInfo.getDate()).split(" ")[0]);}
+        else {holder.tv_day_mc.setVisibility(View.GONE);}
+        if (position == MessageIndex) {holder.tv_day_mc.setText("服务类短信\n "+check(messageInfo.getDate()).split(" ")[0]);}
         holder.fl_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +109,7 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
     static class ViewHolder extends RecyclerView.ViewHolder {
         FrameLayout line_day, fl_click;
         TextView tv_day_mc, tv_first_letter, tv_name_mc, tv_info_mc, tv_time_mc;
-        public ViewHolder(View view){
+        ViewHolder(View view){
             super(view);
             line_day = view.findViewById(R.id.line_day);
             tv_day_mc = view.findViewById(R.id.tv_day_mc);

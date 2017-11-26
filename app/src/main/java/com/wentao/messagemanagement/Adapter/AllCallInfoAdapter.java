@@ -6,30 +6,20 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
-import android.telecom.Call;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.wentao.messagemanagement.Activity.ContactsList;
 import com.wentao.messagemanagement.Activity.MessageAndCall;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.CallInfo;
-import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.tool.CallFilter;
 
-import org.litepal.crud.DataSupport;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2017/11/14.
@@ -38,12 +28,15 @@ import java.util.Map;
 public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.ViewHolder>{
     private static List<Integer> gonePositions = new ArrayList<>();
     private List<CallInfo> mCallInfos = new LinkedList<>();
-    private List<Integer> count;
+    private List<Integer> count = new ArrayList<>();
     View view;
-    public AllCallInfoAdapter(LinkedList<CallInfo> infos) {
+    public AllCallInfoAdapter(List<CallInfo> infos) {
+       filterList(infos);
+    }
+
+    private void filterList(List<CallInfo> infos) {
         CallFilter f = new CallFilter(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
-        count = new ArrayList<>();
-        int index = 0;
+        List<String> timeInfos = new ArrayList<>();
         for (int i = 0; i < infos.size(); i++) {
             String m = infos.get(i).getTime().substring(0, infos.get(i).getTime().length() - 2);
             String p = infos.get(i).getPhoneNumber();
@@ -54,7 +47,6 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
                     !f.phone.get(count.size() - 1).contains(p)) {
                 f.add(p,t,m);
                 mCallInfos.add(infos.get(i));
-                index = i;
                 count.add(1);
             } else {
                 int c = mCallInfos.size() - 1;
@@ -62,14 +54,14 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
             }
         }
 
-        List<String> list = new ArrayList<>();
         for (int i = 0; i < mCallInfos.size(); i++) {
-            if (!list.contains(mCallInfos.get(i).getTime().split(" ")[0])) {
-                list.add(mCallInfos.get(i).getTime().split(" ")[0]);
+            if (!timeInfos.contains(mCallInfos.get(i).getTime().split(" ")[0])) {
+                timeInfos.add(mCallInfos.get(i).getTime().split(" ")[0]);
                 gonePositions.add(i);
             }
         }
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
@@ -85,13 +77,14 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
             countStr = " ("+ count.get(position) +")";
         }
         holder.tv_time_mc.setText(check(callInfo.getTime()).split(" ")[1]);
-        holder.tv_day_mc.setText(check(callInfo.getTime()).split(" ")[0]);
+
         holder.tv_info_mc.setText(check(callInfo.getType()));
         holder.tv_name_mc.setText(check(callInfo.getName()) + countStr);
         holder.tv_first_letter.setText(check(callInfo.getName()).substring(0,1));
         if (gonePositions.contains(position)) {
-            holder.line_day.setVisibility(View.VISIBLE);}
-        else {holder.line_day.setVisibility(View.GONE);}
+            holder.tv_day_mc.setText(check(callInfo.getTime()).split(" ")[0]);
+            holder.tv_day_mc.setVisibility(View.VISIBLE);}
+        else {holder.tv_day_mc.setVisibility(View.GONE);}
         holder.fl_click.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

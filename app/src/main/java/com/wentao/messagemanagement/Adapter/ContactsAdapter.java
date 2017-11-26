@@ -17,7 +17,7 @@ import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.wentao.messagemanagement.Activity.ContactInfo;
+import com.wentao.messagemanagement.Activity.ContactsPage;
 import com.wentao.messagemanagement.Activity.MessagePage;
 import com.wentao.messagemanagement.Activity.ContactsList;
 import com.wentao.messagemanagement.R;
@@ -139,9 +139,9 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
                     ContactsList.getInstance().startActivity(intent);
                 }break;
                 case R.id.btn_info : {
-                    Intent intent = new Intent(ContactsList.getInstance(), ContactInfo.class);
+                    Intent intent = new Intent(ContactsList.getInstance(), ContactsPage.class);
                     intent.putExtra("id", id);
-                    ContactsList.getInstance().startActivity(intent);
+                    ContactsList.getInstance().startActivityForResult(intent, 2);
                 }break;
                 case  R.id.btn_showmenu : {
                     LinearLayout linear = view.findViewById(R.id.liner_info);

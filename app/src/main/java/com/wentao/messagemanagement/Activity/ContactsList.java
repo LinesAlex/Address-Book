@@ -109,6 +109,13 @@ public class ContactsList extends AppCompatActivity {
                     CoordinatorLayout coordinatorLayout =(CoordinatorLayout) findViewById(R.id.coordinator);
                     Snackbar.make(coordinatorLayout, "联系人 " + name + " 添加成功!", Snackbar.LENGTH_SHORT).show();
                 }break;
+            case 2 :
+                if (resultCode == RESULT_OK) {
+                    String name = data.getStringExtra("name");
+                    refresh();
+                    CoordinatorLayout coordinatorLayout =(CoordinatorLayout) findViewById(R.id.coordinator);
+                    Snackbar.make(coordinatorLayout, "联系人 " + name + " 已删除!", Snackbar.LENGTH_SHORT).show();
+                }
             default : break;
         }
     }
