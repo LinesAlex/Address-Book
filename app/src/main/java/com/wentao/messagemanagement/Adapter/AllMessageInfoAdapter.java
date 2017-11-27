@@ -24,44 +24,21 @@ import java.util.List;
 public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAdapter.ViewHolder>{
     private List<MessageInfo> mMessageInfos = new LinkedList<>();
     private List<Integer> gonePositions = new ArrayList<>();
-    private int MessageIndex;
     View view;
 
     public AllMessageInfoAdapter(List<MessageInfo> infos) {
-        filterList(infos);
+        mMessageInfos.addAll(infos);
+        setGonePosition(mMessageInfos);
     }
 
-    private void filterList(List<MessageInfo> infos) {
-        List<MessageInfo> otherMessage = new ArrayList<>();
-
-        List<String> phoneInfos = new LinkedList<>();
-
-        for (MessageInfo info : infos) {
-            if (!phoneInfos.contains(info.getPhoneNumber())) {
-                phoneInfos.add(info.getPhoneNumber());
-                if (info.getPhoneNumber().startsWith("106"))
-                {
-                    otherMessage.add(info);
-                } else {
-                    mMessageInfos.add(info);
-                }
-            }
-        }
-        setGonePosition(mMessageInfos, 0);
-        setGonePosition(otherMessage, mMessageInfos.size() - 1);
-        MessageIndex = mMessageInfos.size() - 1;
-        mMessageInfos.addAll(otherMessage);
-    }
-
-    private void setGonePosition(List<MessageInfo> infos, int index) {
+    private void setGonePosition(List<MessageInfo> infos) {
         List<String> timeInfos = new ArrayList<>();
-        for (int i = 0; i < infos.size(); i++) {
+        for (int i = 0; i < MessageInfo.MessageIndex; i++) {
             if (!timeInfos.contains(infos.get(i).getDate().split(" ")[0])) {
                 timeInfos.add(infos.get(i).getDate().split(" ")[0]);
-                gonePositions.add(index + i);
+                gonePositions.add(i);
             }
         }
-
     }
 
     @Override
@@ -83,7 +60,9 @@ public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAd
             holder.tv_day_mc.setVisibility(View.VISIBLE);
             holder.tv_day_mc.setText(check(messageInfo.getDate()).split(" ")[0]);}
         else {holder.tv_day_mc.setVisibility(View.GONE);}
-        if (position == MessageIndex) {holder.tv_day_mc.setText("服务类短信\n "+check(messageInfo.getDate()).split(" ")[0]);}
+        if (position == MessageInfo.MessageIndex) {
+            holder.tv_day_mc.setVisibility(View.VISIBLE);
+            holder.tv_day_mc.setText("服务类短信\n "+check(messageInfo.getDate()).split(" ")[0]);}
         holder.fl_click.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

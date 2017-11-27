@@ -15,7 +15,11 @@ import com.wentao.messagemanagement.Fragment.CallPageFragment;
 import com.wentao.messagemanagement.Fragment.MessagePageFragment;
 import com.wentao.messagemanagement.FragmentAdapter.MyFragmentPagerAdapter;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.db.input.MContacts;
 import com.wentao.messagemanagement.tool.ContactsHandler;
+import com.wentao.messagemanagement.tool.DataHandler;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 
@@ -26,6 +30,7 @@ import java.util.ArrayList;
 
 public class MessageAndCall extends AppCompatActivity {
     private static MessageAndCall instance;
+    private boolean FlagOfGone = false;
     public static MessageAndCall getInstance() {
         return instance;
     }
@@ -34,12 +39,35 @@ public class MessageAndCall extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_message_and_call);
         instance = MessageAndCall.this;
-        FloatingActionButton floatingActionButton =(FloatingActionButton) findViewById(R.id.btn_contact);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton fbtn_contact =(FloatingActionButton) findViewById(R.id.btn_contact);
+        fbtn_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.this, ContactsList.class);
                 startActivity(intent);
+            }
+        });
+        final FloatingActionButton fbtn_dial = (FloatingActionButton) findViewById(R.id.btn_dial);
+        fbtn_dial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MessageAndCall.this, DialPage.class);
+                startActivity(intent);
+            }
+        });
+        FloatingActionButton fbtn_more = (FloatingActionButton) findViewById(R.id.btn_more);
+        fbtn_more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (FlagOfGone) {
+                    fbtn_contact.setVisibility(View.GONE);
+                    fbtn_dial.setVisibility(View.GONE);
+                    FlagOfGone = false;
+                } else {
+                    fbtn_contact.setVisibility(View.VISIBLE);
+                    fbtn_dial.setVisibility(View.VISIBLE);
+                    FlagOfGone = true;
+                }
             }
         });
 //--------------------------------------------------------------------------------------------------
@@ -56,5 +84,6 @@ public class MessageAndCall extends AppCompatActivity {
                 , new String[] {"电话", "短信"});
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        DataHandler.init(instance);
     }
 }

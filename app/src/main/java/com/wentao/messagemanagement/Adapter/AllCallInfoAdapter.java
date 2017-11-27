@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.wentao.messagemanagement.Activity.MessageAndCall;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.CallInfo;
-import com.wentao.messagemanagement.tool.CallFilter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -29,23 +28,28 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
     private static List<Integer> gonePositions = new ArrayList<>();
     private List<CallInfo> mCallInfos = new LinkedList<>();
     private List<Integer> count = new ArrayList<>();
-    View view;
+
     public AllCallInfoAdapter(List<CallInfo> infos) {
        filterList(infos);
     }
 
     private void filterList(List<CallInfo> infos) {
-        CallFilter f = new CallFilter(new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>());
+        List<String> type = new ArrayList<>();
+        List<String> time = new ArrayList<>();
+        List<String> phone = new ArrayList<>();
+
         List<String> timeInfos = new ArrayList<>();
         for (int i = 0; i < infos.size(); i++) {
             String m = infos.get(i).getTime().substring(0, infos.get(i).getTime().length() - 2);
             String p = infos.get(i).getPhoneNumber();
             String t = infos.get(i).getType();
-            if (!f.phone.contains(p) ||
-                    !f.type.get(count.size() - 1).contains(t) ||
-                    !f.time.get(count.size() - 1).contains(m.substring(0, m.length() - 2)) ||
-                    !f.phone.get(count.size() - 1).contains(p)) {
-                f.add(p,t,m);
+            if (!phone.contains(p) ||
+                    !type.get(count.size() - 1).contains(t) ||
+                    !time.get(count.size() - 1).contains(m.substring(0, m.length() - 2)) ||
+                    !phone.get(count.size() - 1).contains(p)) {
+                type.add(t);
+                time.add(m);
+                phone.add(p);
                 mCallInfos.add(infos.get(i));
                 count.add(1);
             } else {
@@ -64,9 +68,8 @@ public class AllCallInfoAdapter extends RecyclerView.Adapter<AllCallInfoAdapter.
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mc, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override

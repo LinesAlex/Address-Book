@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 
 import com.wentao.messagemanagement.Adapter.AllMessageInfoAdapter;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.db.output.MessageInfo;
 import com.wentao.messagemanagement.tool.ContactsHandler;
+import com.wentao.messagemanagement.tool.DataHandler;
 
 /**
  * Created by Administrator on 2017/11/14.
@@ -21,9 +23,8 @@ public class MessagePageFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message, container, false);
         RecyclerView message = view.findViewById(R.id.rv_all_message);
-        ContactsHandler.getAllMessages(getContext());
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        AllMessageInfoAdapter adapter = new AllMessageInfoAdapter(ContactsHandler.AllMessages);
+        AllMessageInfoAdapter adapter = new AllMessageInfoAdapter(DataHandler.getAllMessages(getContext()));
         message.setLayoutManager(manager);
         message.setAdapter(adapter);
         return view;

@@ -28,6 +28,9 @@
             android:name=".Activity.MessageAndCall">
         </activity>
         <activity
+            android:name=".Activity.DialPage">
+        </activity>
+        <activity
             android:name=".Activity.ContactsList">
         </activity>
         <activity

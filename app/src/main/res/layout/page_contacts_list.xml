@@ -26,8 +26,7 @@
                 android:background="#334"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:queryHint="请输入搜索内容"
-                android:searchIcon="@drawable/icon_search" />
+                android:queryHint="请输入搜索内容" />
         </android.support.design.widget.AppBarLayout>
 
         <LinearLayout
@@ -42,19 +41,18 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <ListView
-                        android:id="@+id/lv_contacts"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:divider="@null"
-                        android:scrollbars="none" />
-
                     <android.support.v4.widget.SwipeRefreshLayout
                         android:id="@+id/swipe_refresh"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+                        <ListView
+                            android:id="@+id/lv_contacts"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:divider="@null"
+                            android:scrollbars="none" />
                     </android.support.v4.widget.SwipeRefreshLayout>
                 </LinearLayout>
 

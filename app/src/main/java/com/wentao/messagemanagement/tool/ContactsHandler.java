@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -35,11 +36,8 @@ import java.util.Objects;
 public class ContactsHandler {
     public static ArrayList<CallInfo> CallInfos = new ArrayList<>();
     public static ArrayList<MessageInfo> MessageInfos = new ArrayList<>();
-    public static LinkedList<MessageInfo> AllMessages = new LinkedList<>();
-    public static LinkedList<CallInfo> AllCalls = new LinkedList<>();
 
-    public static LinkedList<MessageInfo> getAllMessages(Context context){
-        AllMessages.clear();
+    static void getAllMessages(Context context, List<MessageInfo> list){
         String[] projection = new String[] {
                 Telephony.Sms.ADDRESS
                 , Telephony.Sms.BODY
@@ -52,39 +50,53 @@ public class ContactsHandler {
                 , null
                 , null
                 , Telephony.Sms.DEFAULT_SORT_ORDER);
+        List<String> checkHasPhone = new LinkedList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do{
-                MessageInfo info = new MessageInfo();
                 String phone = phoneCheck(cursor.getLong(0) + "");
-                info.setPhoneNumber(phone);
-                info.setSmsbody(cursor.getString(1).equals("") ? "-" : cursor.getString(1));
-                Date date = new Date(Long.parseLong(cursor.getString(2)));
-                info.setDate(TimeTool.formatForDate(date));
-                switch (Integer.parseInt(cursor.getString(3))) {
-                    case Telephony.Sms.MESSAGE_TYPE_SENT:   info.setType("送达");    break;
-                    case Telephony.Sms.MESSAGE_TYPE_DRAFT:  info.setType("草稿");    break;
-                    case Telephony.Sms.MESSAGE_TYPE_FAILED: info.setType("发送失败"); break;
-                    case Telephony.Sms.MESSAGE_TYPE_INBOX:  info.setType("接收");    break;
-                    case Telephony.Sms.MESSAGE_TYPE_OUTBOX: info.setType("待发");    break;
-                    default:info.setType("重新发送");break;
+                if (!checkHasPhone.contains(phone)) {
+                    checkHasPhone.add(phone);
+                    MessageInfo info = new MessageInfo();
+                    info.setPhoneNumber(phone);
+                    info.setSmsbody(cursor.getString(1).equals("") ? "-" : cursor.getString(1));
+                    Date date = new Date(Long.parseLong(cursor.getString(2)));
+                    info.setDate(TimeTool.formatForDate(date));
+                    switch (cursor.getInt(3)) {
+                        case Telephony.Sms.MESSAGE_TYPE_SENT:
+                            info.setType("送达");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_DRAFT:
+                            info.setType("草稿");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_FAILED:
+                            info.setType("发送失败");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_INBOX:
+                            info.setType("接收");
+                            break;
+                        case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
+                            info.setType("待发");
+                            break;
+                        default:
+                            info.setType("重新发送");
+                            break;
+                    }
+                    if (Objects.equals(cursor.getString(4), ""))
+                        info.setName(cursor.getString(4));
+                    else if (DataSupport.where("phone = ?", phone).find(MPhone.class).size() > 0) {
+                        String id = DataSupport.where("phone = ?", phone).find(MPhone.class).get(0).getMid();
+                        info.setName(DataHandler.getName(id));
+                        info.setId(id);
+                    } else {
+                        info.setName(phone);
+                    }
+                    list.add(info);
                 }
-                if (Objects.equals(cursor.getString(4), ""))
-                    info.setName(cursor.getString(4));
-                else if (DataSupport.where("phone = ?",phone).find(MPhone.class).size() > 0) {
-                    String id = DataSupport.where("phone = ?",phone).find(MPhone.class).get(0).getMid();
-                    info.setName(DataHandler.getName(id));
-                    info.setId(id);
-                }else {
-                    info.setName(phone);
-                }
-                AllMessages.add(info);
             }while(cursor.moveToNext());
         }
-        return AllMessages;
     }
 
-    public static LinkedList<CallInfo> getAllCalls(Context context) {
-        AllCalls.clear();
+    static void getAllCalls(Context context, List<CallInfo> list) {
         String[] projection = new String[] {
                 CallLog.Calls.TYPE
                 , CallLog.Calls.DATE
@@ -124,10 +136,9 @@ public class ContactsHandler {
                     callInfo.setName(phone);
                 }
 
-                AllCalls.add(callInfo);
+                list.add(callInfo);
             }while(cursor.moveToNext());
         }
-        return AllCalls;
     }
 
     //初始化ContactsInfos
@@ -183,7 +194,7 @@ public class ContactsHandler {
                 , Telephony.Sms.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {
             do{
-                if (phoneNumber.compareTo(cursor.getString(0)) == 0) {
+                if ((cursor.getLong(0) + "").contains(phoneNumber)) {
                     MessageInfo info = new MessageInfo();
                     info.setId(id);
                     info.setPhoneNumber(phoneNumber);
@@ -207,7 +218,7 @@ public class ContactsHandler {
         return MessageInfos;
     }
 
-    public static void getContacts(Context context) {
+    static void getContacts(Context context) {
         DataSupport.deleteAll(MPhone.class);
         DataSupport.deleteAll(MEmail.class);
         DataSupport.deleteAll(MContacts.class);
@@ -227,7 +238,6 @@ public class ContactsHandler {
                 MContacts contacts = new MContacts();
                 contacts.setMid(cursorInfo.getString(0));
                 contacts.setName(cursorInfo.getString(1));
-//                contacts.setSurname(cursorInfo.getString(2).substring(0,1));
                 contacts.setSurname(getPinyin(contacts.getName().charAt(0)));
 //--------------------------------------get phone number-------------------------------------------
                 Cursor cursor = context.getContentResolver().query(
@@ -263,7 +273,7 @@ public class ContactsHandler {
     }
 
 
-    public static boolean update(String id, String phone, String name, String email, boolean Flag) {
+    static boolean update(String id, String phone, String name, String email, boolean Flag) {
         //插入raw_contacts表，并获取_id属性
         String rawId = getRawId(AddContact.getInstance(), id);
         ContentResolver resolver = AddContact.getInstance().getContentResolver();
@@ -286,14 +296,6 @@ public class ContactsHandler {
                     , ContactsContract.Data.RAW_CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"
                     , new String[]{rawId, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE});
         }
-//        else if (FlagOfInfo[1]){
-//            values.clear();
-//            values.put(ContactsContract.Data.RAW_CONTACT_ID, rawId);
-//            values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-//            values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, phone);
-//            values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
-//            resolver.insert(ContactsContract.Data.CONTENT_URI, values);
-//        }
 
         if (!email.equals("") && !Flag) {
             values.clear();
@@ -313,7 +315,7 @@ public class ContactsHandler {
         }
         return true;
     }
-    public static String insert(String phone, String name, String email) {
+    static String insert(String phone, String name, String email) {
 
         ContentResolver resolver = AddContact.getInstance().getContentResolver();
         ContentValues values = new ContentValues();
@@ -343,7 +345,7 @@ public class ContactsHandler {
         }
         return getId(AddContact.getInstance(), rawId + "");
     }
-    public static boolean delete(String id) {
+    static boolean delete(String id) {
         String rawId = getRawId(ContactsPage.getInstance(), id);
         ContactsPage.getInstance().getContentResolver().delete(
                 ContactsContract.RawContacts.CONTENT_URI
@@ -372,7 +374,7 @@ public class ContactsHandler {
         return cursor.moveToFirst() ? cursor.getString(0) : "";
     }
 
-    public static String getPinyin(char name) {
+    static String getPinyin(char name) {
         String[] pinyin;
         pinyin = PinyinHelper.toHanyuPinyinStringArray(name);
         if(pinyin == null) return name + "";
@@ -380,11 +382,10 @@ public class ContactsHandler {
     }
 
     private static String phoneCheck(String phone){
-        if (phone.substring(0,1) != "1") {
-            phone = ((phone.indexOf("1") != -1) && (phone.length() > 11)) ? phone.substring(phone.indexOf("1")) : phone;
+        if (!phone.substring(0, 1).equals("1")) {
+            phone = (phone.contains("1") && (phone.length() > 11)) ? phone.substring(phone.indexOf("1")) : phone;
             return phone;
-        } else
-        {
+        } else {
             return phone;
         }
     }

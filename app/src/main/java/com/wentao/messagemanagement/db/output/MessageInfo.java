@@ -5,6 +5,7 @@ package com.wentao.messagemanagement.db.output;
  */
 
 public class MessageInfo {
+    public static int MessageIndex;
     private String id;
     private String phoneNumber;
     private String smsbody;

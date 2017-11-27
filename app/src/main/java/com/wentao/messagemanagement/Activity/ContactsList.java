@@ -19,13 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wentao.messagemanagement.Adapter.ContactsAdapter;
-import com.wentao.messagemanagement.db.input.MContacts;
-import com.wentao.messagemanagement.db.output.ContactsInfo;
 import com.wentao.messagemanagement.tool.DataHandler;
-import com.wentao.messagemanagement.tool.ContactsHandler;
 import com.wentao.messagemanagement.R;
-
-import org.litepal.crud.DataSupport;
 
 public class ContactsList extends AppCompatActivity {
     
@@ -44,10 +39,6 @@ public class ContactsList extends AppCompatActivity {
         setContentView(R.layout.page_contacts_list);
         instance = ContactsList.this;
 
-        if (DataSupport.findAll(MContacts.class).isEmpty()) {
-            ContactsHandler.getContacts(instance);
-        }
-
         //------------------------------------------------------------------------------------------
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
@@ -55,9 +46,8 @@ public class ContactsList extends AppCompatActivity {
             @Override
             public void onRefresh() {refresh();}});//Refresh
 
-        DataHandler.getContacts();
         contactsListView = (ListView) findViewById(R.id.lv_contacts);
-        contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts, ContactsInfo.List);//第一次GetContactsInfo.ContactsInfos
+        contactsAdapter = new ContactsAdapter(ContactsList.this, R.layout.item_contacts, DataHandler.getContacts());//第一次GetContactsInfo.ContactsInfos
         contactsListView.setAdapter(contactsAdapter);//Set ListView
 
         contactsListView.setTextFilterEnabled(true);
@@ -92,7 +82,6 @@ public class ContactsList extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ContactsHandler.getContacts(ContactsList.this);
                         DataHandler.getContacts();
                         contactsAdapter.notifyDataSetChanged();
                         swipeRefresh.setRefreshing(false);}});
