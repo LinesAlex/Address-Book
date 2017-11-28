@@ -11,14 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="15dp"
         android:layout_marginLeft="15dp">
-
         <ImageView
             android:id="@+id/iv"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_gravity="center"
             app:srcCompat="@android:color/darker_gray" />
-
         <TextView
             android:id="@+id/tv_day_mc"
             android:layout_width="wrap_content"

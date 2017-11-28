@@ -9,16 +9,27 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.Spannable;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
 import com.wentao.messagemanagement.R;
+import com.wentao.messagemanagement.db.output.CallInfo;
+import com.wentao.messagemanagement.db.output.DialInfo;
+import com.wentao.messagemanagement.tool.DataHandler;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/11/27.
@@ -29,6 +40,8 @@ public class DialPage extends AppCompatActivity {
     public static DialPage getInstance() {
         return instance;
     }
+    private DialContactsAdapter adapter;
+    private List<DialInfo> mDialList = new LinkedList<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +80,13 @@ public class DialPage extends AppCompatActivity {
         callin.setOnClickListener(listener);
         packup.setOnClickListener(listener);
         delete.setOnClickListener(listener);
+
+        DataHandler.getDialList(mDialList, "n");
+        RecyclerView rv_contasts = (RecyclerView) findViewById(R.id.rv_contact);
+        LinearLayoutManager manager = new LinearLayoutManager(instance);
+        adapter = new DialContactsAdapter(mDialList);
+        rv_contasts.setLayoutManager(manager);
+        rv_contasts.setAdapter(adapter);
     }
     class OnClickItemListener implements View.OnClickListener {
         @Override
@@ -123,13 +143,16 @@ public class DialPage extends AppCompatActivity {
                     finish();
                 } break;
                 case R.id.delete:{
-                    if (phone.getText().length() > 0){
+                    if (phone.getText().length() > 0 && index > 0){
 
                         editable.delete(index-1, index);
                     }
                 }break;
             }
             CharSequence text = phone.getText();
+            DataHandler.getDialList(mDialList, text.toString());
+            adapter.notifyDataSetChanged();
+//            adapter.viewNotify(mDialList);
             //Debug.asserts(text instanceof Spannable);
             if (text instanceof Spannable && index == 0) {
                 Spannable spanText = (Spannable)text;

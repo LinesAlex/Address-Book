@@ -1,6 +1,7 @@
 package com.wentao.messagemanagement.tool;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.wentao.messagemanagement.Activity.ContactsPage;
 import com.wentao.messagemanagement.Adapter.AllMessageInfoAdapter;
@@ -10,6 +11,7 @@ import com.wentao.messagemanagement.db.output.ContactsInfo;
 import com.wentao.messagemanagement.db.input.MContacts;
 import com.wentao.messagemanagement.db.input.MEmail;
 import com.wentao.messagemanagement.db.input.MPhone;
+import com.wentao.messagemanagement.db.output.DialInfo;
 import com.wentao.messagemanagement.db.output.MessageInfo;
 
 import org.litepal.crud.DataSupport;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Voter Lin on 2017/11/22.
@@ -208,6 +211,24 @@ public class DataHandler{
         List<CallInfo> list = new ArrayList<>();
         ContactsHandler.getAllCalls(context, list);
         return list;
+    }
+
+    public static void getDialList(List<DialInfo> infos, String phone){
+        List<MPhone> phones;
+        if (!infos.isEmpty())
+            infos.clear();
+        if (Objects.equals(phone, "n")) {
+            phones = DataSupport.findAll(MPhone.class);
+        } else {
+            phones = DataSupport.where("phone like ?", "%" + phone + "%").find(MPhone.class);
+        }
+        for (MPhone p : phones){
+            DialInfo i = new DialInfo();
+            i.setPhone(p.getPhone());
+            i.setName(getName(p.getMid()));
+            infos.add(i);
+        }
+
     }
 
     private static String check(String str, String ostr) {

@@ -194,7 +194,7 @@ public class ContactsHandler {
                 , Telephony.Sms.DEFAULT_SORT_ORDER);
         if (cursor != null && cursor.moveToFirst()) {
             do{
-                if ((cursor.getLong(0) + "").contains(phoneNumber)) {
+                if (phoneNumber.contains(cursor.getLong(0) + "") || ("86" + phoneNumber).contains(cursor.getLong(0) + "")) {
                     MessageInfo info = new MessageInfo();
                     info.setId(id);
                     info.setPhoneNumber(phoneNumber);
