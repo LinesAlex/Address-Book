@@ -40,22 +40,31 @@ public class MessageAndCall extends AppCompatActivity {
         setContentView(R.layout.page_message_and_call);
         instance = MessageAndCall.this;
         final FloatingActionButton fbtn_contact =(FloatingActionButton) findViewById(R.id.btn_contact);
+        final FloatingActionButton fbtn_dial = (FloatingActionButton) findViewById(R.id.btn_dial);
+        FloatingActionButton fbtn_more = (FloatingActionButton) findViewById(R.id.btn_more);
+
         fbtn_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.this, ContactsList.class);
                 startActivity(intent);
+                fbtn_contact.setVisibility(View.GONE);
+                fbtn_dial.setVisibility(View.GONE);
+                FlagOfGone = false;
             }
         });
-        final FloatingActionButton fbtn_dial = (FloatingActionButton) findViewById(R.id.btn_dial);
+
         fbtn_dial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.this, DialPage.class);
                 startActivity(intent);
+                fbtn_contact.setVisibility(View.GONE);
+                fbtn_dial.setVisibility(View.GONE);
+                FlagOfGone = false;
             }
         });
-        FloatingActionButton fbtn_more = (FloatingActionButton) findViewById(R.id.btn_more);
+
         fbtn_more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

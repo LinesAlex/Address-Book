@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tb_title_dial"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_contact"
             android:layout_width="match_parent"
@@ -14,15 +24,16 @@
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/dial_page"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:background="#223"
+        android:background="#00000000"
         android:orientation="vertical">
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#445"
+            android:background="#ddd"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp">
             <EditText
@@ -30,10 +41,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="#445"
-                android:textColor="#fff"
+                android:layout_marginRight="30dp"
+                android:background="#ddd"
+                android:textColor="#111"
                 android:inputType="phone"
                 android:textSize="35sp" />
+            <Button
+                android:id="@+id/btn_delete_all"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/button_delete_all"/>
         </FrameLayout>
 
 
@@ -49,32 +68,32 @@
 
                 <Button
                     android:id="@+id/one"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="1"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/two"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="2"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/three"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="3"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
             </TableRow>
 
@@ -84,32 +103,32 @@
 
                 <Button
                     android:id="@+id/four"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="4"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/five"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="5"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/six"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="6"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
             </TableRow>
 
@@ -119,32 +138,32 @@
 
                 <Button
                     android:id="@+id/seven"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="7"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/eight"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="8"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/nine"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="9"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
             </TableRow>
 
@@ -154,32 +173,32 @@
 
                 <Button
                     android:id="@+id/xin"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="*"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/zero"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="0"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
 
                 <Button
                     android:id="@+id/jin"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:background="#334"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/button_background"
                     android:text="#"
-                    android:textColor="#fff"
+                    android:textColor="#334"
                     android:textSize="30sp" />
             </TableRow>
 
@@ -190,33 +209,41 @@
                 <Button
                     android:id="@+id/call_in"
                     android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/button_call_push" />
 
                 <Button
                     android:id="@+id/pack_up"
                     android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/button_finish" />
 
                 <Button
                     android:id="@+id/delete"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="15dp"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
+                    android:layout_marginLeft="15dp"
                     android:background="@drawable/button_del" />
             </TableRow>
         </TableLayout>
-
     </LinearLayout>
 
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fbtn_show_dial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/fbutton_dial"
+        app:backgroundTint="#272636"
+        app:rippleColor="#334"
+        android:layout_margin="16dp"
+        android:visibility="gone"/>
 </FrameLayout>

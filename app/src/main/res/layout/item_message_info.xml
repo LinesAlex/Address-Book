@@ -14,22 +14,23 @@
         android:layout_gravity="right"
         android:orientation="horizontal"
         android:visibility="gone">
-
+        <TextView
+            android:id="@+id/tv_sms_time_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="5dp"
+            android:text="10月6日 16:00"
+            android:textColor="#555"
+            android:textSize="8sp" />
         <LinearLayout
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="#ded">
 
-            <TextView
-                android:id="@+id/tv_sms_time_send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginRight="10dp"
-                android:text="10月6日 16:00"
-                android:textColor="#555"
-                android:textSize="8dp" />
+
 
             <TextView
                 android:id="@+id/tv_sms_message_send"
@@ -40,7 +41,7 @@
                 android:layout_gravity="right"
                 android:text="短信消息一二三四五六七八九十"
                 android:textColor="#000"
-                android:textSize="15dp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tv_sms_type_send"
@@ -50,7 +51,7 @@
                 android:layout_marginRight="10dp"
                 android:text="送达"
                 android:textColor="#5a5"
-                android:textSize="8dp" />
+                android:textSize="8sp" />
 
         </LinearLayout>
 
@@ -61,6 +62,7 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="10dp"
             app:srcCompat="@drawable/message_send" />
+
     </LinearLayout>
 
 
@@ -83,27 +85,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_sms_time_get"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="left"
-                android:text="10月6日 16:00"
-                android:textColor="#555"
-                android:textSize="8dp" />
-
+            android:orientation="vertical"
+            android:background="#ccc">
             <TextView
                 android:id="@+id/tv_sms_message_get"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:layout_marginBottom="10dp"
                 android:text="短信消息一二三四五六七八九十"
                 android:textColor="#000"
-                android:textSize="15dp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:id="@+id/tv_sms_type_get"
@@ -113,8 +104,16 @@
                 android:layout_gravity="left"
                 android:text="送达"
                 android:textColor="#5aa"
-                android:textSize="8dp" />
+                android:textSize="8sp" />
         </LinearLayout>
-
+        <TextView
+            android:id="@+id/tv_sms_time_get"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="left|bottom"
+            android:text="10月6日 16:00"
+            android:textColor="#555"
+            android:textSize="8sp" />
     </LinearLayout>
 </LinearLayout>

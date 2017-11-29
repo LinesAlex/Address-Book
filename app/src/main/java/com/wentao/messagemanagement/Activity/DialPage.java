@@ -7,19 +7,24 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.Spannable;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
 import com.wentao.messagemanagement.R;
@@ -42,6 +47,9 @@ public class DialPage extends AppCompatActivity {
     }
     private DialContactsAdapter adapter;
     private List<DialInfo> mDialList = new LinkedList<>();
+    private LinearLayout dial_page;
+    EditText phone;
+    FloatingActionButton btn_show;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +71,17 @@ public class DialPage extends AppCompatActivity {
         Button callin = (Button) findViewById(R.id.call_in);
         Button packup = (Button) findViewById(R.id.pack_up);
         Button delete = (Button) findViewById(R.id.delete);
+        Button delete_all = (Button) findViewById(R.id.btn_delete_all);
+        phone = (EditText) findViewById(R.id.et_phone);
+        btn_show = (FloatingActionButton) findViewById(R.id.fbtn_show_dial);
+        dial_page = (LinearLayout) findViewById(R.id.dial_page);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_title_dial);
+        toolbar.setTitle("拨号");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {actionBar.setDisplayHomeAsUpEnabled(true);}
+
 
         OnClickItemListener listener = new OnClickItemListener();
         one.setOnClickListener(listener);
@@ -80,18 +99,22 @@ public class DialPage extends AppCompatActivity {
         callin.setOnClickListener(listener);
         packup.setOnClickListener(listener);
         delete.setOnClickListener(listener);
+        delete_all.setOnClickListener(listener);
+        btn_show.setOnClickListener(listener);
 
         DataHandler.getDialList(mDialList, "n");
         RecyclerView rv_contasts = (RecyclerView) findViewById(R.id.rv_contact);
         LinearLayoutManager manager = new LinearLayoutManager(instance);
+        DialContactsAdapter.setViewHolderEditText(phone);
         adapter = new DialContactsAdapter(mDialList);
         rv_contasts.setLayoutManager(manager);
         rv_contasts.setAdapter(adapter);
+
     }
-    class OnClickItemListener implements View.OnClickListener {
+    private class OnClickItemListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            EditText phone = (EditText) findViewById(R.id.et_phone);
+
             int index = phone.getSelectionStart();
             Editable editable = phone.getText();
             switch (v.getId()) {
@@ -140,24 +163,39 @@ public class DialPage extends AppCompatActivity {
                     }
                 }break;
                 case R.id.pack_up:{
-                    finish();
+                    dial_page.setVisibility(View.GONE);
+                    btn_show.setVisibility(View.VISIBLE);
                 } break;
+                case R.id.fbtn_show_dial:{
+                    btn_show.setVisibility(View.GONE);
+                    dial_page.setVisibility(View.VISIBLE);
+                }break;
                 case R.id.delete:{
                     if (phone.getText().length() > 0 && index > 0){
-
                         editable.delete(index-1, index);
                     }
                 }break;
+                case R.id.btn_delete_all:{
+                    phone.setText("");
+                }
             }
             CharSequence text = phone.getText();
             DataHandler.getDialList(mDialList, text.toString());
             adapter.notifyDataSetChanged();
-//            adapter.viewNotify(mDialList);
-            //Debug.asserts(text instanceof Spannable);
-            if (text instanceof Spannable && index == 0) {
+            if (index == 0) {
                 Spannable spanText = (Spannable)text;
                 Selection.setSelection(spanText, text.length());
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
