@@ -20,6 +20,8 @@ import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.ContactsHandler;
 import com.wentao.messagemanagement.tool.TimeTool;
 
+import java.util.Objects;
+
 /**
  * Created by Administrator on 2017/11/10.
  */
@@ -40,7 +42,7 @@ public class MessagePage extends AppCompatActivity{
         final String phone;
         final String name;
         final String id = intent.getStringExtra("id");
-        if (id == "" || id == null){
+        if (Objects.equals(id, "") || id == null){
             phone = intent.getStringExtra("phone");
             name = phone;
         } else {
@@ -49,6 +51,7 @@ public class MessagePage extends AppCompatActivity{
         }
 
         ListView lv_message_page = (ListView) findViewById(R.id.lv_message_page);
+        lv_message_page.setDivider(null);
         lv_message_page.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         et_enter_message = (EditText) findViewById(R.id.et_enter_message);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tb_title_message);

@@ -8,18 +8,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 
 import com.wentao.messagemanagement.Fragment.CallPageFragment;
 import com.wentao.messagemanagement.Fragment.MessagePageFragment;
 import com.wentao.messagemanagement.FragmentAdapter.MyFragmentPagerAdapter;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.input.MContacts;
-import com.wentao.messagemanagement.tool.ContactsHandler;
 import com.wentao.messagemanagement.tool.DataHandler;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 
@@ -41,6 +37,8 @@ public class MessageAndCall extends AppCompatActivity {
         instance = MessageAndCall.this;
         final FloatingActionButton fbtn_contact =(FloatingActionButton) findViewById(R.id.btn_contact);
         final FloatingActionButton fbtn_dial = (FloatingActionButton) findViewById(R.id.btn_dial);
+        final FloatingActionButton fbtn_write = (FloatingActionButton) findViewById(R.id.btn_send);
+        final FloatingActionButton[] buttons = new FloatingActionButton[]{fbtn_contact, fbtn_dial, fbtn_write};
         FloatingActionButton fbtn_more = (FloatingActionButton) findViewById(R.id.btn_more);
 
         fbtn_contact.setOnClickListener(new View.OnClickListener() {
@@ -48,8 +46,7 @@ public class MessageAndCall extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.this, ContactsList.class);
                 startActivity(intent);
-                fbtn_contact.setVisibility(View.GONE);
-                fbtn_dial.setVisibility(View.GONE);
+                setButtonGone(buttons, false);
                 FlagOfGone = false;
             }
         });
@@ -59,8 +56,7 @@ public class MessageAndCall extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.this, DialPage.class);
                 startActivity(intent);
-                fbtn_contact.setVisibility(View.GONE);
-                fbtn_dial.setVisibility(View.GONE);
+                setButtonGone(buttons, false);
                 FlagOfGone = false;
             }
         });
@@ -69,13 +65,12 @@ public class MessageAndCall extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (FlagOfGone) {
-                    fbtn_contact.setVisibility(View.GONE);
-                    fbtn_dial.setVisibility(View.GONE);
+                    setButtonGone(buttons, true);
                     FlagOfGone = false;
                 } else {
-                    fbtn_contact.setVisibility(View.VISIBLE);
-                    fbtn_dial.setVisibility(View.VISIBLE);
+                    setButtonGone(buttons, false);
                     FlagOfGone = true;
+
                 }
             }
         });
@@ -94,5 +89,19 @@ public class MessageAndCall extends AppCompatActivity {
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
         DataHandler.init(instance);
+    }
+
+    public void setButtonGone(FloatingActionButton[] button, boolean flag){
+        if (flag) {
+            for (FloatingActionButton aButton : button) {
+                aButton.setVisibility(View.GONE);
+                aButton.setAnimation(AnimationUtils.makeOutAnimation(instance, true));
+            }
+        } else {
+            for (FloatingActionButton aButton : button) {
+                aButton.setVisibility(View.VISIBLE);
+                aButton.setAnimation(AnimationUtils.makeInAnimation(instance, false));
+            }
+        }
     }
 }

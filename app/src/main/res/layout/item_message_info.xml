@@ -5,15 +5,37 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:layout_marginTop="10dp"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:background="#fff">
+    <FrameLayout
+        android:id="@+id/fl_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp">
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:srcCompat="@android:color/darker_gray"
+            android:layout_gravity="center_vertical"/>
+        <TextView
+            android:id="@+id/tv_day_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#000"
+            android:textSize="15sp"
+            android:background="#fff"/>
+    </FrameLayout>
     <LinearLayout
         android:id="@+id/linear_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:orientation="horizontal"
-        android:visibility="gone">
+        >
         <TextView
             android:id="@+id/tv_sms_time_send"
             android:layout_width="wrap_content"
@@ -29,9 +51,6 @@
             android:layout_margin="10dp"
             android:orientation="vertical"
             android:background="#ded">
-
-
-
             <TextView
                 android:id="@+id/tv_sms_message_send"
                 android:layout_width="wrap_content"
@@ -49,10 +68,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
                 android:text="送达"
                 android:textColor="#5a5"
                 android:textSize="8sp" />
-
         </LinearLayout>
 
         <ImageView
@@ -64,7 +83,6 @@
             app:srcCompat="@drawable/message_send" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/linear_get"
@@ -101,6 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
                 android:layout_gravity="left"
                 android:text="送达"
                 android:textColor="#5aa"

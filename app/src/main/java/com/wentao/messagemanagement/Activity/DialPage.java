@@ -21,12 +21,14 @@ import android.text.Spannable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
+import com.wentao.messagemanagement.Animation.AnimationUtil;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.CallInfo;
 import com.wentao.messagemanagement.db.output.DialInfo;
@@ -35,6 +37,8 @@ import com.wentao.messagemanagement.tool.DataHandler;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Administrator on 2017/11/27.
@@ -165,10 +169,14 @@ public class DialPage extends AppCompatActivity {
                 case R.id.pack_up:{
                     dial_page.setVisibility(View.GONE);
                     btn_show.setVisibility(View.VISIBLE);
+                    dial_page.setAnimation(AnimationUtil.moveToViewBottom());
+                    btn_show.setAnimation(AnimationUtil.moveToViewLocation());
                 } break;
                 case R.id.fbtn_show_dial:{
                     btn_show.setVisibility(View.GONE);
                     dial_page.setVisibility(View.VISIBLE);
+                    btn_show.setAnimation(AnimationUtil.moveToViewBottom());
+                    dial_page.setAnimation(AnimationUtil.moveToViewLocation());
                 }break;
                 case R.id.delete:{
                     if (phone.getText().length() > 0 && index > 0){

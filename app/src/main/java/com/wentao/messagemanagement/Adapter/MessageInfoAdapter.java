@@ -8,11 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.MessageInfo;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,11 +25,20 @@ import java.util.List;
 public class MessageInfoAdapter extends ArrayAdapter<MessageInfo> {
     private int resourceId;
     private View view;
-    private TextView tv_sms_time, tv_sms_message, tv_sms_type;
+    private TextView tv_sms_time, tv_sms_message, tv_sms_type, tv_sms_day;
+    private FrameLayout fl_day;
     private LinearLayout linear;
+    private static List<Integer> gonePositions = new ArrayList<>();
     public MessageInfoAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<MessageInfo> objects) {
         super(context, resource, objects);
         resourceId = resource;
+        List<String> timeInfos = new ArrayList<>();
+        for (int i = 0; i < objects.size(); i++) {
+            if (!timeInfos.contains(objects.get(i).getDate().split(" ")[0])) {
+                timeInfos.add(objects.get(i).getDate().split(" ")[0]);
+                gonePositions.add(i);
+            }
+        }
     }
 
     @NonNull
@@ -44,6 +56,11 @@ public class MessageInfoAdapter extends ArrayAdapter<MessageInfo> {
             case "接收":     {initView(0);}break;
             default:break;
         }
+        if (gonePositions.contains(position)) {
+            fl_day.setVisibility(View.VISIBLE);
+            tv_sms_day.setText(item.getDate().split(" ")[0]);
+        }
+        else {fl_day.setVisibility(View.GONE);}
         setView(item);
         return view;
     }
@@ -64,11 +81,14 @@ public class MessageInfoAdapter extends ArrayAdapter<MessageInfo> {
                 linear = view.findViewById(R.id.linear_send);
             }break;
         }
+        fl_day = view.findViewById(R.id.fl_day);
+        tv_sms_day = view.findViewById(R.id.tv_day_message);
     }
     private void setView(MessageInfo item) {
         linear.setVisibility(View.VISIBLE);
-        tv_sms_time.setText(item.getDate());
+        tv_sms_time.setText(item.getDate().split(" ")[1]);
         tv_sms_message.setText(item.getSmsbody());
         tv_sms_type.setText(item.getType());
+
     }
 }

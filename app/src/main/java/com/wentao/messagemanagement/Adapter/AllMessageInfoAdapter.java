@@ -24,7 +24,7 @@ import java.util.List;
 public class AllMessageInfoAdapter extends RecyclerView.Adapter<AllMessageInfoAdapter.ViewHolder>{
     private List<MessageInfo> mMessageInfos = new LinkedList<>();
     private List<Integer> gonePositions = new ArrayList<>();
-    View view;
+    private View view;
 
     public AllMessageInfoAdapter(List<MessageInfo> infos) {
         mMessageInfos.addAll(infos);
