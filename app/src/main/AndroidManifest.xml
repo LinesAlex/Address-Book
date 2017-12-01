@@ -30,6 +30,7 @@
         <activity
             android:name=".Activity.DialPage">
         </activity>
+        <activity android:name=".Activity.SendMessagePage" />
         <activity
             android:name=".Activity.ContactsList">
         </activity>

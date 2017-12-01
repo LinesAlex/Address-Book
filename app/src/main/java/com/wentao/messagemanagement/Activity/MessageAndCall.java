@@ -46,8 +46,7 @@ public class MessageAndCall extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.this, ContactsList.class);
                 startActivity(intent);
-                setButtonGone(buttons, false);
-                FlagOfGone = false;
+                setButtonGone(buttons, true);
             }
         });
 
@@ -56,21 +55,25 @@ public class MessageAndCall extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MessageAndCall.this, DialPage.class);
                 startActivity(intent);
-                setButtonGone(buttons, false);
-                FlagOfGone = false;
+                setButtonGone(buttons, true);
             }
         });
 
+        fbtn_write.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MessageAndCall.this, SendMessagePage.class);
+                startActivity(intent);
+                setButtonGone(buttons, true);
+            }
+        });
         fbtn_more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (FlagOfGone) {
                     setButtonGone(buttons, true);
-                    FlagOfGone = false;
                 } else {
                     setButtonGone(buttons, false);
-                    FlagOfGone = true;
-
                 }
             }
         });
@@ -97,11 +100,13 @@ public class MessageAndCall extends AppCompatActivity {
                 aButton.setVisibility(View.GONE);
                 aButton.setAnimation(AnimationUtils.makeOutAnimation(instance, true));
             }
+            FlagOfGone = false;
         } else {
             for (FloatingActionButton aButton : button) {
                 aButton.setVisibility(View.VISIBLE);
                 aButton.setAnimation(AnimationUtils.makeInAnimation(instance, false));
             }
+            FlagOfGone = true;
         }
     }
 }

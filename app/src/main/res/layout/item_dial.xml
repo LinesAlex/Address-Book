@@ -27,12 +27,24 @@
             android:textSize="12sp"
             android:textColor="#333"/>
     </LinearLayout>
+    <Button
+        android:id="@+id/btn_choice"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="end|center_vertical"
+        android:background="@drawable/btn_choice_add"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="5dp"
+        android:visibility="gone"/>
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
-        android:layout_margin="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         app:srcCompat="@android:color/darker_gray" />
 
 </FrameLayout>

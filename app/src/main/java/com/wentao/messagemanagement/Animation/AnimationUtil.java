@@ -19,7 +19,7 @@ public class AnimationUtil {
         TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
                 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
-        mHiddenAction.setDuration(500);
+        mHiddenAction.setDuration(400);
         return mHiddenAction;
     }
 
@@ -32,7 +32,7 @@ public class AnimationUtil {
         TranslateAnimation mHiddenAction = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f,
                 Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
                 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-        mHiddenAction.setDuration(500);
+        mHiddenAction.setDuration(400);
         return mHiddenAction;
     }
 }

@@ -20,6 +20,7 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -87,6 +88,7 @@ public class DialPage extends AppCompatActivity {
         if (actionBar != null) {actionBar.setDisplayHomeAsUpEnabled(true);}
 
 
+
         OnClickItemListener listener = new OnClickItemListener();
         one.setOnClickListener(listener);
         two.setOnClickListener(listener);
@@ -109,8 +111,9 @@ public class DialPage extends AppCompatActivity {
         DataHandler.getDialList(mDialList, "n");
         RecyclerView rv_contasts = (RecyclerView) findViewById(R.id.rv_contact);
         LinearLayoutManager manager = new LinearLayoutManager(instance);
-        DialContactsAdapter.setViewHolderEditText(phone);
+
         adapter = new DialContactsAdapter(mDialList);
+        adapter.setViewHolderEditText(phone);
         rv_contasts.setLayoutManager(manager);
         rv_contasts.setAdapter(adapter);
 
