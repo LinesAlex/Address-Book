@@ -3,18 +3,26 @@ package com.wentao.messagemanagement.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.wentao.messagemanagement.Adapter.ChoiceContactsAdapter;
 import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
 import com.wentao.messagemanagement.Animation.AnimationUtil;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.DialInfo;
+import com.wentao.messagemanagement.db.output.MessageInfo;
 import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.NotifyList;
 
@@ -39,29 +47,9 @@ public class SendMessagePage extends AppCompatActivity {
         setContentView(R.layout.page_send_message);
         instance = SendMessagePage.this;
 
-        final FloatingActionButton show_edit = (FloatingActionButton) findViewById(R.id.show_edit);
-        final LinearLayout edit_page = (LinearLayout) findViewById(R.id.edit_page);
-        show_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                edit_page.setVisibility(View.VISIBLE);
-                edit_page.setAnimation(AnimationUtil.moveToViewLocation());
-                show_edit.setVisibility(View.GONE);
-                show_edit.setAnimation(AnimationUtil.moveToViewBottom());
-            }
-        });
-        Button hide_edit = (Button) findViewById(R.id.hide_edit);
-        hide_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                edit_page.setVisibility(View.GONE);
-                edit_page.setAnimation(AnimationUtil.moveToViewBottom());
-                show_edit.setVisibility(View.VISIBLE);
-                show_edit.setAnimation(AnimationUtil.moveToViewLocation());
-            }
-        });
 
-        RecyclerView rv_choice_contacts, rv_contacts;
+
+        final RecyclerView rv_choice_contacts, rv_contacts;
         rv_choice_contacts = (RecyclerView) findViewById(R.id.rv_choice_contacts);
         ChoiceContactsAdapter adapterC = new ChoiceContactsAdapter(contactsChoiceList);
         LinearLayoutManager managerC = new LinearLayoutManager(instance);
@@ -72,12 +60,112 @@ public class SendMessagePage extends AppCompatActivity {
 
         rv_contacts = (RecyclerView) findViewById(R.id.rv_contacts);
         DataHandler.getDialList(contactsList,"n");
-        DialContactsAdapter adapter = new DialContactsAdapter(contactsList);
+        final DialContactsAdapter adapter = new DialContactsAdapter(contactsList);
         LinearLayoutManager manager = new LinearLayoutManager(instance);
         adapter.setChioceFlag();
         rv_contacts.setLayoutManager(manager);
         rv_contacts.setAdapter(adapter);
 
         NotifyList.initNotify(contactsList, contactsChoiceList, adapter, adapterC);
+
+        final EditText et_message = (EditText) findViewById(R.id.autoCompleteTextView);
+        final FloatingActionButton show_edit = (FloatingActionButton) findViewById(R.id.show_edit);
+        final FloatingActionButton send_message = (FloatingActionButton) findViewById(R.id.fbtn_send_message);
+        final LinearLayout edit_page = (LinearLayout) findViewById(R.id.edit_page);
+        show_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit_page.setVisibility(View.VISIBLE);
+                edit_page.setAnimation(AnimationUtil.moveToViewLocation());
+                send_message.setVisibility(View.VISIBLE);
+                send_message.setAnimation(AnimationUtil.moveToViewLocation());
+                show_edit.setVisibility(View.GONE);
+                show_edit.setAnimation(AnimationUtil.moveToViewBottom());
+                rv_contacts.setVisibility(View.GONE);
+                rv_contacts.setAnimation(AnimationUtil.moveToViewBottom());
+
+            }
+        });
+
+        Button hide_edit = (Button) findViewById(R.id.hide_edit);
+        hide_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit_page.setVisibility(View.GONE);
+                edit_page.setAnimation(AnimationUtil.moveToViewBottom());
+                send_message.setVisibility(View.GONE);
+                send_message.setAnimation(AnimationUtil.moveToViewBottom());
+                show_edit.setVisibility(View.VISIBLE);
+                show_edit.setAnimation(AnimationUtil.moveToViewLocation());
+                rv_contacts.setVisibility(View.VISIBLE);
+                rv_contacts.setAnimation(AnimationUtil.moveToViewLocation());
+            }
+        });
+
+        send_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = et_message.getText().toString();
+                if(contactsChoiceList.isEmpty()) {
+                    Snackbar.make(edit_page, "未选择联系人，无法发送", Snackbar.LENGTH_SHORT).show();
+                }else if (message.isEmpty() || message.length() == 0) {
+                    Snackbar.make(edit_page, "未填写短信，无法发送", Snackbar.LENGTH_SHORT).show();
+                }else {
+                    String names = null;
+                    for (DialInfo i : contactsChoiceList) {
+                        et_message.setText("");
+                        SmsManager sms = SmsManager.getDefault();
+                        sms.sendTextMessage(i.getPhone(), null, message, null, null);
+                        names += i.getName() + " ";
+                    }
+                    Snackbar.make(edit_page, "已将信息发送给"+ names +"等联系人", Snackbar.LENGTH_SHORT).show();
+                    while(!contactsChoiceList.isEmpty()) {
+                        NotifyList.Notify.notChoiceItem(0);
+                    }
+                }
+            }
+        });
+
+
+        SearchView search = (SearchView) findViewById(R.id.sv_search_contacts);
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                if (newText != null && newText.length() != 0){
+                    DataHandler.getDialList(contactsList, newText);
+                    adapter.notifyDataSetChanged();
+                }
+                FrameLayout fl_search = (FrameLayout) findViewById(R.id.fl_search);
+                if (contactsList.size() == 0) {
+                    fl_search.setVisibility(View.VISIBLE);
+                    TextView tv_search = (TextView) findViewById(R.id.tv_search_choice);
+                    tv_search.setText(newText);
+                    Button btn_search = (Button) findViewById(R.id.btn_search_choice);
+                    btn_search.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            for (DialInfo info : contactsChoiceList) {
+                                if (newText == info.getPhone()) {
+                                    return;
+                                }
+                            }
+                            DialInfo dialInfo = new DialInfo();
+                            dialInfo.setName(newText);
+                            dialInfo.setPhone(newText);
+                            dialInfo.setContacts(false);
+                            NotifyList.Notify.addItem(dialInfo);
+                        }
+                    });
+                } else {
+                    fl_search.setVisibility(View.GONE);
+                }
+                return true;
+            }
+        });
     }
 }

@@ -35,7 +35,7 @@ public class ChoiceContactsAdapter extends RecyclerView.Adapter<ChoiceContactsAd
         holder.btn_remove_contacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotifyList.Notify.notChoiceItem();
+                NotifyList.Notify.notChoiceItem(position);
             }
         });
 

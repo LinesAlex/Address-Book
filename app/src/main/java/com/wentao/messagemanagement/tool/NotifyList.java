@@ -28,10 +28,15 @@ public class NotifyList {
         list.remove(index);
         notifyData();
     }
+    public void addItem(DialInfo i) {
+        choiceList.add(0,i);
+        notifyData();
+    }
 
-    public void notChoiceItem() {
-        list.add(choiceList.get(0));
-        choiceList.remove(0);
+    public void notChoiceItem(int index) {
+        if (choiceList.get(index).isContacts())
+            list.add(choiceList.get(index));
+        choiceList.remove(index);
         notifyData();
     }
 

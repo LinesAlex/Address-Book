@@ -47,8 +47,8 @@
         android:layout_marginRight="25dp"
         android:layout_marginBottom="190dp"
         app:fabSize="mini"
-        app:backgroundTint="#9d9d9d"
-        app:rippleColor="#224"
+        app:backgroundTint="#fff"
+        app:rippleColor="#999"
         android:src="@drawable/fbutton_contact"
         android:visibility="gone"/>
     <android.support.design.widget.FloatingActionButton
@@ -59,8 +59,8 @@
         android:layout_marginRight="25dp"
         android:layout_marginBottom="140dp"
         app:fabSize="mini"
-        app:backgroundTint="#9d9d9d"
-        app:rippleColor="#555"
+        app:backgroundTint="#fff"
+        app:rippleColor="#999"
         android:src="@drawable/button_write_message"
         android:visibility="gone"/>
     <android.support.design.widget.FloatingActionButton
@@ -71,8 +71,8 @@
         android:layout_marginRight="25dp"
         android:layout_marginBottom="90dp"
         app:fabSize="mini"
-        app:backgroundTint="#9d9d9d"
-        app:rippleColor="#555"
+        app:backgroundTint="#fff"
+        app:rippleColor="#999"
         android:src="@drawable/fbutton_dial"
         android:visibility="gone"/>
     <android.support.design.widget.FloatingActionButton

@@ -7,6 +7,15 @@ package com.wentao.messagemanagement.db.output;
 public class DialInfo {
     private String name;
     private String phone;
+    private boolean isContacts = true;
+
+    public boolean isContacts() {
+        return isContacts;
+    }
+
+    public void setContacts(boolean contacts) {
+        isContacts = contacts;
+    }
 
     public String getName() {
         return name;
