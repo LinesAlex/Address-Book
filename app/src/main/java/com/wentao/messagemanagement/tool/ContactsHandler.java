@@ -239,6 +239,7 @@ public class ContactsHandler {
                 contacts.setMid(cursorInfo.getString(0));
                 contacts.setName(cursorInfo.getString(1));
                 contacts.setSurname(getPinyin(contacts.getName().charAt(0)));
+                contacts.save();
 //--------------------------------------get phone number-------------------------------------------
                 Cursor cursor = context.getContentResolver().query(
                         ContactsContract.CommonDataKinds.Phone.CONTENT_URI
@@ -267,7 +268,6 @@ public class ContactsHandler {
                         email.save();
                     } while (cursor.moveToNext());
                 }
-                contacts.save();
             } while (cursorInfo.moveToNext());
         }
     }

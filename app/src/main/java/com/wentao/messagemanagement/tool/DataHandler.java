@@ -1,10 +1,7 @@
 package com.wentao.messagemanagement.tool;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.wentao.messagemanagement.Activity.ContactsPage;
-import com.wentao.messagemanagement.Adapter.AllMessageInfoAdapter;
 import com.wentao.messagemanagement.db.input.Intro;
 import com.wentao.messagemanagement.db.output.CallInfo;
 import com.wentao.messagemanagement.db.output.ContactsInfo;
@@ -18,7 +15,6 @@ import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 

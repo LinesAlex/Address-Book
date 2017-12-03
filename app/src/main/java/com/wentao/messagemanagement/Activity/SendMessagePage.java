@@ -1,10 +1,13 @@
 package com.wentao.messagemanagement.Activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
@@ -54,6 +57,7 @@ public class SendMessagePage extends AppCompatActivity {
         ChoiceContactsAdapter adapterC = new ChoiceContactsAdapter(contactsChoiceList);
         LinearLayoutManager managerC = new LinearLayoutManager(instance);
         managerC.setOrientation(LinearLayoutManager.HORIZONTAL);
+//        GridLayoutManager managerC = new GridLayoutManager(this,5);
         rv_choice_contacts.setLayoutManager(managerC);
         rv_choice_contacts.setAdapter(adapterC);
 
@@ -105,23 +109,47 @@ public class SendMessagePage extends AppCompatActivity {
         send_message.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = et_message.getText().toString();
+                final String message = et_message.getText().toString();
                 if(contactsChoiceList.isEmpty()) {
                     Snackbar.make(edit_page, "未选择联系人，无法发送", Snackbar.LENGTH_SHORT).show();
                 }else if (message.isEmpty() || message.length() == 0) {
                     Snackbar.make(edit_page, "未填写短信，无法发送", Snackbar.LENGTH_SHORT).show();
                 }else {
-                    String names = null;
-                    for (DialInfo i : contactsChoiceList) {
+                    if (contactsChoiceList.size() > 1) {
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(instance);
+                        dialog.setTitle("提示");
+                        dialog.setMessage("是否要将信息发出?");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("发出信息", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String names = null;
+                                for (DialInfo i : contactsChoiceList) {
+                                    et_message.setText("");
+                                    SmsManager sms = SmsManager.getDefault();
+                                    sms.sendTextMessage(i.getPhone(), null, message, null, null);
+                                    names += i.getName() + " ";
+                                }
+                                Snackbar.make(edit_page, "已将信息发送给联系人 : " + names, Snackbar.LENGTH_SHORT).show();
+                                while (!contactsChoiceList.isEmpty()) {
+                                    NotifyList.Notify.notChoiceItem(0);
+                                }
+                            }
+                        });
+                        dialog.setNegativeButton("重新编辑", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        dialog.show();
+                    } else {
                         et_message.setText("");
                         SmsManager sms = SmsManager.getDefault();
-                        sms.sendTextMessage(i.getPhone(), null, message, null, null);
-                        names += i.getName() + " ";
-                    }
-                    Snackbar.make(edit_page, "已将信息发送给"+ names +"等联系人", Snackbar.LENGTH_SHORT).show();
-                    while(!contactsChoiceList.isEmpty()) {
+                        sms.sendTextMessage(contactsChoiceList.get(0).getPhone(), null, message, null, null);
+                        Snackbar.make(edit_page, "已将信息发送给联系人 : " + contactsChoiceList.get(0).getName(), Snackbar.LENGTH_SHORT).show();
                         NotifyList.Notify.notChoiceItem(0);
                     }
+
                 }
             }
         });
@@ -136,29 +164,23 @@ public class SendMessagePage extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(final String newText) {
-                if (newText != null && newText.length() != 0){
-                    DataHandler.getDialList(contactsList, newText);
-                    adapter.notifyDataSetChanged();
-                }
+                NotifyList.Notify.searchList(newText);
                 FrameLayout fl_search = (FrameLayout) findViewById(R.id.fl_search);
                 if (contactsList.size() == 0) {
+                    for (DialInfo infos :contactsChoiceList) {
+                        if(infos.getPhone().startsWith(newText)) {
+                            fl_search.setVisibility(View.GONE);
+                            return true;
+                        }
+                    }
                     fl_search.setVisibility(View.VISIBLE);
                     TextView tv_search = (TextView) findViewById(R.id.tv_search_choice);
-                    tv_search.setText(newText);
                     Button btn_search = (Button) findViewById(R.id.btn_search_choice);
+                    tv_search.setText(newText);
                     btn_search.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            for (DialInfo info : contactsChoiceList) {
-                                if (newText == info.getPhone()) {
-                                    return;
-                                }
-                            }
-                            DialInfo dialInfo = new DialInfo();
-                            dialInfo.setName(newText);
-                            dialInfo.setPhone(newText);
-                            dialInfo.setContacts(false);
-                            NotifyList.Notify.addItem(dialInfo);
+                            NotifyList.Notify.addItem(newText);
                         }
                     });
                 } else {

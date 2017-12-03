@@ -19,7 +19,7 @@ import java.util.Date;
  */
 
 public class MessageReceiver extends BroadcastReceiver{
-    private static MessageInfoAdapter Adapter;
+    private static MessageInfoAdapter Adapter = null;
     @Override
     public void onReceive(Context context, Intent intent) {
         // 短信时间
@@ -45,16 +45,11 @@ public class MessageReceiver extends BroadcastReceiver{
             String smsBody = strBody.toString();
             String smsNumber = number.toString();
 
-            Log.v("NUMBER=", smsNumber);
-            Log.v("TIME=", strTime);
-            Log.v("BODY=", smsBody);
-
-            if (!Adapter.isEmpty()){
+            if (Adapter != null){
                 MessageInfo messageInfo = new MessageInfo(smsNumber, smsBody, strTime, "接收");
                 ContactsHandler.MessageInfos.add(messageInfo);
                 Adapter.notifyDataSetChanged();
             }
-
             // 取消消息
             this.abortBroadcast();
         }
@@ -62,5 +57,4 @@ public class MessageReceiver extends BroadcastReceiver{
     public static void setAdapter(MessageInfoAdapter adapter) {
         Adapter = adapter;
     }
-
 }

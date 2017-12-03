@@ -35,7 +35,7 @@
         android:background="@drawable/btn_choice_add"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="5dp"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
