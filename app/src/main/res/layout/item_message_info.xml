@@ -29,110 +29,144 @@
             android:textSize="15sp"
             android:background="#fff"/>
     </FrameLayout>
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/linear_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:orientation="horizontal"
-        >
-        <TextView
-            android:id="@+id/tv_sms_time_send"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:visibility="gone">
+
+        <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
-            android:text="10月6日 16:00"
-            android:textColor="#555"
-            android:textSize="8sp" />
-        <LinearLayout
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="vertical"
-            android:background="#ded">
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="35dp"
+            app:cardCornerRadius="15dp"
+            android:elevation="10dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
             <TextView
                 android:id="@+id/tv_sms_message_send"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_gravity="right"
-                android:text="短信消息一二三四五六七八九十"
-                android:textColor="#000"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/tv_sms_type_send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginBottom="5dp"
-                android:text="送达"
-                android:textColor="#5a5"
-                android:textSize="8sp" />
+                android:layout_gravity="right"
+                android:text=""
+                android:textColor="#000"
+                android:textSize="15sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="5dp">
+                    <TextView
+                        android:id="@+id/tv_sms_time_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="16:00"
+                        android:textColor="#555"
+                        android:textSize="8sp" />
+                    <TextView
+                        android:id="@+id/tv_sms_type_send"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="送达"
+                        android:textColor="#5a5"
+                        android:textSize="8sp" />
+                </LinearLayout>
         </LinearLayout>
-
+        </android.support.v7.widget.CardView>
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="bottom"
+            android:layout_gravity="bottom|right"
             android:layout_marginBottom="10dp"
             app:srcCompat="@drawable/message_send" />
+    </FrameLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/linear_get"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:visibility="gone">
-
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="10dp"
             app:srcCompat="@drawable/message_get" />
-
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="35dp"
+            app:cardCornerRadius="15dp"
+            android:elevation="10dp">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:orientation="vertical"
-            android:background="#ccc">
-            <TextView
-                android:id="@+id/tv_sms_message_get"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="短信消息一二三四五六七八九十"
-                android:textColor="#000"
-                android:textSize="13sp" />
+            android:background="#ddd">
 
             <TextView
-                android:id="@+id/tv_sms_type_get"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_sms_message_get"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:layout_marginBottom="5dp"
-                android:layout_gravity="left"
-                android:text="送达"
-                android:textColor="#5aa"
-                android:textSize="8sp" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp">
+                <TextView
+                    android:id="@+id/tv_sms_type_get"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="送达"
+                    android:textColor="#5aa"
+                    android:textSize="8sp" />
+                <TextView
+                    android:id="@+id/tv_sms_time_get"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="16:00"
+                    android:textColor="#555"
+                    android:textSize="8sp" />
+
+
+
+            </LinearLayout>
         </LinearLayout>
-        <TextView
-            android:id="@+id/tv_sms_time_get"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_gravity="left|bottom"
-            android:text="10月6日 16:00"
-            android:textColor="#555"
-            android:textSize="8sp" />
-    </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </FrameLayout>
 </LinearLayout>

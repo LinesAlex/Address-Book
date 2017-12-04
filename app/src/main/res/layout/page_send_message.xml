@@ -13,7 +13,7 @@
             android:id="@+id/sv_search_contacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#ddd"/>
+            android:background="#334"/>
         <FrameLayout
             android:id="@+id/fl_search"
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
             android:id="@+id/rv_choice_contacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#eee">
+            android:background="#fff">
         </android.support.v7.widget.RecyclerView>
 
         <ImageView

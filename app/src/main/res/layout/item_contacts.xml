@@ -78,7 +78,8 @@
             android:layout_marginLeft="40dp"
             android:gravity="center_vertical"
             android:text="Name"
-            android:textSize="15dp" />
+            android:textSize="15sp"
+            android:textColor="#333"/>
 
         <LinearLayout
             android:id="@+id/liner_right"

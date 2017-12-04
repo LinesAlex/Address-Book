@@ -27,7 +27,7 @@ public class MessageInfoAdapter extends ArrayAdapter<MessageInfo> {
     private View view;
     private TextView tv_sms_time, tv_sms_message, tv_sms_type, tv_sms_day;
     private FrameLayout fl_day;
-    private LinearLayout linear;
+    private FrameLayout linear;
     private static List<Integer> gonePositions = new ArrayList<>();
     public MessageInfoAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<MessageInfo> objects) {
         super(context, resource, objects);

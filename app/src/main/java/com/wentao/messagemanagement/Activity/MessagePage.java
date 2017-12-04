@@ -9,8 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import com.wentao.messagemanagement.Adapter.MessageInfoAdapter;
 import com.wentao.messagemanagement.Receiver.MessageReceiver;
@@ -55,7 +55,7 @@ public class MessagePage extends AppCompatActivity{
         lv_message_page.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         et_enter_message = (EditText) findViewById(R.id.et_enter_message);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tb_title_message);
-        ImageButton btn_send_message = (ImageButton) findViewById(R.id.btn_send_message);
+        Button btn_send_message = (Button) findViewById(R.id.btn_send_message);
         //------------------------------------------------------------------------------------------
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);

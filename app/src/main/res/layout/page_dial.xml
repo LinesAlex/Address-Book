@@ -42,13 +42,17 @@
         android:layout_gravity="center_horizontal|bottom"
         android:background="#fff"
         android:orientation="vertical">
-
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            app:srcCompat="@android:color/black" />
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:background="#eee">
+            android:background="#fff">
 
             <EditText
                 android:id="@+id/et_phone"
@@ -86,7 +90,7 @@
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:background="#fff"
-                    android:layout_marginBottom="1dp"
+                    android:layout_margin="1dp"
                     android:text="1"
                     android:textColor="#334"
                     android:textSize="30sp" />
@@ -118,7 +122,7 @@
                     android:id="@+id/four"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="1dp"
+                    android:layout_margin="1dp"
                     android:background="#fff"
                     android:text="4"
                     android:textColor="#334"
@@ -151,7 +155,7 @@
                     android:id="@+id/seven"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
-                    android:layout_marginBottom="1dp"
+                    android:layout_margin="1dp"
                     android:background="#fff"
                     android:text="7"
                     android:textColor="#334"
@@ -185,7 +189,7 @@
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:background="#fff"
-                    android:layout_marginBottom="1dp"
+                    android:layout_margin="1dp"
                     android:text="*"
                     android:textColor="#334"
                     android:textSize="30sp" />

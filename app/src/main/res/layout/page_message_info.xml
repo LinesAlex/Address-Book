@@ -23,32 +23,41 @@
         android:id="@+id/lv_message_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="45dp"
         android:stackFromBottom="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="45dp"
+        app:srcCompat="@color/cardview_dark_background" />
 
     <LinearLayout
         android:id="@+id/enter_bar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_gravity="bottom"
         android:orientation="horizontal"
-        android:background="#d9d9d9">
+        android:background="#fff">
         <EditText
             android:id="@+id/et_enter_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginLeft="10dp"
+            android:background="#fff"
             android:ems="10"
             android:inputType="textAutoComplete" />
-
-        <ImageButton
+        <Button
             android:id="@+id/btn_send_message"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_send" />
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/fbutton_send_message" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 </android.support.v4.widget.DrawerLayout>
