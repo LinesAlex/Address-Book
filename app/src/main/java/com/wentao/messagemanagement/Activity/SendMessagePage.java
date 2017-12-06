@@ -7,12 +7,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -25,7 +24,6 @@ import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
 import com.wentao.messagemanagement.Animation.AnimationUtil;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.DialInfo;
-import com.wentao.messagemanagement.db.output.MessageInfo;
 import com.wentao.messagemanagement.tool.DataHandler;
 import com.wentao.messagemanagement.tool.NotifyList;
 
@@ -44,6 +42,7 @@ public class SendMessagePage extends AppCompatActivity {
 
     private List<DialInfo> contactsList = new ArrayList<>();
     private List<DialInfo> contactsChoiceList = new ArrayList<>();
+    private List<DialInfo> contactsSearchList = new ArrayList<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,25 +51,31 @@ public class SendMessagePage extends AppCompatActivity {
 
 
 
-        final RecyclerView rv_choice_contacts, rv_contacts;
-        rv_choice_contacts = (RecyclerView) findViewById(R.id.rv_choice_contacts);
+        final RecyclerView rv_choice_contacts, rv_contacts, rv_search_contacts;
+
+        final DialContactsAdapter adapter = new DialContactsAdapter(contactsList);
+        adapter.setChioceFlag();
+        DataHandler.getDialList(contactsList,DataHandler.NO_PHONE);
+        LinearLayoutManager manager = new LinearLayoutManager(instance);
+        rv_contacts = (RecyclerView) findViewById(R.id.rv_contacts);
+        rv_contacts.setLayoutManager(manager);
+        rv_contacts.setAdapter(adapter);
+
         ChoiceContactsAdapter adapterC = new ChoiceContactsAdapter(contactsChoiceList);
         LinearLayoutManager managerC = new LinearLayoutManager(instance);
         managerC.setOrientation(LinearLayoutManager.HORIZONTAL);
 //        GridLayoutManager managerC = new GridLayoutManager(this,5);
+        rv_choice_contacts = (RecyclerView) findViewById(R.id.rv_choice_contacts);
         rv_choice_contacts.setLayoutManager(managerC);
         rv_choice_contacts.setAdapter(adapterC);
 
+        final DialContactsAdapter adapterS = new DialContactsAdapter(contactsSearchList);
+        LinearLayoutManager managerS = new LinearLayoutManager(instance);
+        rv_search_contacts = (RecyclerView) findViewById(R.id.rv_search_contacts);
+        rv_search_contacts.setAdapter(adapterS);
+        rv_search_contacts.setLayoutManager(managerS);
 
-        rv_contacts = (RecyclerView) findViewById(R.id.rv_contacts);
-        DataHandler.getDialList(contactsList,"n");
-        final DialContactsAdapter adapter = new DialContactsAdapter(contactsList);
-        LinearLayoutManager manager = new LinearLayoutManager(instance);
-        adapter.setChioceFlag();
-        rv_contacts.setLayoutManager(manager);
-        rv_contacts.setAdapter(adapter);
-
-        NotifyList.initNotify(contactsList, contactsChoiceList, adapter, adapterC);
+        NotifyList.initNotify(contactsList, contactsChoiceList, contactsSearchList, adapter, adapterC, adapterS);
 
         final EditText et_message = (EditText) findViewById(R.id.autoCompleteTextView);
         final FloatingActionButton show_edit = (FloatingActionButton) findViewById(R.id.show_edit);
@@ -164,9 +169,20 @@ public class SendMessagePage extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(final String newText) {
+                if (newText.length() > 0 && rv_contacts.getVisibility() == View.VISIBLE) {
+                    rv_contacts.setVisibility(View.GONE);
+                    rv_contacts.setAnimation(AnimationUtils.makeOutAnimation(instance, true));
+                    rv_search_contacts.setVisibility(View.VISIBLE);
+                    rv_search_contacts.setAnimation(AnimationUtils.makeInAnimation(instance, true));
+                } else if (newText.length() == 0 && rv_contacts.getVisibility() == View.GONE){
+                    rv_contacts.setVisibility(View.VISIBLE);
+                    rv_contacts.setAnimation(AnimationUtils.makeInAnimation(instance, false));
+                    rv_search_contacts.setVisibility(View.GONE);
+                    rv_search_contacts.setAnimation(AnimationUtils.makeOutAnimation(instance, false));
+                }
                 NotifyList.Notify.searchList(newText);
                 FrameLayout fl_search = (FrameLayout) findViewById(R.id.fl_search);
-                if (contactsList.size() == 0) {
+                if (contactsSearchList.size() == 0 && rv_contacts.getVisibility() == View.GONE) {
                     for (DialInfo infos :contactsChoiceList) {
                         if(infos.getPhone().startsWith(newText)) {
                             fl_search.setVisibility(View.GONE);
@@ -180,7 +196,7 @@ public class SendMessagePage extends AppCompatActivity {
                     btn_search.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            NotifyList.Notify.addItem(newText);
+                            NotifyList.Notify.addSearchItem(newText);
                         }
                     });
                 } else {

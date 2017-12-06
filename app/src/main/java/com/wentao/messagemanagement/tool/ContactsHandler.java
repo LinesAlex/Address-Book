@@ -234,7 +234,6 @@ public class ContactsHandler {
                 , projection, null, null, null);//根据Uri查询相应的ContentProvider，cursor为获取到的数据集
         if (cursorInfo != null && cursorInfo.moveToFirst()) {
             do {
-
                 MContacts contacts = new MContacts();
                 contacts.setMid(cursorInfo.getString(0));
                 contacts.setName(cursorInfo.getString(1));

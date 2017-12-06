@@ -1,6 +1,8 @@
 package com.wentao.messagemanagement.db.output;
 
 
+import com.wentao.messagemanagement.db.Infos;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,17 +10,17 @@ import java.util.List;
  * Created by Administrator on 2017/11/4.
  */
 
-public class ContactsInfo {
+public class ContactsInfo extends Infos{
     private int count = 0;
     private String id = null;
     private String name = null;
-    private String pinyin = null;
+    private String surname = null;
 
     private ArrayList<String> email = new ArrayList<>();
     private ArrayList<String> phoneNumber = new ArrayList<>();
 
-    public String getPinyin() {return pinyin;}
-    public void setPinyin(String pinyin) {this.pinyin = pinyin;}
+    public String getSurname() {return surname;}
+    public void setSurname(String pinyin) {this.surname = pinyin;}
 
     public String getId() {
         return id;

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Created by Voter Lin on 2017/11/22.
@@ -26,6 +27,7 @@ import java.util.Objects;
 
 public class DataHandler{
 
+    static public String NO_PHONE = "NO_PHONE_USE";
     /**
      *use mid get phone email name
      */
@@ -47,6 +49,9 @@ public class DataHandler{
     }
     public static String getName(String id) {
         return DataSupport.where("mid = ?", id).find(MContacts.class).get(0).getName();
+    }
+    public static String getSurname(String id) {
+        return DataSupport.where("mid = ?", id).find(MContacts.class).get(0).getSurname();
     }
     /**
      *update local data base and system data base
@@ -162,7 +167,7 @@ public class DataHandler{
         for (MContacts c : contacts) {
             ContactsInfo info = new ContactsInfo();
             info.setName(c.getName());
-            info.setPinyin(c.getSurname());
+            info.setSurname(c.getSurname());
             info.setId(c.getMid());
             info.setPhoneNumber(getPhone(c.getMid()));
             info.setEmail(getEmail(c.getMid()));
@@ -210,21 +215,50 @@ public class DataHandler{
     }
 
     public static void getDialList(List<DialInfo> infos, String phone){
-        List<MPhone> phones;
+        if (isNumber(phone)) {
+            List<MPhone> phones;
+            if (!infos.isEmpty())
+                infos.clear();
+            if (Objects.equals(phone, NO_PHONE)) {
+                phones = DataSupport.findAll(MPhone.class);
+            } else {
+                phones = DataSupport.where("phone like ?", "%" + phone + "%").find(MPhone.class);
+            }
+            for (MPhone p : phones) {
+                DialInfo i = new DialInfo();
+                i.setPhone(p.getPhone());
+                i.setName(getName(p.getMid()));
+                i.setSurname(getSurname(p.getMid()));
+                infos.add(i);
+            }
+            Collections.sort(infos, new ContactsComparator());
+        } else {
+            getDialListOnName(infos, phone);
+        }
+    }
+
+    public static void getDialListOnName(List<DialInfo> infos, String name){
+        List<MContacts> names;
         if (!infos.isEmpty())
             infos.clear();
-        if (Objects.equals(phone, "n")) {
-            phones = DataSupport.findAll(MPhone.class);
+        if (Objects.equals(name, NO_PHONE)) {
+            names = DataSupport.findAll(MContacts.class);
         } else {
-            phones = DataSupport.where("phone like ?", "%" + phone + "%").find(MPhone.class);
+            names = DataSupport.where("name like ?", "%" + name + "%").find(MContacts.class);
         }
-        for (MPhone p : phones){
+        for (MContacts n : names){
             DialInfo i = new DialInfo();
-            i.setPhone(p.getPhone());
-            i.setName(getName(p.getMid()));
+            i.setPhone(getPhone(n.getMid()));
+            i.setName(n.getName());
+            i.setSurname(n.getSurname());
             infos.add(i);
         }
+        Collections.sort(infos,new ContactsComparator());
+    }
 
+    public static boolean isNumber(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
     }
 
     private static String check(String str, String ostr) {

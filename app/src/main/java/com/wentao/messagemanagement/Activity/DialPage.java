@@ -108,7 +108,7 @@ public class DialPage extends AppCompatActivity {
         delete_all.setOnClickListener(listener);
         btn_show.setOnClickListener(listener);
 
-        DataHandler.getDialList(mDialList, "n");
+        DataHandler.getDialList(mDialList, DataHandler.NO_PHONE);
         RecyclerView rv_contasts = (RecyclerView) findViewById(R.id.rv_contact);
         LinearLayoutManager manager = new LinearLayoutManager(instance);
 

@@ -77,7 +77,7 @@ public class ContactsAdapter extends ArrayAdapter<ContactsInfo> {
     }
 
     private void setShowLine(ContactsInfo item, int position){
-        String letter = item.getPinyin().toUpperCase();
+        String letter = item.getSurname().toUpperCase();
         if (!LetterToPosition.containsKey(letter)||LetterToPosition.containsValue(position))
         {
             liner_line.setVisibility(View.VISIBLE);

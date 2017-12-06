@@ -1,12 +1,24 @@
 package com.wentao.messagemanagement.db.output;
 
+import com.wentao.messagemanagement.db.Infos;
+
 /**
  * Created by Administrator on 2017/11/28.
  */
 
-public class DialInfo {
+public class DialInfo extends Infos{
     private String name;
     private String phone;
+    private String surname;
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
     private boolean isContacts = true;
 
     public boolean isContacts() {
