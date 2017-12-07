@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -35,33 +38,42 @@ import java.util.List;
  */
 
 public class SendMessagePage extends AppCompatActivity {
-    private SendMessagePage instance;
-    public SendMessagePage getInstance() {
+    private static SendMessagePage instance;
+    public static SendMessagePage getInstance() {
         return instance;
     }
 
-    private List<DialInfo> contactsList = new ArrayList<>();
-    private List<DialInfo> contactsChoiceList = new ArrayList<>();
-    private List<DialInfo> contactsSearchList = new ArrayList<>();
+    private List<DialInfo> list = new ArrayList<>();
+    private List<DialInfo> choiceList = new ArrayList<>();
+    private List<DialInfo> searchList = new ArrayList<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_send_message);
         instance = SendMessagePage.this;
 
-
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_title_send_message);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {actionBar.setDisplayHomeAsUpEnabled(true);}
 
         final RecyclerView rv_choice_contacts, rv_contacts, rv_search_contacts;
-
-        final DialContactsAdapter adapter = new DialContactsAdapter(contactsList);
-        adapter.setChioceFlag();
-        DataHandler.getDialList(contactsList,DataHandler.NO_PHONE);
+        DialContactsAdapter adapter = new DialContactsAdapter(list);
+        adapter.choiceAble();
+        DataHandler.getDialList(list,DataHandler.NO_PHONE);
         LinearLayoutManager manager = new LinearLayoutManager(instance);
         rv_contacts = (RecyclerView) findViewById(R.id.rv_contacts);
         rv_contacts.setLayoutManager(manager);
         rv_contacts.setAdapter(adapter);
 
-        ChoiceContactsAdapter adapterC = new ChoiceContactsAdapter(contactsChoiceList);
+        DialContactsAdapter adapterS = new DialContactsAdapter(searchList);
+        adapterS.searchAble();
+        LinearLayoutManager managerS = new LinearLayoutManager(instance);
+        rv_search_contacts = (RecyclerView) findViewById(R.id.rv_search_contacts);
+        rv_search_contacts.setLayoutManager(managerS);
+        rv_search_contacts.setAdapter(adapterS);
+
+        ChoiceContactsAdapter adapterC = new ChoiceContactsAdapter(choiceList);
         LinearLayoutManager managerC = new LinearLayoutManager(instance);
         managerC.setOrientation(LinearLayoutManager.HORIZONTAL);
 //        GridLayoutManager managerC = new GridLayoutManager(this,5);
@@ -69,13 +81,9 @@ public class SendMessagePage extends AppCompatActivity {
         rv_choice_contacts.setLayoutManager(managerC);
         rv_choice_contacts.setAdapter(adapterC);
 
-        final DialContactsAdapter adapterS = new DialContactsAdapter(contactsSearchList);
-        LinearLayoutManager managerS = new LinearLayoutManager(instance);
-        rv_search_contacts = (RecyclerView) findViewById(R.id.rv_search_contacts);
-        rv_search_contacts.setAdapter(adapterS);
-        rv_search_contacts.setLayoutManager(managerS);
 
-        NotifyList.initNotify(contactsList, contactsChoiceList, contactsSearchList, adapter, adapterC, adapterS);
+
+        NotifyList.initNotify(list, choiceList, searchList, adapterC, adapterS);
 
         final EditText et_message = (EditText) findViewById(R.id.autoCompleteTextView);
         final FloatingActionButton show_edit = (FloatingActionButton) findViewById(R.id.show_edit);
@@ -84,15 +92,7 @@ public class SendMessagePage extends AppCompatActivity {
         show_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                edit_page.setVisibility(View.VISIBLE);
-                edit_page.setAnimation(AnimationUtil.moveToViewLocation());
-                send_message.setVisibility(View.VISIBLE);
-                send_message.setAnimation(AnimationUtil.moveToViewLocation());
-                show_edit.setVisibility(View.GONE);
-                show_edit.setAnimation(AnimationUtil.moveToViewBottom());
-                rv_contacts.setVisibility(View.GONE);
-                rv_contacts.setAnimation(AnimationUtil.moveToViewBottom());
-
+                AnimationUtil.setAnimationTopToButton(new View[]{edit_page, send_message, show_edit, rv_contacts});
             }
         });
 
@@ -100,14 +100,7 @@ public class SendMessagePage extends AppCompatActivity {
         hide_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                edit_page.setVisibility(View.GONE);
-                edit_page.setAnimation(AnimationUtil.moveToViewBottom());
-                send_message.setVisibility(View.GONE);
-                send_message.setAnimation(AnimationUtil.moveToViewBottom());
-                show_edit.setVisibility(View.VISIBLE);
-                show_edit.setAnimation(AnimationUtil.moveToViewLocation());
-                rv_contacts.setVisibility(View.VISIBLE);
-                rv_contacts.setAnimation(AnimationUtil.moveToViewLocation());
+                AnimationUtil.setAnimationTopToButton(new View[]{edit_page, send_message, show_edit, rv_contacts});
             }
         });
 
@@ -115,12 +108,12 @@ public class SendMessagePage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String message = et_message.getText().toString();
-                if(contactsChoiceList.isEmpty()) {
+                if(choiceList.isEmpty()) {
                     Snackbar.make(edit_page, "未选择联系人，无法发送", Snackbar.LENGTH_SHORT).show();
                 }else if (message.isEmpty() || message.length() == 0) {
                     Snackbar.make(edit_page, "未填写短信，无法发送", Snackbar.LENGTH_SHORT).show();
                 }else {
-                    if (contactsChoiceList.size() > 1) {
+                    if (choiceList.size() > 1) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(instance);
                         dialog.setTitle("提示");
                         dialog.setMessage("是否要将信息发出?");
@@ -129,14 +122,14 @@ public class SendMessagePage extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String names = null;
-                                for (DialInfo i : contactsChoiceList) {
+                                for (DialInfo i : choiceList) {
                                     et_message.setText("");
                                     SmsManager sms = SmsManager.getDefault();
                                     sms.sendTextMessage(i.getPhone(), null, message, null, null);
                                     names += i.getName() + " ";
                                 }
                                 Snackbar.make(edit_page, "已将信息发送给联系人 : " + names, Snackbar.LENGTH_SHORT).show();
-                                while (!contactsChoiceList.isEmpty()) {
+                                while (!choiceList.isEmpty()) {
                                     NotifyList.Notify.notChoiceItem(0);
                                 }
                             }
@@ -150,11 +143,10 @@ public class SendMessagePage extends AppCompatActivity {
                     } else {
                         et_message.setText("");
                         SmsManager sms = SmsManager.getDefault();
-                        sms.sendTextMessage(contactsChoiceList.get(0).getPhone(), null, message, null, null);
-                        Snackbar.make(edit_page, "已将信息发送给联系人 : " + contactsChoiceList.get(0).getName(), Snackbar.LENGTH_SHORT).show();
+                        sms.sendTextMessage(choiceList.get(0).getPhone(), null, message, null, null);
+                        Snackbar.make(edit_page, "已将信息发送给联系人 : " + choiceList.get(0).getName(), Snackbar.LENGTH_SHORT).show();
                         NotifyList.Notify.notChoiceItem(0);
                     }
-
                 }
             }
         });
@@ -169,21 +161,20 @@ public class SendMessagePage extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(final String newText) {
+                if (send_message.getVisibility() == View.VISIBLE) {
+                    AnimationUtil.setAnimationTopToButton(new View[]{edit_page, send_message, show_edit, rv_search_contacts});
+                }
                 if (newText.length() > 0 && rv_contacts.getVisibility() == View.VISIBLE) {
-                    rv_contacts.setVisibility(View.GONE);
-                    rv_contacts.setAnimation(AnimationUtils.makeOutAnimation(instance, true));
-                    rv_search_contacts.setVisibility(View.VISIBLE);
-                    rv_search_contacts.setAnimation(AnimationUtils.makeInAnimation(instance, true));
+                    AnimationUtil.setAnimationLeftToRightGone(rv_contacts, instance);
+                    AnimationUtil.setAnimationRightToLeftGone(rv_search_contacts, instance);
                 } else if (newText.length() == 0 && rv_contacts.getVisibility() == View.GONE){
-                    rv_contacts.setVisibility(View.VISIBLE);
-                    rv_contacts.setAnimation(AnimationUtils.makeInAnimation(instance, false));
-                    rv_search_contacts.setVisibility(View.GONE);
-                    rv_search_contacts.setAnimation(AnimationUtils.makeOutAnimation(instance, false));
+                    AnimationUtil.setAnimationLeftToRightGone(rv_contacts, instance);
+                    AnimationUtil.setAnimationRightToLeftGone(rv_search_contacts, instance);
                 }
                 NotifyList.Notify.searchList(newText);
                 FrameLayout fl_search = (FrameLayout) findViewById(R.id.fl_search);
-                if (contactsSearchList.size() == 0 && rv_contacts.getVisibility() == View.GONE) {
-                    for (DialInfo infos :contactsChoiceList) {
+                if (searchList.size() == 0 && rv_contacts.getVisibility() == View.GONE) {
+                    for (DialInfo infos : searchList) {
                         if(infos.getPhone().startsWith(newText)) {
                             fl_search.setVisibility(View.GONE);
                             return true;
@@ -205,5 +196,15 @@ public class SendMessagePage extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

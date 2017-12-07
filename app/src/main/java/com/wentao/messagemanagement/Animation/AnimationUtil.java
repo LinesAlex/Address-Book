@@ -1,6 +1,9 @@
 package com.wentao.messagemanagement.Animation;
 
+import android.content.Context;
+import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 
 /**
@@ -35,5 +38,42 @@ public class AnimationUtil {
         mHiddenAction.setDuration(400);
         return mHiddenAction;
     }
+
+
+    public static void setAnimationTopToButton(View view) {
+        if (view.getVisibility() == View.VISIBLE){
+            view.setVisibility(View.GONE);
+            view.setAnimation(moveToViewBottom());
+        } else {
+            view.setVisibility(View.VISIBLE);
+            view.setAnimation(moveToViewLocation());
+        }
+    }
+
+    public static void setAnimationTopToButton(View[] views) {
+        for (View v : views) {
+            setAnimationTopToButton(v);
+        }
+    }
+
+    public static void setAnimationLeftToRightGone(View view, Context context) {
+        if (view.getVisibility() == View.VISIBLE) {
+            view.setVisibility(View.GONE);
+            view.setAnimation(AnimationUtils.makeOutAnimation(context, true));
+        } else {
+            view.setVisibility(View.VISIBLE);
+            view.setAnimation(AnimationUtils.makeInAnimation(context, false));
+        }
+    }
+    public static void setAnimationRightToLeftGone(View view, Context context) {
+        if (view.getVisibility() == View.VISIBLE) {
+            view.setVisibility(View.GONE);
+            view.setAnimation(AnimationUtils.makeOutAnimation(context, false));
+        } else {
+            view.setVisibility(View.VISIBLE);
+            view.setAnimation(AnimationUtils.makeInAnimation(context, true));
+        }
+    }
+
 }
 

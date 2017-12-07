@@ -170,16 +170,10 @@ public class DialPage extends AppCompatActivity {
                     }
                 }break;
                 case R.id.pack_up:{
-                    dial_page.setVisibility(View.GONE);
-                    btn_show.setVisibility(View.VISIBLE);
-                    dial_page.setAnimation(AnimationUtil.moveToViewBottom());
-                    btn_show.setAnimation(AnimationUtil.moveToViewLocation());
+                    AnimationUtil.setAnimationTopToButton(new View[]{btn_show, dial_page});
                 } break;
                 case R.id.fbtn_show_dial:{
-                    btn_show.setVisibility(View.GONE);
-                    dial_page.setVisibility(View.VISIBLE);
-                    btn_show.setAnimation(AnimationUtil.moveToViewBottom());
-                    dial_page.setAnimation(AnimationUtil.moveToViewLocation());
+                    AnimationUtil.setAnimationTopToButton(new View[]{btn_show, dial_page});
                 }break;
                 case R.id.delete:{
                     if (phone.getText().length() > 0 && index > 0){

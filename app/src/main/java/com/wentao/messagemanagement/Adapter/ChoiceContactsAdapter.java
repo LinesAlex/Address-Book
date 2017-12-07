@@ -38,7 +38,6 @@ public class ChoiceContactsAdapter extends RecyclerView.Adapter<ChoiceContactsAd
                 NotifyList.Notify.notChoiceItem(position);
             }
         });
-
     }
 
     @Override

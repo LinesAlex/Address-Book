@@ -18,15 +18,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#eee">
-
-            <SearchView
-                android:id="@+id/sv_search"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/tb_title_contacts"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:background="#334"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:queryHint="请输入搜索内容" />
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                <SearchView
+                    android:id="@+id/sv_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="#334"
+                    android:queryHint="请输入搜索内容" />
+            </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
         <LinearLayout

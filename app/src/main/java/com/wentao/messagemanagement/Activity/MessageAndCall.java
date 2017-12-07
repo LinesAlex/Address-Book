@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 
+import com.wentao.messagemanagement.Animation.AnimationUtil;
 import com.wentao.messagemanagement.Fragment.CallPageFragment;
 import com.wentao.messagemanagement.Fragment.MessagePageFragment;
 import com.wentao.messagemanagement.FragmentAdapter.MyFragmentPagerAdapter;
@@ -97,14 +98,12 @@ public class MessageAndCall extends AppCompatActivity {
     public void setButtonGone(FloatingActionButton[] button, boolean flag){
         if (flag) {
             for (FloatingActionButton aButton : button) {
-                aButton.setVisibility(View.GONE);
-                aButton.setAnimation(AnimationUtils.makeOutAnimation(instance, true));
+                AnimationUtil.setAnimationLeftToRightGone(aButton, instance);
             }
             FlagOfGone = false;
         } else {
             for (FloatingActionButton aButton : button) {
-                aButton.setVisibility(View.VISIBLE);
-                aButton.setAnimation(AnimationUtils.makeInAnimation(instance, false));
+                AnimationUtil.setAnimationLeftToRightGone(aButton, instance);
             }
             FlagOfGone = true;
         }

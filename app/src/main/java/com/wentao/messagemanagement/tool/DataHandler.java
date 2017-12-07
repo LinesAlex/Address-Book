@@ -214,46 +214,43 @@ public class DataHandler{
         return list;
     }
 
-    public static void getDialList(List<DialInfo> infos, String phone){
-        if (isNumber(phone)) {
-            List<MPhone> phones;
-            if (!infos.isEmpty())
-                infos.clear();
-            if (Objects.equals(phone, NO_PHONE)) {
-                phones = DataSupport.findAll(MPhone.class);
-            } else {
-                phones = DataSupport.where("phone like ?", "%" + phone + "%").find(MPhone.class);
-            }
-            for (MPhone p : phones) {
-                DialInfo i = new DialInfo();
-                i.setPhone(p.getPhone());
-                i.setName(getName(p.getMid()));
-                i.setSurname(getSurname(p.getMid()));
-                infos.add(i);
-            }
-            Collections.sort(infos, new ContactsComparator());
-        } else {
-            getDialListOnName(infos, phone);
-        }
-    }
-
-    public static void getDialListOnName(List<DialInfo> infos, String name){
-        List<MContacts> names;
+    public static void getDialList(List<DialInfo> infos, String newText){
         if (!infos.isEmpty())
             infos.clear();
-        if (Objects.equals(name, NO_PHONE)) {
-            names = DataSupport.findAll(MContacts.class);
+        if (isNumber(newText)) {
+            List<MPhone> phones;
+            if (Objects.equals(newText, NO_PHONE)) {
+                phones = DataSupport.findAll(MPhone.class);
+            } else {
+                phones = DataSupport.where("phone like ?", "%" + newText + "%").find(MPhone.class);
+            }
+            for (MPhone p : phones) {
+                if (p.getPhone().length() > 0) {
+                    DialInfo i = new DialInfo();
+                    i.setPhone(p.getPhone());
+                    i.setName(getName(p.getMid()));
+                    i.setSurname(getSurname(p.getMid()));
+                    infos.add(i);
+                }
+            }
         } else {
-            names = DataSupport.where("name like ?", "%" + name + "%").find(MContacts.class);
+            List<MContacts> names;
+            if (Objects.equals(newText, NO_PHONE)) {
+                names = DataSupport.findAll(MContacts.class);
+            } else {
+                names = DataSupport.where("name like ?", "%" + newText + "%").find(MContacts.class);
+            }
+            for (MContacts n : names){
+                if (getPhone(n.getMid()).length() > 0) {
+                    DialInfo i = new DialInfo();
+                    i.setPhone(getPhone(n.getMid()));
+                    i.setName(n.getName());
+                    i.setSurname(n.getSurname());
+                    infos.add(i);
+                }
+            }
         }
-        for (MContacts n : names){
-            DialInfo i = new DialInfo();
-            i.setPhone(getPhone(n.getMid()));
-            i.setName(n.getName());
-            i.setSurname(n.getSurname());
-            infos.add(i);
-        }
-        Collections.sort(infos,new ContactsComparator());
+        Collections.sort(infos, new ContactsComparator());
     }
 
     public static boolean isNumber(String str){

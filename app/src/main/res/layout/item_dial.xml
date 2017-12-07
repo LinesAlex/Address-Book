@@ -6,75 +6,86 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
-        android:orientation="horizontal">
-
-        <!--<Button-->
-            <!--android:id="@+id/btn_choice"-->
-            <!--android:layout_width="30dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:background="@drawable/btn_choice_add"-->
-            <!--android:layout_marginRight="30dp"-->
-            <!--android:visibility="gone"/>-->
-
-        <RadioButton
-            android:id="@+id/btn_choice"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="30dp"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/tv_surname"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/icon_first_name"
-            android:gravity="center"
-            android:layout_gravity="center_vertical"
-            android:text="L"
-            android:textColor="#000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        android:orientation="vertical">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="35dp"
+                android:layout_marginLeft="35dp"
+                app:srcCompat="@android:color/darker_gray" />
+            <TextView
+                android:id="@+id/tv_title_surname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:background="#fff"
+                android:text="L"
+                android:textSize="20sp"
+                android:textColor="#000"
+                android:visibility="gone"/>
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="60dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/btn_choice"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="30dp"
+                android:visibility="gone"/>
 
             <TextView
-                android:id="@+id/tv_name_dial"
+                android:id="@+id/tv_surname"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/icon_first_name"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:text="L"
+                android:textColor="#000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"
-                android:textSize="18sp"
-                android:textColor="#000" />
-            <TextView
-                android:id="@+id/tv_phone_dial"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="123123123123"
-                android:textSize="12sp"
-                android:textColor="#444"/>
+                android:orientation="vertical"
+
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/tv_name_dial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:textSize="18sp"
+                    android:textColor="#000" />
+                <TextView
+                    android:id="@+id/tv_phone_dial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="123123123123"
+                    android:textSize="12sp"
+                    android:textColor="#444"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        app:srcCompat="@android:color/darker_gray" />
 
 </FrameLayout>

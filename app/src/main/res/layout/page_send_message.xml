@@ -8,12 +8,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <SearchView
-            android:id="@+id/sv_search_contacts"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tb_title_send_message"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#334"/>
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            <SearchView
+                android:id="@+id/sv_search_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#334"/>
+        </android.support.v7.widget.Toolbar>
+
         <FrameLayout
             android:id="@+id/fl_search"
             android:layout_width="match_parent"
@@ -62,13 +70,14 @@
             android:layout_height="match_parent"
             android:visibility="gone">
         </android.support.v7.widget.RecyclerView>
+
         <LinearLayout
             android:id="@+id/edit_page"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#fff"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
             <Button
                 android:id="@+id/hide_edit"
                 android:layout_width="220dp"
