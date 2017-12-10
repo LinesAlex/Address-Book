@@ -40,13 +40,14 @@
             android:layout_marginLeft="60dp"
             android:orientation="horizontal">
 
-            <RadioButton
+            <Button
                 android:id="@+id/btn_choice"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="30dp"
-                android:visibility="gone"/>
+                android:background="@drawable/btn_choice_not"
+                android:visibility="visible"/>
 
             <TextView
                 android:id="@+id/tv_surname"

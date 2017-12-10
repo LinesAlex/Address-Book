@@ -1,11 +1,10 @@
 package com.wentao.messagemanagement.tool;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.wentao.messagemanagement.Activity.SendMessagePage;
-import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
+import com.wentao.messagemanagement.Adapter.DialAdapter;
 import com.wentao.messagemanagement.db.output.DialInfo;
 
 import java.util.ArrayList;
@@ -18,16 +17,15 @@ import java.util.Objects;
 
 public class NotifyList {
 
-    private List<DialInfo> choiceList, searchList, list;
-    private RecyclerView.Adapter  choiceAdapter, searchAdapter;
+    private List<DialInfo> beChoiceList, searchList, choiceList;
+    private RecyclerView.Adapter bechoiceAdapter, searchAdapter;
     private List<Integer> indexList;
     public static NotifyList Notify;
-
     private NotifyList(List<DialInfo> l0, List<DialInfo> l1, List<DialInfo> l2,RecyclerView.Adapter a1, RecyclerView.Adapter a2){
-        list = l0;
-        choiceList = l1;
+        choiceList = l0;
+        beChoiceList = l1;
         searchList = l2;
-        choiceAdapter = a1;
+        bechoiceAdapter = a1;
         searchAdapter = a2;
         indexList = new ArrayList<>();
     }
@@ -39,19 +37,17 @@ public class NotifyList {
     public void choiceItem(int index, boolean flag) {
         if (index != -1)
         if (flag) {
-            choiceList.add(0, list.get(index));
-            indexList.add(0,index);
+            addBeChoiceItem(choiceList.get(index), index);
         } else {
-            choiceList.remove(indexList.indexOf(index));
-            indexList.remove(indexList.indexOf(index));
+            removeBeChoiceItem(indexList.indexOf(index));
         }
-        choiceAdapter.notifyDataSetChanged();
+        bechoiceAdapter.notifyDataSetChanged();
     }
 
     public int getIndex(int index) {
-        for(int i = 0; i < list.size(); i++) {
-            if (list.get(i).getPhone().startsWith(searchList.get(index).getPhone()) &&
-                    list.get(i).getName().startsWith(searchList.get(index).getName()))
+        for(int i = 0; i < choiceList.size(); i++) {
+            if (choiceList.get(i).getPhone().startsWith(searchList.get(index).getPhone()) &&
+                    choiceList.get(i).getName().startsWith(searchList.get(index).getName()))
             {
                 return i;
             }
@@ -61,13 +57,10 @@ public class NotifyList {
 
     public void notChoiceItem(int index) {
         if (indexList.get(index) != -1) {
-            //完成对checkbox的修改。
-            DialContactsAdapter.radioButtons.get(indexList.get(index)).setChecked(false);
-            DialContactsAdapter.checkList.set(indexList.get(index), false);
+            DialAdapter.checkPositions.set(indexList.get(index), false);
         }
-        choiceList.remove(index);
-        indexList.remove(index);
-        choiceAdapter.notifyDataSetChanged();
+        removeBeChoiceItem(index);
+        bechoiceAdapter.notifyDataSetChanged();
     }
 
     public void addSearchItem(String newText) {
@@ -75,20 +68,27 @@ public class NotifyList {
             Toast.makeText(SendMessagePage.getInstance(), "联系人 "+newText+" 不存在",Toast.LENGTH_SHORT).show();
             return;
         }
-
-        for (DialInfo info : choiceList) {
+        for (DialInfo info : beChoiceList) {
             if (Objects.equals(newText, info.getPhone())) {
                 return;
             }
         }
-
         DialInfo dialInfo = new DialInfo();
         dialInfo.setName(newText);
         dialInfo.setPhone(newText);
         dialInfo.setContacts(false);
-        choiceList.add(0,dialInfo);
-        indexList.add(0,-1);
-        choiceAdapter.notifyDataSetChanged();
+        addBeChoiceItem(dialInfo, -1);
+        bechoiceAdapter.notifyDataSetChanged();
+    }
+
+    private void addBeChoiceItem(DialInfo info, int index) {
+        beChoiceList.add(0,info);
+        indexList.add(0,index);
+    }
+
+    private void removeBeChoiceItem(int index) {
+        beChoiceList.remove(index);
+        indexList.remove(index);
     }
 
     public void searchList(String phone) {
@@ -97,18 +97,22 @@ public class NotifyList {
             DataHandler.getDialList(l, phone);
             if (!searchList.isEmpty())
                 searchList.clear();
-            if (!choiceList.isEmpty())
+            if (!beChoiceList.isEmpty())
                 for (int i = 0; i < l.size(); i++) {
-                    for (int j = 0; j < choiceList.size(); j++) {
-                        if(l.get(i).getPhone().startsWith(choiceList.get(j).getPhone())) {
+                    for (int j = 0; j < beChoiceList.size(); j++) {
+                        if(l.get(i).getPhone().startsWith(beChoiceList.get(j).getPhone())) {
                             break;
-                        } else if (j == choiceList.size() - 1) {
+                        } else if (j == beChoiceList.size() - 1) {
                             searchList.add(l.get(i));
                         }
                     }
                 }
             else
             searchList.addAll(l);
+        }
+        DialAdapter.searchPositions.clear();
+        for (int i =0 ; i < searchList.size(); i++) {
+            DialAdapter.searchPositions.add(false);
         }
         searchAdapter.notifyDataSetChanged();
     }

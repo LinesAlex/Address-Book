@@ -50,7 +50,7 @@ public class DataHandler{
     public static String getName(String id) {
         return DataSupport.where("mid = ?", id).find(MContacts.class).get(0).getName();
     }
-    public static String getSurname(String id) {
+    private static String getSurname(String id) {
         return DataSupport.where("mid = ?", id).find(MContacts.class).get(0).getSurname();
     }
     /**

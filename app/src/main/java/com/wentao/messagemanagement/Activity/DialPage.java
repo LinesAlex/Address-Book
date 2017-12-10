@@ -1,7 +1,6 @@
 package com.wentao.messagemanagement.Activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -15,31 +14,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.Selection;
 import android.text.Spannable;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
+import com.wentao.messagemanagement.Adapter.DialAdapter;
 import com.wentao.messagemanagement.Animation.AnimationUtil;
 import com.wentao.messagemanagement.R;
-import com.wentao.messagemanagement.db.output.CallInfo;
 import com.wentao.messagemanagement.db.output.DialInfo;
 import com.wentao.messagemanagement.tool.DataHandler;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Administrator on 2017/11/27.
@@ -50,7 +40,7 @@ public class DialPage extends AppCompatActivity {
     public static DialPage getInstance() {
         return instance;
     }
-    private DialContactsAdapter adapter;
+    private DialAdapter adapter;
     private List<DialInfo> mDialList = new LinkedList<>();
     private LinearLayout dial_page;
     EditText phone;
@@ -112,7 +102,7 @@ public class DialPage extends AppCompatActivity {
         RecyclerView rv_contasts = (RecyclerView) findViewById(R.id.rv_contact);
         LinearLayoutManager manager = new LinearLayoutManager(instance);
 
-        adapter = new DialContactsAdapter(mDialList);
+        adapter = new DialAdapter(mDialList, DialAdapter.COMMON);
         adapter.setViewHolderEditText(phone);
         rv_contasts.setLayoutManager(manager);
         rv_contasts.setAdapter(adapter);

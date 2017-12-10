@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -23,7 +22,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.wentao.messagemanagement.Adapter.ChoiceContactsAdapter;
-import com.wentao.messagemanagement.Adapter.DialContactsAdapter;
+import com.wentao.messagemanagement.Adapter.DialAdapter;
 import com.wentao.messagemanagement.Animation.AnimationUtil;
 import com.wentao.messagemanagement.R;
 import com.wentao.messagemanagement.db.output.DialInfo;
@@ -58,16 +57,14 @@ public class SendMessagePage extends AppCompatActivity {
         if (actionBar != null) {actionBar.setDisplayHomeAsUpEnabled(true);}
 
         final RecyclerView rv_choice_contacts, rv_contacts, rv_search_contacts;
-        DialContactsAdapter adapter = new DialContactsAdapter(list);
-        adapter.choiceAble();
         DataHandler.getDialList(list,DataHandler.NO_PHONE);
+        DialAdapter adapter = new DialAdapter(list, DialAdapter.CHOICE_ITEM);
         LinearLayoutManager manager = new LinearLayoutManager(instance);
         rv_contacts = (RecyclerView) findViewById(R.id.rv_contacts);
         rv_contacts.setLayoutManager(manager);
         rv_contacts.setAdapter(adapter);
 
-        DialContactsAdapter adapterS = new DialContactsAdapter(searchList);
-        adapterS.searchAble();
+        DialAdapter adapterS = new DialAdapter(searchList, DialAdapter.SEARCH_ITEM);
         LinearLayoutManager managerS = new LinearLayoutManager(instance);
         rv_search_contacts = (RecyclerView) findViewById(R.id.rv_search_contacts);
         rv_search_contacts.setLayoutManager(managerS);
