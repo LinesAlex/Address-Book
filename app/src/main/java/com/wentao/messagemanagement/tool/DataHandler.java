@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 public class DataHandler{
 
+    private static final String[] serverPhone = new String[]{"10086", "10010", "1301", "12306", "95548", "95588"};
     static public String NO_PHONE = "NO_PHONE_USE";
     /**
      *use mid get phone email name
@@ -188,22 +189,17 @@ public class DataHandler{
     /**
      *use ContactsHandler.getAllMessages() get all messages
      */
-    public static List<MessageInfo> getAllMessages(Context context) {
+    public static void getAllMessages(Context context, List<MessageInfo> otherMessage, List<MessageInfo> mainMessage) {
         List<MessageInfo> list = new ArrayList<>();
         ContactsHandler.getAllMessages(context, list);
-        List<MessageInfo> mainMessage = new ArrayList<>();
-        List<MessageInfo> otherMessage = new ArrayList<>();
         for (MessageInfo info : list) {
-            if (info.getPhoneNumber().startsWith("106") || info.getPhoneNumber().length() > 11)
+            if (info.getPhone().startsWith("106") || info.getPhone().length() > 11 || equals(info.getPhone()))
             {
                 otherMessage.add(info);
             } else {
                 mainMessage.add(info);
             }
         }
-        MessageInfo.MessageIndex = mainMessage.size();
-        mainMessage.addAll(otherMessage);
-        return mainMessage;
     }
     /**
      *use ContactsHandler.getAllCalls() get all calls
@@ -213,7 +209,13 @@ public class DataHandler{
         ContactsHandler.getAllCalls(context, list);
         return list;
     }
-
+    public static boolean equals(String str) {
+        for (String p : serverPhone) {
+            if (p.startsWith(str))
+                return true;
+        }
+        return false;
+    }
     public static void getDialList(List<DialInfo> infos, String newText){
         if (!infos.isEmpty())
             infos.clear();
@@ -245,7 +247,7 @@ public class DataHandler{
                     DialInfo i = new DialInfo();
                     i.setPhone(getPhone(n.getMid()));
                     i.setName(n.getName());
-                    i.setSurname(n.getSurname());
+                    i.setSurname(n.getSurname().toUpperCase());
                     infos.add(i);
                 }
             }

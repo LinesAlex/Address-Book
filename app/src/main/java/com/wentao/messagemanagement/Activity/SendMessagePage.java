@@ -80,7 +80,7 @@ public class SendMessagePage extends AppCompatActivity {
 
 
 
-        NotifyList.initNotify(list, choiceList, searchList, adapterC, adapterS);
+        NotifyList.initNotify(list, choiceList, searchList,adapter, adapterC, adapterS);
 
         final EditText et_message = (EditText) findViewById(R.id.autoCompleteTextView);
         final FloatingActionButton show_edit = (FloatingActionButton) findViewById(R.id.show_edit);

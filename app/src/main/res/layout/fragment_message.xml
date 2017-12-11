@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+
+    <Button
+        android:id="@+id/btn_show_message"
+        android:layout_width="55dp"
+        android:layout_height="20dp"
+        android:background="@drawable/btn_message"
+        android:text="一般"
+        android:textSize="10sp"
+        android:textColor="#000"
+        android:layout_marginTop="30dp"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/btn_show_other_message"
+        android:layout_width="55dp"
+        android:layout_height="20dp"
+        android:background="@drawable/btn_other_message"
+        android:text="服务"
+        android:textSize="10sp"
+        android:textColor="#000"
+        android:layout_gravity="end"
+        android:layout_marginTop="30dp" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_all_message"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
-</LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_all_message_other"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+    </android.support.v7.widget.RecyclerView>
+</FrameLayout>

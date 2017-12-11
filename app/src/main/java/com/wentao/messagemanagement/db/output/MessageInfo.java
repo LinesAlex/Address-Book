@@ -5,9 +5,8 @@ package com.wentao.messagemanagement.db.output;
  */
 
 public class MessageInfo {
-    public static int MessageIndex;
     private String id;
-    private String phoneNumber;
+    private String phone;
     private String smsbody;
     private String date;
     private String type;
@@ -19,9 +18,9 @@ public class MessageInfo {
     public String getId() {return id;}
     public void setId(String id) {this.id = id;}
 
-    public String getPhoneNumber() {return phoneNumber;}
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public String getPhone() {return phone;}
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getSmsbody() {
@@ -45,8 +44,8 @@ public class MessageInfo {
         this.type = type;
     }
 
-    public MessageInfo(String phoneNumber, String smsbody, String date, String type) {
-        this.phoneNumber = phoneNumber;
+    public MessageInfo(String phone, String smsbody, String date, String type) {
+        this.phone = phone;
         this.smsbody = smsbody;
         this.date = date;
         this.type = type;

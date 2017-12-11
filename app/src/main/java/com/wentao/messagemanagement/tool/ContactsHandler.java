@@ -53,11 +53,11 @@ public class ContactsHandler {
         List<String> checkHasPhone = new LinkedList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do{
-                String phone = phoneCheck(cursor.getLong(0) + "");
+                String phone = phoneCheck(cursor.getString(0)).replace(" ", "").replace("-", "");
                 if (!checkHasPhone.contains(phone)) {
                     checkHasPhone.add(phone);
                     MessageInfo info = new MessageInfo();
-                    info.setPhoneNumber(phone);
+                    info.setPhone(phone);
                     info.setSmsbody(cursor.getString(1).equals("") ? "-" : cursor.getString(1));
                     Date date = new Date(Long.parseLong(cursor.getString(2)));
                     info.setDate(TimeTool.formatForDate(date));
@@ -120,7 +120,7 @@ public class ContactsHandler {
                 }
                 //呼叫时间
                 Date date = new Date(Long.parseLong(cursor.getString(1)));
-                String phone = phoneCheck(cursor.getLong(3) + "");
+                String phone = phoneCheck(cursor.getString(3)).replace(" ", "").replace("-", "");
                 callInfo.setTime(TimeTool.formatForDate(date));
                 //通话时长
                 callInfo.setDuration(TimeTool.formatDuration(cursor.getLong(2)));
@@ -197,7 +197,7 @@ public class ContactsHandler {
                 if (phoneNumber.contains(cursor.getLong(0) + "") || ("86" + phoneNumber).contains(cursor.getLong(0) + "")) {
                     MessageInfo info = new MessageInfo();
                     info.setId(id);
-                    info.setPhoneNumber(phoneNumber);
+                    info.setPhone(phoneNumber);
                     info.setName(cursor.getString(1));
                     info.setSmsbody(cursor.getString(2).equals("") ? "-" : cursor.getString(2));
                     Date date = new Date(Long.parseLong(cursor.getString(3)));
@@ -250,6 +250,9 @@ public class ContactsHandler {
                         MPhone phone = new MPhone();
                         phone.setMid(contacts.getMid());
                         phone.setPhone(cursor.getLong(0) + "");
+                        if (phone.getPhone().length() < 5) {
+                            phone.setPhone(cursor.getString(0).replace(" ", "").replace("-", ""));
+                        }
                         phone.save();
                     } while (cursor.moveToNext());
                 }
@@ -381,6 +384,8 @@ public class ContactsHandler {
     }
 
     private static String phoneCheck(String phone){
+        if (phone.isEmpty())
+            return "0";
         if (!phone.substring(0, 1).equals("1")) {
             phone = (phone.contains("1") && (phone.length() > 11)) ? phone.substring(phone.indexOf("1")) : phone;
             return phone;

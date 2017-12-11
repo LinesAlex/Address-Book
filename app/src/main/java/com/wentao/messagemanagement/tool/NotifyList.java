@@ -18,20 +18,21 @@ import java.util.Objects;
 public class NotifyList {
 
     private List<DialInfo> beChoiceList, searchList, choiceList;
-    private RecyclerView.Adapter bechoiceAdapter, searchAdapter;
+    private RecyclerView.Adapter beChoiceAdapter, searchAdapter, choiceAdapter;
     private List<Integer> indexList;
     public static NotifyList Notify;
-    private NotifyList(List<DialInfo> l0, List<DialInfo> l1, List<DialInfo> l2,RecyclerView.Adapter a1, RecyclerView.Adapter a2){
+    private NotifyList(List<DialInfo> l0, List<DialInfo> l1, List<DialInfo> l2, RecyclerView.Adapter a0, RecyclerView.Adapter a1, RecyclerView.Adapter a2){
         choiceList = l0;
         beChoiceList = l1;
         searchList = l2;
-        bechoiceAdapter = a1;
+        choiceAdapter = a0;
+        beChoiceAdapter = a1;
         searchAdapter = a2;
         indexList = new ArrayList<>();
     }
 
-    public static void initNotify(List<DialInfo> l0, List<DialInfo> l1, List<DialInfo> l2, RecyclerView.Adapter a1, RecyclerView.Adapter a2){
-        Notify = new NotifyList(l0,l1,l2,a1,a2);
+    public static void initNotify(List<DialInfo> l0, List<DialInfo> l1, List<DialInfo> l2, RecyclerView.Adapter a0, RecyclerView.Adapter a1, RecyclerView.Adapter a2){
+        Notify = new NotifyList(l0,l1,l2,a0,a1,a2);
     }
 
     public void choiceItem(int index, boolean flag) {
@@ -41,7 +42,8 @@ public class NotifyList {
         } else {
             removeBeChoiceItem(indexList.indexOf(index));
         }
-        bechoiceAdapter.notifyDataSetChanged();
+        beChoiceAdapter.notifyDataSetChanged();
+        choiceAdapter.notifyDataSetChanged();
     }
 
     public int getIndex(int index) {
@@ -60,7 +62,8 @@ public class NotifyList {
             DialAdapter.checkPositions.set(indexList.get(index), false);
         }
         removeBeChoiceItem(index);
-        bechoiceAdapter.notifyDataSetChanged();
+        beChoiceAdapter.notifyDataSetChanged();
+        choiceAdapter.notifyDataSetChanged();
     }
 
     public void addSearchItem(String newText) {
@@ -78,7 +81,8 @@ public class NotifyList {
         dialInfo.setPhone(newText);
         dialInfo.setContacts(false);
         addBeChoiceItem(dialInfo, -1);
-        bechoiceAdapter.notifyDataSetChanged();
+        beChoiceAdapter.notifyDataSetChanged();
+        choiceAdapter.notifyDataSetChanged();
     }
 
     private void addBeChoiceItem(DialInfo info, int index) {
